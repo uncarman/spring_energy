@@ -1,0 +1,134 @@
+getUserBuildings
+SELECT
+	b.*
+from a_building b
+right JOIN a_user_building ub on ub.building_id = b.id
+where ub.user_id = 1
+
+
+
+getItemGroups
+select
+	g.*,
+	IFNULL(gg.itemNum,0) as itemNum
+from a_item_group g
+left join (
+	select
+		count(id) as itemNum,
+		group_id
+	from a_item_group_mapper
+	group by group_id
+) gg on gg.group_id = g.id
+
+
+
+getItemsByGroupId
+select 
+		i.id,
+		i.code,
+		i.name
+from a_item_group g
+LEFT JOIN a_item_group_mapper m on m.group_id = g.id
+LEFT JOIN a_item i on i.id = m.item_id
+left join a_collector c on c.id = i.collector_id
+where g.id = 1 and c.building_id=56
+order by i.item_type asc, i.collector_id asc, i.name asc
+
+
+
+getItems
+select
+    i.*,
+    t.code as type_code,
+    t.name as type_name
+from a_item i
+left join a_item_type t on t.id = i.item_type
+left join a_collector c on c.id = i.collector_id
+where c.building_id=56
+
+
+
+getBaseDatas
+select
+    d.id,
+    d.type,
+		d.name,
+		d.basic_code,
+		d.basic_name
+from a_base_data d
+
+
+
+
+
+v_group_item
+select 
+		g.id as group_id,
+		g.code as group_code,
+		g.type as group_type,
+		g.name as group_name,
+		g.parent as group_parent,
+		g.building_id as group_building_id,
+		i.id as item_id,
+		i.code as item_code,
+		i.item_type as item_type,
+		i.name as item_name,
+		c.id as collector_id,
+		c.code as collector_code,
+		c.building_id as collector_building_id
+from a_item_group g
+left JOIN a_item_group_mapper m on m.group_id = g.id
+left JOIN a_item i on i.id = m.item_id
+left join a_collector c on c.id = i.collector_id
+
+
+v_item_val_by_day
+select
+	id,
+  item_id,
+	max(indication) as max_ind,
+  min(indication) as min_ind,
+	max(indication) - min(indication) as val,
+	date_format(d.recorded_at, '%Y-%m-%d') as recorded_at
+from a_energy_electricity_data d
+group by item_id, date_format(d.recorded_at, '%Y-%m-%d')
+
+
+
+
+route/api.php
+Route::get('/test', 'TestController@test');
+
+config/database.php
+
+        'test' => [
+            'driver' => 'mysql',
+            'host' => 'rm-uf67xbt5r3r17jddto.mysql.rds.aliyuncs.com',
+            'port' => '3306',
+            'database' => 'lp_energy',
+            'username' => 'llproj',
+            'password' => 'asjfy3j7Y@62o@hksowi',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
+
+testController
+	public function test(){
+        $sql = "
+			SELECT
+			    b.*
+			from a_user_building ub
+			right JOIN a_building b on ub.building_id = b.id
+			where ub.user_id = 1
+        ";
+        $res = \DB::connection('test')->select($sql);
+        $responseDataObj = new \Illuminate\Http\JsonResponse([
+            'code' => 200,
+            'msg' => "success",
+            'data' => $res
+        ], 200);
+        return $responseDataObj->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+    }

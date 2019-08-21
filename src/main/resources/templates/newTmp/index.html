@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        能耗管理系统
+    </title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="css/daterangepicker.css">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
+    <link href="css/sweetalert.css" rel="stylesheet">
+    <link href="css/nprogress.css" rel="stylesheet">
+    <link href="css/normalize.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+
+    <style type="text/css">
+        .left_col { display: none1; }
+    </style>
+
+</head>
+<body class="nav-md" ng-app="app" ng-controller="index">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a class="site_title">
+                        <i class="fa fa-bar-chart-o"></i>
+                        <span>
+                            能耗管理系统
+                        </span>
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="profile clearfix">
+                    <div class="profile_pic">
+                        <img ng-src="{{datas.user.photo_url}}" alt="datas.user.name" class="img-circle profile_img">
+                    </div>
+                    <div class="profile_info">
+                        <span>欢迎回来</span>
+                        <h2 ng-bind="datas.user.name"></h2>
+                    </div>
+                </div>
+                <p class="clearfix"></p>
+
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <!--<h3>-->
+                        <!--General-->
+                        <!--</h3>-->
+                        <ul class="nav side-menu">
+                            <li class="dashboard">
+                                <a href="#/dashboard">
+                                    <i class="fa fa-th"></i>
+                                    数据中心
+                                </a>
+                            </li>
+                            <li class="monitor">
+                                <a>
+                                    <i class="fa fa-edit"></i>
+                                    监测分析
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+
+                                <ul class="nav child_menu">
+                                    <li class="monitor"><a href="#/monitor">总体用能概述</a></li>
+                                    <li class="monitor_electricity monitor_electricity_by_subentry
+                                      monitor_electricity_by_area monitor_electricity_by_org
+                                      monitor_electricity_by_custom
+                                     "><a href="#/monitor_electricity">电能监测</a></li>
+                                    <li class="monitor_water monitor_water_by_group"><a href="#/monitor_water?type=02">水量监测</a></li>
+                                    <li class="monitor_gas monitor_gas_by_group"><a href="#/monitor_gas?type=03">燃气监测</a></li>
+                                    <li class="monitor_cah monitor_cah_by_group"><a href="#/monitor_cah?type=04">冷热量监测</a></li>
+                                    <li class="monitor_vapour monitor_vapour_by_group"><a href="#/monitor_vapour?type=05">蒸汽量监测</a></li>
+                                    <li class="monitor_env monitor_env_by_group"><a href="#/monitor_env?type=07">室内环境监测</a></li>
+                                </ul>
+                            </li>
+                            <li class="statistics">
+                                <a>
+                                    <i class="fa fa-th"></i>
+                                    数据统计
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul class="nav child_menu">
+                                    <li class="statistics"><a href="#statistics">能耗统计</a></li>
+                                    <li class="statistics_fee"><a href="#statistics_fee">费用分析</a></li>
+                                    <li><a href="###">评价能耗</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a>
+                                    <i class="fa fa-laptop"></i>
+                                    节能管理
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul>
+                                    <li><a href="###">###</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a>
+                                    <i class="fa fa-envelope"></i>
+                                    报警处理
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul class="nav child_menu">
+                                    <li class="warning"><a href="#warning">所有报警</a></li>
+                                    <li class="warning_setting"><a href="#warning_setting">报警设置</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a>
+                                    <i class="fa fa-edit"></i>
+                                    系统配置
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul class="nav child_menu">
+                                    <li class="settings_group"><a href="#settings_group">监测配置</a></li>
+                                    <li class="settings_item"><a href="#settings_item">设备管理</a></li>
+                                    <li class="settings_base"><a href="#settings_base">基本配置</a></li>
+                                    <li class="settings_profile"><a href="#settings_profile">账号管理</a></li>
+                                    <li class="settings_roles"><a href="#settings_roles">权限和角色</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="top_nav">
+            <div class="nav_menu">
+                <nav>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                               aria-expanded="false">
+                                <img src="images/img.jpg" alt="">
+                                John Doe
+                                <span class=" fa fa-angle-down">
+										</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                <li>
+                                    <a href="javascript:;">
+                                        Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+												<span class="badge bg-red pull-right">
+													50%
+												</span>
+                                        <span>
+													Settings
+												</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        Help
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="login.html">
+                                        <i class="fa fa-sign-out pull-right">
+                                        </i>
+                                        Log Out
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
+                               aria-expanded="false">
+                                <i class="fa fa-envelope-o">
+                                </i>
+                                <span class="badge bg-green">
+											6
+										</span>
+                            </a>
+                            <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                                <li>
+                                    <a>
+												<span class="image">
+													<img src="images/img.jpg" alt="Profile Image" />
+												</span>
+                                        <span>
+													<span>
+														John Smith
+													</span>
+													<span class="time">
+														3 mins ago
+													</span>
+												</span>
+                                        <span class="message">
+													Film festivals used to be do-or-die moments for movie makers. They were
+													where...
+												</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+												<span class="image">
+													<img src="images/img.jpg" alt="Profile Image" />
+												</span>
+                                        <span>
+													<span>
+														John Smith
+													</span>
+													<span class="time">
+														3 mins ago
+													</span>
+												</span>
+                                        <span class="message">
+													Film festivals used to be do-or-die moments for movie makers. They were
+													where...
+												</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+												<span class="image">
+													<img src="images/img.jpg" alt="Profile Image" />
+												</span>
+                                        <span>
+													<span>
+														John Smith
+													</span>
+													<span class="time">
+														3 mins ago
+													</span>
+												</span>
+                                        <span class="message">
+													Film festivals used to be do-or-die moments for movie makers. They were
+													where...
+												</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+												<span class="image">
+													<img src="images/img.jpg" alt="Profile Image" />
+												</span>
+                                        <span>
+													<span>
+														John Smith
+													</span>
+													<span class="time">
+														3 mins ago
+													</span>
+												</span>
+                                        <span class="message">
+													Film festivals used to be do-or-die moments for movie makers. They were
+													where...
+												</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="text-center">
+                                        <a>
+                                            <strong>
+                                                See All Alerts
+                                            </strong>
+                                            <i class="fa fa-angle-right">
+                                            </i>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="right_col" role="main">
+            <div ui-view></div>
+        </div>
+        <footer>
+            <div class="pull-right">
+                能耗管理系统
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+    </div>
+</div>
+
+<!-- jQuery 3 -->
+<script src="./js/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="./js/bootstrap.min.js"></script>
+<!-- date-range-picker -->
+<script src="./js/moment.min.js"></script>
+<script src="./js/moment-with-locales.min.js"></script>
+<script src="./js/daterangepicker.js"></script>
+<!-- bootstrap datepicker -->
+<script src="./js/bootstrap-datepicker.min.js"></script>
+
+<script src="https://webapi.amap.com/maps?v=1.4.10&key=9ab87268e7b0963b097a9c6c7ddd06d9"></script>
+
+<script src="./js/echarts.js"></script>
+
+<script src="./js/angular.min.js"></script>
+<script src="./js/angular_ui_router.min.js"></script>
+<script src="./js/sider.js"></script>
+<script src="./js/fake_datas.js?v4"></script>
+<!-- <script src="./js/sweetalert.min.js?v4"></script> -->
+<script src="./js/comm.js?v4"></script>
+
+
+<script src="./js/app.js?v4"></script>
+<script src="pages/dashboard.js?v4"></script>
+<script src="pages/monitor.js?v4"></script>
+<script src="pages/monitor_energy.js?v4"></script>
+<script src="pages/monitor_electricity_by_group.js?v4"></script>
+
+<!-- <script src="js/LuTree.js"></script> -->
+<script src="pages/settings_group.js?v4"></script>
+<script src="pages/settings_item.js?v4"></script>
+<script src="pages/settings_base.js?v4"></script>
+</body>
+</html>

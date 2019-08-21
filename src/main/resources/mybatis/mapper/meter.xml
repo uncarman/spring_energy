@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.MeterMapper">
+
+    <!-- 查询某个建筑下的所有计量表 -->
+    <select id="getBuildingMeters" resultType="java.util.HashMap">
+        <![CDATA[
+        select
+        *
+        FROM (
+            select
+                a.build_id as bid,
+                a.id as id,
+                a.name as name,
+                a.sn as sn,
+                a.collector_id as cid,
+                a.is_main as is_main,
+                a.rate as rate,
+                a.note as note,
+                'ammeter' as type,
+                '电表' as type_txt
+            from ammeter a
+            where a.status = '正常'
+            UNION
+            select
+                w.build_id as bid,
+                w.id as id,
+                w.name as name,
+                w.sn as sn,
+                w.collector_id as cid,
+                w.is_main as is_main,
+                w.rate as rate,
+                w.note as note,
+                'watermeter' as type,
+                '水表' as type_txt
+            from watermeter w
+            where w.status = '正常'
+            UNION
+            select
+                w.build_id as bid,
+                w.id as id,
+                w.name as name,
+                w.sn as sn,
+                w.collector_id as cid,
+                w.is_main as is_main,
+                w.rate as rate,
+                w.note as note,
+                'energymeter' as type,
+                '冷热表' as type_txt
+            from watermeter w
+            where w.status = '正常'
+        ) totalmeter where totalmeter.bid = #{buildingId}
+        ]]>
+    </select>
+
+
+    <!-- 查询电表 -->
+    <select id="getAmmeterBySn" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT
+            a.*
+        from ammeter a
+        LEFT JOIN collector c on a.collector_id = c.id
+        where a.sn = #{meterSn}  and c.sn = #{collectorSn}
+        ]]>
+    </select>
+
+    <insert id="createAmmeterData" parameterType="com.energy.entity.AmmeterData">
+        INSERT INTO `ammeter_data`(`meter_id`, `positive_active_power`, `reverse_active_power`, `other_data`, `recorded_at`)
+        VALUES ( #{meterId}, #{positiveActivePower}, #{reverseActivePower}, #{otherData}, #{recordedAt})
+        <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+
+    <!-- 查询水表 -->
+    <select id="getWatermeterBySn" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT
+            a.*
+        from watermeter a
+        LEFT JOIN collector c on a.collector_id = c.id
+        where a.sn = #{meterSn}  and c.sn = #{collectorSn}
+        ]]>
+    </select>
+
+    <insert id="createWatermeterData" parameterType="com.energy.entity.WatermeterData">
+        INSERT INTO `watermeter_data`(`meter_id`, `indication`, `other_data`, `recorded_at`)
+        VALUES ( #{meterId}, #{indication}, #{otherData}, #{recordedAt})
+        <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+
+    <!-- 查询冷热表 -->
+    <select id="getEnergymeterBySn" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT
+            a.*
+        from energymeter a
+        LEFT JOIN collector c on a.collector_id = c.id
+        where a.sn = #{meterSn}  and c.sn = #{collectorSn}
+        ]]>
+    </select>
+
+    <insert id="createEnergymeterData" parameterType="com.energy.entity.EnergymeterData">
+        INSERT INTO `energymeter_data`(`meter_id`, `indication`, `other_data`, `recorded_at`)
+        VALUES ( #{meterId}, #{indication}, #{otherData}, #{recordedAt})
+        <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+</mapper>

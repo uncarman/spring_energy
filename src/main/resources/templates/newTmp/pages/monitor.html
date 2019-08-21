@@ -1,0 +1,78 @@
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                总体用能概述
+                <small ng-bind="datas.todayStr"></small>
+            </h3>
+        </div>
+        <div class="title_right">
+            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right text-right">
+                当前建筑名称
+                <i class="fa fa-chevron-down"></i>
+            </div>
+        </div>
+    </div>
+    <p class="clearfix"></p>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>
+                        图表展示
+                    </h2>
+                    <div class="pull-right">
+                        <input type="text" class="form-control" id="reservation">
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="chart">
+                                <div id="summaryChart" style="height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>
+                        详细数据
+                    </h2>
+                    <div class="pull-right form-inline">
+                        <button ng-click="exportData();" class="btn btn-primary"><spam class="fa fa-download"></spam> 导出报表</button>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-hover" id="summaryTable">
+                                <thead>
+                                <tr>
+                                    <th ng-repeat="(k,n) in datas.result.dailyList.title" ng-bind="n"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="v in datas.result.dailyList.data">
+                                    <td ng-repeat="(k,n) in datas.result.dailyList.title"
+                                        ng-bind="v[k]"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.BuildingMapper">
+    <!--
+        select标签代表查询
+        findById要与接口中的方法名对应上
+    -->
+    <select id="findById" parameterType="Integer" resultType="com.energy.entity.Building">
+        select * from building_base where id = #{id}
+    </select>
+
+    <!--
+    <if test="userName != null">
+        AND u.name like '%${userName}%'
+    </if>
+
+    <if test="prodType != null and prodType !='' and prodType == '1'.toString()">
+        AND purchase.prodType=1
+    </if>
+
+    <foreach item="item" index="index" collection="series" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+    -->
+
+    <!-- 获取用户建筑列表 -->
+    <select id="getBuildingsByUserId" resultType="java.util.HashMap">
+        <![CDATA[
+        select * from building_base b
+          left join users u on u.id = b.owner_id
+        where u.id = #{userId}
+        ]]>
+    </select>
+
+    <!-- 查询某个用户下的建筑列表 -->
+    <select id="getBuildingsByUserName" resultType="java.util.HashMap">
+        <![CDATA[
+        select * from building_base b
+          left join users u on u.id = b.owner_id
+        where u.name like '%${userName}%'
+        ]]>
+    </select>
+
+
+    <!-- 查询某个建筑下的所有采集器 -->
+    <select id="getBuildingCollectors" resultType="java.util.HashMap">
+        <![CDATA[
+        select
+            c.*,
+            'collector' as type,
+            '采集器' as type_txt
+        from collector c
+        where build_id = #{buildingId}
+            and status = '正常'
+        ]]>
+    </select>
+
+
+    <!-- 查询某建筑下 某个大分项（能耗分项）下的 所有设备分组  -->
+    <select id="getItemGroupByType" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        SELECT
+          id,
+          code,
+          name,
+          parent,
+          area,
+          note
+        FROM a_item_group
+        where building_id = #{buildingId} and `type` = #{type}
+        order by code asc
+        ]]>
+    </select>
+
+    <!-- 查询某个记录 -->
+    <select id="getItemGroupById" resultType="com.energy.entity.ItemGroup">
+        <![CDATA[
+        SELECT * FROM a_item_group where id = #{id}
+        ]]>
+    </select>
+    <select id="getItemGroupChildsById" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        SELECT * FROM a_item_group where parent = #{id}
+        ]]>
+    </select>
+    <insert id="createItemGroup" parameterType="com.energy.entity.ItemGroup">
+        INSERT INTO `a_item_group` (`code`, `type`, `name`, `parent`, `area`, `note`, `building_id`)
+        VALUES ( #{code}, #{type}, #{name}, #{parent}, #{area}, #{note}, #{building_id})
+        <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    <update id="updateItemGroup" parameterType="com.energy.entity.ItemGroup">
+        UPDATE `a_item_group`
+          set `code` = #{code}, `type` = #{type}, `name`= #{name}, `parent`= #{parent}, `area`= #{area}, `note`= #{note}
+        where id = ${id}
+    </update>
+    <delete id="deleteItemGroup" parameterType="Integer">
+        DELETE FROM a_item_group WHERE id = #{id}
+    </delete>
+
+
+    <!-- 拿到所有 能耗分项 对应的总表类型 -->
+    <select id="getBuildingItemTypes" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+          group_id,
+          NULLIF(item_id, -1) as item_id
+        from v_group_item gi
+        where gi.group_type = #{type} and group_building_id=#{buildingId}
+          and (gi.group_parent is null or gi.group_parent <= 0)
+        ]]>
+    </select>
+
+    <!-- 拿到所有 能耗分项 对应的总表类型 -->
+    <select id="getItemDatasByHour" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(val) as total_val,
+            recorded_at
+        from v_item_val_by_hour
+        where recorded_at >= #{from} and recorded_at <= #{to}
+          and item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY recorded_at
+        order by recorded_at asc
+        ]]>
+    </select>
+
+    <select id="getItemDatasByDay" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(val) as total_val,
+            recorded_at
+        from v_item_val_by_day
+        where recorded_at >= #{from} and recorded_at <= #{to}
+          and item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY recorded_at
+        order by recorded_at asc
+        ]]>
+    </select>
+
+    <select id="getItemDatasByMonth" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(val) as total_val,
+            recorded_at
+        from v_item_val_by_month
+        where recorded_at >= #{from} and recorded_at <= #{to}
+          and item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY recorded_at
+        order by recorded_at asc
+        ]]>
+    </select>
+
+    <select id="getItemDatasByYear" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(val) as total_val,
+            recorded_at
+        from v_item_val_by_year
+        where recorded_at >= #{from} and recorded_at <= #{to}
+          and item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY recorded_at
+        order by recorded_at asc
+        ]]>
+    </select>
+
+    <!-- 多个设备，某个时间段内 总值 -->
+    <select id="getItemsSummaryVal" resultType="long">
+        <![CDATA[
+        select
+            IFNULL(sum(val),0) as total_val
+        from v_item_val_by_year
+        where recorded_at >= #{from} and recorded_at <= #{to}
+          and item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="getItemTypeBaseInfo" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            t.id,
+            t.code as type_code,
+            t.name as type_name,
+            t2.code,
+            t2.name,
+            t2.calculate,
+            t2.table_name,
+            t2.parent,
+            t2.unit,
+            t2.basic_code,
+            r.name as rate_name,
+            r.rate_type,
+            r.cycle as rate_cycle,
+            rd.rate,
+            rd.num_start,
+            rd.num_end,
+            rd.time_start,
+            rd.time_end
+        from a_item_type t
+        RIGHT JOIN a_item_type t2 on t2.parent = t.id
+        left join a_rate r on r.energy_type = t2.basic_code and r.`status` = 0
+        LEFT JOIN a_rate_data rd on rd.rate_id = r.id
+        where t.id !="" and t2.calculate != ""
+        ]]>
+    </select>
+
+</mapper>

@@ -1,0 +1,351 @@
+{
+	"id": "cf9b0378-3e53-4bfa-91d5-e410f4da85b5",
+	"name": "energy",
+	"description": "",
+	"auth": null,
+	"events": null,
+	"variables": [],
+	"order": [
+		"902fc64e-4cbe-4f41-9257-8ae5383ca36b",
+		"a871a589-8664-48f2-8d42-1601f5485755",
+		"a04fd203-cdce-48a9-9983-c73b90107056",
+		"1eceb7cf-286e-4249-a53a-f6f1386708ad",
+		"0d4d79d5-bf3b-4b63-af2b-7abb57d48998",
+		"05d2a039-aafb-43be-8616-8acc2e948cbc",
+		"3a05de3a-afb7-4373-bdf9-17b47d663af2",
+		"f1fd58b9-a0b4-4042-8e0b-d09c1ff1b5a4"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "05d2a039-aafb-43be-8616-8acc2e948cbc",
+			"name": "06.  某建筑下 某个大分项（能耗分项）下的 所有【设备分组】",
+			"url": "http://{{host}}/api/getItemGroupByType",
+			"description": "",
+			"data": [
+				{
+					"key": "groupId",
+					"value": "2",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"pathVariables": {}
+		},
+		{
+			"id": "0d4d79d5-bf3b-4b63-af2b-7abb57d48998",
+			"name": "05.  某个设备分组的详细信息，包含第一级子信息",
+			"url": "http://{{host}}/api/getItemGroupById",
+			"description": "",
+			"data": [
+				{
+					"key": "groupId",
+					"value": "2",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"pathVariables": {}
+		},
+		{
+			"id": "1eceb7cf-286e-4249-a53a-f6f1386708ad",
+			"name": "04. 所有【能耗分项】已安装的 一级分类对应的设备ids",
+			"url": "http://{{host}}/api/getBuildingItemTypes",
+			"description": "",
+			"data": [
+				{
+					"key": "buildingId",
+					"value": "56",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "from",
+					"value": "2019-01-10",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				},
+				{
+					"key": "to",
+					"value": "2019-01-20",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				},
+				{
+					"key": "type",
+					"value": "010100",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				}
+			],
+			"dataMode": "params",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"pathVariables": {}
+		},
+		{
+			"id": "3a05de3a-afb7-4373-bdf9-17b47d663af2",
+			"name": "07.  用户下所有建筑列表",
+			"url": "http://{{host}}/api/getBuildingsByUserId",
+			"description": "",
+			"data": [
+				{
+					"key": "userId",
+					"value": "1",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "能耗分项",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				}
+			],
+			"dataMode": "params",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"pathVariables": {}
+		},
+		{
+			"id": "902fc64e-4cbe-4f41-9257-8ae5383ca36b",
+			"name": "01. 【多个设备】按【时/日/月/年】汇总数据",
+			"url": "http://{{host}}/api/getItemDatasByDate",
+			"description": "",
+			"data": [
+				{
+					"key": "itemIds",
+					"value": "1,2,79",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "from",
+					"value": "2019-01-10",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "to",
+					"value": "2019-01-20",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Basic YWRtaW46cHVibGlj",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				},
+				{
+					"key": "Content-Type",
+					"name": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [
+				{
+					"key": "itemIds",
+					"value": "1,2,79",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "from",
+					"value": "2019-01-10",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "to",
+					"value": "2019-01-20",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				},
+				{
+					"key": "_",
+					"value": "1565936224225",
+					"equals": true,
+					"description": "",
+					"enabled": false
+				}
+			],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"headers": "//Authorization: Basic YWRtaW46cHVibGlj\n//Content-Type: application/x-www-form-urlencoded\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "a04fd203-cdce-48a9-9983-c73b90107056",
+			"name": "03. 某建筑【四种表】按【时/日/月/年】汇总数据",
+			"url": "http://{{host}}/api/getBuildingChartDataByType",
+			"description": "",
+			"data": [
+				{
+					"key": "buildingId",
+					"value": "56",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "from",
+					"value": "2019-01-10",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "to",
+					"value": "2019-01-20",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "day",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"pathVariables": {}
+		},
+		{
+			"id": "a871a589-8664-48f2-8d42-1601f5485755",
+			"name": "02. 某建筑 总汇总数据（首页4块）",
+			"url": "http://{{host}}/api/getBuildingSummaryTotalData",
+			"description": "",
+			"data": [
+				{
+					"key": "buildingId",
+					"value": "56",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "from",
+					"value": "2019-01-10",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				},
+				{
+					"key": "to",
+					"value": "2019-01-20",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				},
+				{
+					"key": "type",
+					"value": "day",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				}
+			],
+			"dataMode": "params",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"pathVariables": {}
+		},
+		{
+			"id": "f1fd58b9-a0b4-4042-8e0b-d09c1ff1b5a4",
+			"name": "08.  单个建筑详情",
+			"url": "http://{{host}}/api/building/1",
+			"description": "",
+			"data": [
+				{
+					"key": "userId",
+					"value": "1",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "能耗分项",
+					"description": "",
+					"type": "text",
+					"enabled": false
+				}
+			],
+			"dataMode": "params",
+			"headerData": null,
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"pathVariables": {}
+		}
+	]
+}
