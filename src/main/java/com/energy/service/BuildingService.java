@@ -133,7 +133,12 @@ public class BuildingService {
     }
 
     // 某个时间段中，设备的总值
-    public long getItemsSummaryVal(List<String> itemIds, String from, String to) {
+    public float getItemsSummaryVal(List<String> itemIds, String from, String to) {
         return buildingMapper.getItemsSummaryVal(itemIds, from, to);
     };
+
+    // 某个分组下的所有设备
+    public List<Map> getItemsByGroupId(Integer groupId) {
+        return buildingMapper.getItemsByGroupId(groupId);
+    }
 }

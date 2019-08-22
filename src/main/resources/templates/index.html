@@ -14,9 +14,15 @@
     <link rel="stylesheet" href="css/daterangepicker.css">
     <!-- bootstrap datepicker -->
     <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
+    <link href="css/sweetalert.css" rel="stylesheet">
     <link href="css/nprogress.css" rel="stylesheet">
     <link href="css/normalize.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
+
+    <style type="text/css">
+        .left_col { display: none1; }
+    </style>
+
 </head>
 <body class="nav-md" ng-app="app" ng-controller="index">
 <div class="container body">
@@ -35,11 +41,11 @@
 
                 <div class="profile clearfix">
                     <div class="profile_pic">
-                        <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                        <img ng-src="{{datas.user.photo_url}}" alt="datas.user.name" class="img-circle profile_img">
                     </div>
                     <div class="profile_info">
                         <span>欢迎回来</span>
-                        <h2>Sam</h2>
+                        <h2 ng-bind="datas.user.name"></h2>
                     </div>
                 </div>
                 <p class="clearfix"></p>
@@ -47,7 +53,7 @@
                 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                     <div class="menu_section">
                         <!--<h3>-->
-                            <!--General-->
+                        <!--General-->
                         <!--</h3>-->
                         <ul class="nav side-menu">
                             <li class="dashboard">
@@ -66,8 +72,8 @@
                                 <ul class="nav child_menu">
                                     <li class="monitor"><a href="#/monitor">总体用能概述</a></li>
                                     <li class="monitor_electricity monitor_electricity_by_subentry
-                                     monitor_electricity_by_subentry monitor_electricity_by_area
-                                     monitor_electricity_by_org monitor_electricity_by_custom
+                                      monitor_electricity_by_area monitor_electricity_by_org
+                                      monitor_electricity_by_custom
                                      "><a href="#/monitor_electricity">电能监测</a></li>
                                     <li class="monitor_water monitor_water_by_group"><a href="#/monitor_water?type=02">水量监测</a></li>
                                     <li class="monitor_gas monitor_gas_by_group"><a href="#/monitor_gas?type=03">燃气监测</a></li>
@@ -128,15 +134,29 @@
                 </div>
             </div>
         </div>
+
+
         <div class="top_nav">
             <div class="nav_menu">
                 <nav>
-                    <div class="nav toggle">
-                        <a id="menu_toggle">
-                            <i class="fa fa-bars">
-                            </i>
-                        </a>
-                    </div>
+
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>
+                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
+                               aria-expanded="false">
+                                <h1 class="nav-title">
+                                    <span ng-bind="datas.curBuilding.name"></span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </h1>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-left">
+                                <li ng-repeat="b in datas.buildingList">
+                                    <a href="javascript:;" ng-bind="b.name" ng-click="changeBuilding(b);"></a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
                     <ul class="nav navbar-nav navbar-right">
                         <li class="">
                             <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
@@ -292,7 +312,7 @@
 </div>
 
 <!-- jQuery 3 -->
-<script src="./jquery.min.js"></script>
+<script src="./js/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="./js/bootstrap.min.js"></script>
 <!-- date-range-picker -->
@@ -310,13 +330,19 @@
 <script src="./js/angular_ui_router.min.js"></script>
 <script src="./js/sider.js"></script>
 <script src="./js/fake_datas.js?v4"></script>
+<!-- <script src="./js/sweetalert.min.js?v4"></script> -->
 <script src="./js/comm.js?v4"></script>
 
 
-<script src="./js/index.js?v4"></script>
+<script src="./js/app.js?v4"></script>
 <script src="pages/dashboard.js?v4"></script>
 <script src="pages/monitor.js?v4"></script>
 <script src="pages/monitor_energy.js?v4"></script>
 <script src="pages/monitor_electricity_by_group.js?v4"></script>
+
+<!-- <script src="js/LuTree.js"></script> -->
+<script src="pages/settings_group.js?v4"></script>
+<script src="pages/settings_item.js?v4"></script>
+<script src="pages/settings_base.js?v4"></script>
 </body>
 </html>

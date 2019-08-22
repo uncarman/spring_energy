@@ -1,18 +1,64 @@
 app.controller('monitor_energy',function ($scope, $stateParams) {
 
-    console.log($stateParams.type);
+    $scope.$watch('$viewContentLoaded', function() {
+        global.on_loaded_func($scope);    // 显示页面内容
+    });
 
     $scope.datas = {
 
-        buildingId: global.read_storage("session", "buildingId"),
+        buildingId: global.read_storage("session", "building")["id"],
 
-        type: $stateParams.type,
-        group: $stateParams.group,
+        type: $stateParams.type,  // 表类型
 
         fmt: "YYYY-MM-DD",
         datePickerDom: "#reservation",
         fromDate: moment().add(-15, 'day').format("YYYY-MM-DD"),
         toDate: moment().format("YYYY-MM-DD"),
+
+        fromDate: "2019-01-15",
+        toDate: "2019-01-25",
+
+        chartTypes: [
+            {
+                val: "hour",
+                name: "按小时",
+                "fmt" : "D-H",
+            },
+            {
+                val: "day",
+                name: "按日",
+                "fmt" : "Y-M-D",
+            },
+            {
+                val: "month",
+                name: "按月",
+                "fmt" : "Y-M",
+            },
+            {
+                val: "year",
+                name: "按年",
+                "fmt" : "Y",
+            }
+        ],
+        chartCompares: [
+//                        {
+//                            val: 2018,
+//                            name: "2018年同比数据"
+//                        }
+        ],
+        query: {
+//                    type: null,
+//                    compareTo: null,
+        },
+        chartType: null,  // 默认按天
+        chartCompare: null,  // 默认上一年度
+
+        result:{
+            summaryDatas: {},
+            chartDatas: {},
+            tableData: {},
+        },
+
         option: {
             color: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
             tooltip : {
@@ -50,39 +96,107 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
         },
     };
 
-    $scope.datas.result = monitorSummary.result;
-    $scope.datas.result.chartDatas.ammeter.datas = [];
-    $scope.datas.result.chartDatas.watermeter.datas = [];
-    $scope.datas.result.chartDatas.gasmeter.datas = [];
-    $scope.datas.result.chartDatas.vapormeter.datas = [];
-    $scope.datas.result.dailyList.data = [];
-    //  根据日期生成随机数据
-    var normalAmmeterDaily = 5000;
-    var xlen = Math.ceil(moment(moment($scope.datas.toDate).format($scope.datas.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.fmt), 'days', true));
-    for(var i=0; i<=xlen; i++) {
-        var d = moment($scope.datas.fromDate).add('days', i).format($scope.datas.fmt);
-        var ad = (normalAmmeterDaily * Math.random()).toFixed(2);
-        var wd = (normalAmmeterDaily / 10 * Math.random()).toFixed(2);
-        var gd = (normalAmmeterDaily / 30 * Math.random()).toFixed(2);
-        var vd = (normalAmmeterDaily / 100 * Math.random()).toFixed(2);
-        $scope.datas.result.chartDatas.ammeter.datas.push({
-            "val": ad,
-            "key": d
-        });
-        $scope.datas.result.chartDatas.watermeter.datas.push({
-            "val": wd,
-            "key": d
-        });
-        $scope.datas.result.chartDatas.gasmeter.datas.push({
-            "val": gd,
-            "key": d
-        });
-        $scope.datas.result.chartDatas.vapormeter.datas.push({
-            "val": vd,
-            "key": d
-        });
-        $scope.datas.result.dailyList.data.unshift([d, ad, (ad/10000).toFixed(4), wd, (wd/10000).toFixed(4), gd, (gd/10000).toFixed(4), vd, (vd/10000).toFixed(4)]);
+    // 生成对比年份
+    for(var i = 2; i>0 ;i--) {
+        var year = moment().add(-i, 'year').format("YYYY");
+        $scope.datas.chartCompares.push({
+            val: year,
+            name: year+"年同比数据",
+        })
     }
+    $scope.datas.chartType = $scope.datas.chartTypes[0];
+    $scope.datas.chartCompare = $scope.datas.chartCompares[0];
+
+    // 获取数据
+    $scope.getDatas = function(){
+        // 获取汇总数据
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getBuildingSummaryTotalDataByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                type: $scope.datas.type
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.summaryDatas = res.data;
+            });
+        });
+
+        // 获取图表数据
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getEnergyChartDataByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                from: $scope.datas.fromDate,
+                to: $scope.datas.toDate,
+                type: $scope.datas.type,
+                energyType: $scope.datas.type,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.chartDatas = res.data;
+                summaryChartDraw($scope.datas);
+            });
+        });
+        //
+        // // 获取table数据
+        // var param = {
+        //     _method: 'post',
+        //     _url: settings.ajax_func.getBuildingTableDataByType,
+        //     _param: {
+        //         buildingId: $scope.datas.buildingId,
+        //         from: $scope.datas.fromDate,
+        //         to: $scope.datas.toDate,
+        //         type: $scope.datas.type,
+        //     }
+        // };
+        // global.ajax_data($scope, param, function (res) {
+        //     $scope.$apply(function(){
+        //         $scope.datas.result.tableData.title = res.data[0];
+        //         $scope.datas.result.tableData.data = res.data.slice(1, res.data.length);
+        //     });
+        // });
+    };
+
+    $scope.getDatas();
+
+    // $scope.datas.result = monitorSummary.result;
+    // $scope.datas.result.chartDatas.ammeter.datas = [];
+    // $scope.datas.result.chartDatas.watermeter.datas = [];
+    // $scope.datas.result.chartDatas.gasmeter.datas = [];
+    // $scope.datas.result.chartDatas.vapormeter.datas = [];
+    // $scope.datas.result.dailyList.data = [];
+    // //  根据日期生成随机数据
+    // var normalAmmeterDaily = 5000;
+    // var xlen = Math.ceil(moment(moment($scope.datas.toDate).format($scope.datas.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.fmt), 'days', true));
+    // for(var i=0; i<=xlen; i++) {
+    //     var d = moment($scope.datas.fromDate).add('days', i).format($scope.datas.fmt);
+    //     var ad = (normalAmmeterDaily * Math.random()).toFixed(2);
+    //     var wd = (normalAmmeterDaily / 10 * Math.random()).toFixed(2);
+    //     var gd = (normalAmmeterDaily / 30 * Math.random()).toFixed(2);
+    //     var vd = (normalAmmeterDaily / 100 * Math.random()).toFixed(2);
+    //     $scope.datas.result.chartDatas.ammeter.datas.push({
+    //         "val": ad,
+    //         "key": d
+    //     });
+    //     $scope.datas.result.chartDatas.watermeter.datas.push({
+    //         "val": wd,
+    //         "key": d
+    //     });
+    //     $scope.datas.result.chartDatas.gasmeter.datas.push({
+    //         "val": gd,
+    //         "key": d
+    //     });
+    //     $scope.datas.result.chartDatas.vapormeter.datas.push({
+    //         "val": vd,
+    //         "key": d
+    //     });
+    //     $scope.datas.result.dailyList.data.unshift([d, ad, (ad/10000).toFixed(4), wd, (wd/10000).toFixed(4), gd, (gd/10000).toFixed(4), vd, (vd/10000).toFixed(4)]);
+    // }
 
     //Date range picker
     $($scope.datas.datePickerDom).daterangepicker({

@@ -43,7 +43,8 @@ public interface BuildingMapper {
     public List<Map> getItemDatasByYear(@Param("itemIds")List<String> itemIds, @Param("from")String from, @Param("to")String to);
 
 
-    public long getItemsSummaryVal(@Param("itemIds")List<String> itemIds, @Param("from")String from, @Param("to")String to);
+    public float getItemsSummaryVal(@Param("itemIds")List<String> itemIds, @Param("from")String from, @Param("to")String to);
+    public List<Map> getItemsByGroupId(@Param("groupId")Integer groupId);
 
     public List<Map> getItemTypeBaseInfo();
 

@@ -16,7 +16,6 @@ import java.util.*;
  */
 
 @Controller
-@RequestMapping("api")
 public class HomeController {
 
     @Resource
@@ -27,17 +26,15 @@ public class HomeController {
         return "index";
     }
 
-    @RequestMapping("/now")
+    @RequestMapping("/login")
+    public String login(){
+        return "login";
+    }
+
+    @RequestMapping("/api/lo")
     @ResponseBody
     public Date now() {
         return new Date();
-    }
-
-    @RequestMapping("/getBuildingsByUserName/{userName}")
-    @ResponseBody
-    public List<Map> getBuildingsByUserName(@PathVariable("userName") String userName) {
-        List<Map> list = buildingService.getBuildingsByUserName(userName);
-        return list;
     }
 
 }

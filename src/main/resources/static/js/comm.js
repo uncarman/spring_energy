@@ -22,8 +22,9 @@ var settings = {
         next_text: "下一页",    // 下一页文字
     },
     default_page : "dashboard",
+    default_photo: "images/img.jpg",
 
-    is_fake_ajax : true,
+    is_fake_ajax : false,
     is_debug : true,
     fake_sms : true,
     can_localStorage: true, // 能否使用 localStorage
@@ -51,8 +52,35 @@ var settings = {
         "ajaxGetMeters": "/ajax_get_meters", //
         "ajaxGetMeterDatas": "/ajax_get_meter_datas", //
 
-        "ajaxGroupTree": "/building/ajaxGroupTree", //
 
+
+        // 可用apis
+        "ajaxLogin": "api/login",
+        "ajaxLogout": "api/logout",
+        "ajaxGetUserBuildings": "api/getBuildingsByUserId", // 用户下所有建筑
+
+        "getBuildingSummaryTotalData": "api/getBuildingSummaryTotalData", // 4大类汇总数据
+        "getBuildingChartDataByType": "api/getBuildingChartDataByType", // 获取某个建筑的汇总数据
+        "getBuildingTableDataByType": "api/getBuildingTableDataByType", // 获取对应的table数据(可export需要server端生成)
+
+        "getBuildingSummaryTotalDataByType": "api/getBuildingSummaryTotalDataByType", // 某一类表汇总数据
+        "getEnergyChartDataByType": "api/getEnergyChartDataByType", //
+
+        "ajaxGetItemGroups": "api/getItemGroups", // 获取所有分组列表
+        "ajaxGetItemsByGroupId": "api/getItemsByGroupId",  // 获取某个分组下的所有设备
+        "ajaxRemoveItemGroup": "api/removeItemGroup",  // 删除
+        "ajaxUpdateItemGroup": "api/updateItemGroup",  // 更新
+        "ajaxCreateItemGroup": "api/createItemGroup",  // 创建
+
+        "ajaxGetItems": "api/getItems",  // 所有设备
+        "ajaxRemoveItem": "api/removeItem",  // 删除
+        "ajaxUpdateItem": "api/updateItem",  // 更新
+        "ajaxCreateItem": "api/createItem",  // 创建
+
+        "ajaxGetBaseDatas": "api/getBaseDatas", // 基础数据
+        "ajaxRemoveBaseDatas": "api/removeBaseDatas",  // 删除
+        "ajaxUpdateBaseDatas": "api/updateBaseDatas",  // 更新
+        "ajaxCreateBaseDatas": "api/createBaseDatas",  // 创建
     },
 
     // 分页参数
@@ -61,7 +89,7 @@ var settings = {
     prev_text: "上一页",    // 上一页文字
     next_text: "下一页",    // 下一页文字
 
-    ajax_succ_code : 10000,       // ajax 成功code
+    ajax_succ_code : 200,       // ajax 成功code
     ajax_auth_failed_code : 4,       // ajax 失败code
     ajax_error_msg: {    // ajax请求，错误码对应错误信息
         "0": "请求成功",
@@ -870,15 +898,25 @@ var global = {
     on_loaded_func: function($scope){
         $scope.settings = settings;
 
+        // 检查是否登录
+        global.check_logined();
+
         // 移除 loading 状态
         global.loading_num -= 1;
         global.loading_hide();
 
-        // 初始化当前公共模块(菜单)
-        global.init_comm($scope);
-
         //gtm使用的scope对象
         window._scope = $scope;  // 标记局部变量，提供给外部访问
+    },
+
+    check_logined: function () {
+        var user = global.read_storage("session", "user");
+        if(typeof user != "undefined" && typeof user["id"] != "undefined" && user["id"] > 0) {
+            // pass
+        } else {
+            global.clearLoginStatus();
+            window.location.href = "/login";
+        }
     },
 
     ajax_catch: function(data) {
@@ -1218,13 +1256,8 @@ var global = {
     clearLoginStatus: function() {
         var temp_session = global.read_storage('session');
         var cleared_session = {
-            mobile: "",
-            password: "",
-            from: temp_session.from || "profile",  // 保留回去的页面地址
-            inviter: temp_session.inviter,        // 保留之前的邀请信息
-            device: temp_session.device,        // 保留之前的设备信息
-            channel_type: temp_session.channel_type,        // 保留之前的渠道信息
-            activity_name: temp_session.activity_name,        // 保留之前的活动信息
+            user: {},
+            buildingList: [],
             token: "",
             openid: temp_session.openid //保留之前的openid
         };

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.UsersMapper">
+
+    <select id="findByUserNameAndPassword" resultType="com.energy.entity.User">
+        select * from a_users where name = #{userName} and password = #{password}
+    </select>
+
+</mapper>

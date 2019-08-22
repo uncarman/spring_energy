@@ -9,9 +9,9 @@
         <div class="title_right">
             <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="搜索建筑名">
+                    <input type="text" class="form-control" ng-model="datas.query.name" placeholder="搜索建筑名">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">
+                        <button class="btn btn-default" type="button" ng-click="filterBuildings();">
                             <i class="fa fa-search-minus"></i>
                         </button>
                     </span>
@@ -39,18 +39,18 @@
                             <table class="table table-bordered table-hover" style="margin-bottom: 0px;">
                                 <thead>
                                 <tr>
-                                    <th ng-repeat="(k,n) in datas.buildingList.title" ng-bind="n"></th>
-                                    <th style="width: 100px;">操作</th>
+                                    <th ng-repeat="(k,n) in datas.tableData.title" ng-bind="n"></th>
+                                    <th>操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="v in datas.buildingList.data">
-                                    <td ng-repeat="(k,n) in datas.buildingList.title">
-                                        <span ng-bind="v[k]" ng-if="k!='photo'"></span>
-                                        <img ng-src="{{v.photo}}" ng-if="k=='photo'" width="100">
+                                <tr ng-repeat="v in datas.tableData.data | filter:nameFilt">
+                                    <td ng-repeat="(k,n) in datas.tableData.title">
+                                        <span ng-bind="v[k]" ng-if="k!='1'"></span>
+                                        <img ng-src="{{v[k]}}" ng-if="k=='1'" width="100">
                                     </td>
                                     <td>
-                                        <button class="btn btn-primary" ng-click="view_item(v);">查看</button>
+                                        <button class="btn btn-primary" ng-click="viewItem(v[0]);">查看</button>
                                     </td>
                                 </tr>
                                 </tbody>

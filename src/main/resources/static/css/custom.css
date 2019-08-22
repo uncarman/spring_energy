@@ -2087,14 +2087,14 @@ h4.graph_title {
     height: 20px;
     color: #BAB8B8;
     position: absolute;
-    right: 53px;
+    right: 40px;
     top: 22px;
     z-index: 1
 }
 
 .tile-stats .icon i {
     margin: 0;
-    font-size: 60px;
+    font-size: 40px;
     line-height: 0;
     vertical-align: bottom;
     padding: 0
@@ -4663,10 +4663,11 @@ ul.notifications {
 }
 
 
-
+.main_menu .fa { vertical-align: middle; }
 .chart { width: 100%; }
 .form-inline button { margin: 0px; }
 .mr10 { margin-right:10px; }
+.ml20 { margin-left:20px; }
 .without_border { border: none; -webkit-box-shadow:none; box-shadow:none; }
 .nav-cus>li.active>a, .nav-cus>li.active>a:focus, .nav-cus>li.active>a:hover {
     border: none;
@@ -4675,3 +4676,14 @@ ul.notifications {
     color: #1ABB9C;
 }
 .nav-cus>li>a:hover { border: none; padding: 14px 16px 13px; }
+ul.bar_tabs>li.active {
+    border-right-color: #1ABB9C;
+}
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color:#1ABB9C;
+}
+.tile-stats .icon { top: 10px; right: 35px; }
+.nav-title { margin: 2px 5px; }
+.nav-title span { font-size: 20px; }
+
+.tile-stats .count, .tile-stats h3, .tile-stats p { font-weight: lighter; }

@@ -1,5 +1,9 @@
 app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
 
+    $scope.$watch('$viewContentLoaded', function() {
+        global.on_loaded_func($scope);    // 显示页面内容
+    });
+
     $scope.datas = {
 
         buildingId: global.read_storage("session", "buildingId"),
@@ -13,6 +17,9 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
         datePickerDom: "#reservation",
         fromDate: moment().add(-7, 'day').format("YYYY-MM-DD"),
         toDate: moment().format("YYYY-MM-DD"),
+
+        fromDate: "2019-01-15",
+        toDate: "2019-01-25",
 
         dgt: global.request("dgt"),
         pid: global.request("pid") || 0,
@@ -57,16 +64,6 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
     }
 
     $scope.init_page = function () {
-        global.init_top_menu($scope);
-        global.init_left($scope, function () {
-            setTimeout(function(){
-                //$scope.summaryChart.resize();
-                $scope.summaryPieChart.resize();
-                $scope.dailyChart.resize();
-            }, 500);
-        });
-        //$scope.init_datepicker($scope.datas.datePickerClassName);
-        console.log("init_page");
         $scope.dailyChart = echarts.init(document.getElementById("dailyChart"));
         $scope.summaryPieChart = echarts.init(document.getElementById("summaryPieChart"));
         $scope.getDatas();
@@ -103,7 +100,7 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
     $scope.ajaxAmmeterGroupsSummaryDailyByType = function () {
         var param = {
             _method: 'get',
-            _url: "/" + $scope.datas.buildingId + "/monitor/ajaxAmmeterGroupsSummaryDaily/" + $scope.datas.dgt,
+            _url: ,
             _param: {
                 from : $scope.datas.fromDate,
                 to: $scope.datas.toDate,
@@ -328,5 +325,4 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
 
     $scope.init_page();
 
-    window._scope = $scope;
 });

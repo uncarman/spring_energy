@@ -1,14 +1,25 @@
 app.controller('monitor',function ($scope) {
 
+    $scope.$watch('$viewContentLoaded', function() {
+        global.on_loaded_func($scope);    // 显示页面内容
+    });
+
     $scope.datas = {
         // 建筑id
-        buildingId: global.read_storage("session", "buildingId"),
+        buildingId: global.read_storage("session", "building")["id"],
 
         fmt: "YYYY-MM-DD",
         datePickerDom: "#reservation",
         fromDate: moment().add(-15, 'day').format("YYYY-MM-DD"),
         toDate: moment().format("YYYY-MM-DD"),
         todayStr:moment().format("YYYY-MM-DD"),
+        type: "day", // 默认按天显示
+
+        result:{
+            summaryDatas: {},
+            chartDatas: {},
+            tableData: {},
+        },
 
         option: {
             color: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
@@ -48,40 +59,58 @@ app.controller('monitor',function ($scope) {
 
     }
 
-    // 准备假数据
-    $scope.datas.result = monitorSummary.result;
-    $scope.datas.result.chartDatas.ammeter.datas = [];
-    $scope.datas.result.chartDatas.watermeter.datas = [];
-    $scope.datas.result.chartDatas.gasmeter.datas = [];
-    $scope.datas.result.chartDatas.vapormeter.datas = [];
-    $scope.datas.result.dailyList.data = [];
-    //  根据日期生成随机数据
-    var normalAmmeterDaily = 5000;
-    var xlen = Math.ceil(moment(moment($scope.datas.toDate).format($scope.datas.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.fmt), 'days', true));
-    for(var i=0; i<=xlen; i++) {
-        var d = moment($scope.datas.fromDate).add('days', i).format($scope.datas.fmt);
-        var ad = (normalAmmeterDaily * Math.random()).toFixed(2);
-        var wd = (normalAmmeterDaily / 10 * Math.random()).toFixed(2);
-        var gd = (normalAmmeterDaily / 30 * Math.random()).toFixed(2);
-        var vd = (normalAmmeterDaily / 100 * Math.random()).toFixed(2);
-        $scope.datas.result.chartDatas.ammeter.datas.push({
-            "val": ad,
-            "key": d
+    // 获取数据
+    $scope.getDatas = function(){
+        // 获取汇总数据
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getBuildingSummaryTotalData,
+            _param: {
+                buildingId: $scope.datas.buildingId
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.summaryDatas = res.data;
+            });
         });
-        $scope.datas.result.chartDatas.watermeter.datas.push({
-            "val": wd,
-            "key": d
+
+        // 获取图表数据
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getBuildingChartDataByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                from: $scope.datas.fromDate,
+                to: $scope.datas.toDate,
+                type: $scope.datas.type,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.chartDatas = res.data;
+                summaryChartDraw($scope.datas);
+            });
         });
-        $scope.datas.result.chartDatas.gasmeter.datas.push({
-            "val": gd,
-            "key": d
+
+        // 获取table数据
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getBuildingTableDataByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                from: $scope.datas.fromDate,
+                to: $scope.datas.toDate,
+                type: $scope.datas.type,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.tableData.title = res.data[0];
+                $scope.datas.result.tableData.data = res.data.slice(1, res.data.length);
+            });
         });
-        $scope.datas.result.chartDatas.vapormeter.datas.push({
-            "val": vd,
-            "key": d
-        });
-        $scope.datas.result.dailyList.data.unshift([d, ad, (ad/10000).toFixed(4), wd, (wd/10000).toFixed(4), gd, (gd/10000).toFixed(4), vd, (vd/10000).toFixed(4)]);
-    }
+    };
 
     //Date range picker
     $($scope.datas.datePickerDom).daterangepicker({
@@ -90,11 +119,13 @@ app.controller('monitor',function ($scope) {
         locale: {
             format: $scope.datas.fmt
         },
+    }).on('apply.daterangepicker', function(ev, picker) {
+        $scope.datas.fromDate = (picker.startDate.format('YYYY-MM-DD'));
+        $scope.datas.toDate = (picker.endDate.format('YYYY-MM-DD'));
     });
 
     // 画图表
     $scope.summaryChart = echarts.init(document.getElementById("summaryChart"));
-    summaryChartDraw($scope.datas);
 
     function summaryChartDraw(data) {
         var opt = angular.copy($scope.datas.option);
@@ -114,8 +145,8 @@ app.controller('monitor',function ($scope) {
             opt.legend.data.push(d.name);
 
             d.datas.map(function (k) {
-                var ind = opt.xAxis[0].data.indexOf(moment(k.key).format($scope.datas.fmt));
-                sd[ind] = parseFloat(k.val).toFixed(4);
+                var ind = opt.xAxis[0].data.indexOf(moment(k[d.key]).format($scope.datas.fmt));
+                sd[ind] = parseFloat(k[d.val]).toFixed(4);
             });
 
             var tempSeries = {
@@ -131,4 +162,9 @@ app.controller('monitor',function ($scope) {
         $scope.summaryChart.resize();
     };
 
+    $scope.refreshData = function () {
+        $scope.getDatas();
+    };
+
+    $scope.getDatas();
 });

@@ -29,9 +29,12 @@
     <!-- 获取用户建筑列表 -->
     <select id="getBuildingsByUserId" resultType="java.util.HashMap">
         <![CDATA[
-        select * from building_base b
-          left join users u on u.id = b.owner_id
-        where u.id = #{userId}
+        select
+          b.*
+        from a_building b
+        where b.id in (
+            select building_id from a_user_building where user_id = #{userId}
+        )
         ]]>
     </select>
 
@@ -189,7 +192,7 @@
     </select>
 
     <!-- 多个设备，某个时间段内 总值 -->
-    <select id="getItemsSummaryVal" resultType="long">
+    <select id="getItemsSummaryVal" resultType="float">
         <![CDATA[
         select
             IFNULL(sum(val),0) as total_val
@@ -202,6 +205,20 @@
         </foreach>
     </select>
 
+    <!-- 某个分组下的所有设备 -->
+    <select id="getItemsByGroupId" resultType="java.util.HashMap">
+        <![CDATA[
+        select
+            i.id,
+            i.code,
+            i.name
+        from a_item_group g
+            LEFT JOIN a_item_group_mapper m on m.group_id = g.id
+            LEFT JOIN a_item i on i.id = m.item_id
+        where g.id = #{groupId}
+        order by i.item_type asc, i.collector_id asc, i.name asc
+        ]]>
+    </select>
 
     <select id="getItemTypeBaseInfo" resultType="java.util.LinkedHashMap">
         <![CDATA[
@@ -231,5 +248,7 @@
         where t.id !="" and t2.calculate != ""
         ]]>
     </select>
+
+
 
 </mapper>

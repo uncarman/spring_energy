@@ -1,12 +1,22 @@
 app.controller('dashboard',function ($scope) {
 
+    $scope.$watch('$viewContentLoaded', function() {
+        global.on_loaded_func($scope);    // 显示页面内容
+    });
+
     $scope.datas = {
+        user: global.read_storage("session", "user"),
+
         fmt: "YYYY-MM-DD",
         datePickerDom: "#reservation",
         fromDate: moment().add(-15, 'day').format("YYYY-MM-DD"),
         toDate: moment().format("YYYY-MM-DD"),
         todayStr:moment().format("YYYY-MM-DD"),
         mapId: "map",
+
+        query: {
+            "name": "",
+        }
 
     }
 
@@ -23,22 +33,23 @@ app.controller('dashboard',function ($scope) {
     $scope.getDatas = function () {
         $scope.ajaxBuildingList()
             .then($scope.drawMap)
-            .then($scope.buildingListTable)
+            .then($scope.buildBuildingsTable)
             .catch($scope.ajaxCatch);
     };
 
     $scope.ajaxBuildingList = function () {
         var param = {
-            _method: 'get',
-            _url: "/ajaxBuildingList",
-            _param: {}
+            _method: 'post',
+            _url: settings.ajax_func.ajaxGetUserBuildings,
+            _param: {
+                userId: $scope.datas.user.id
+            }
         };
         return global.return_promise($scope, param);
     }
-    $scope.drawMap = function (datas) {
-        console.log(datas);
+    $scope.drawMap = function (res) {
         $scope.$apply(function () {
-            var data = datas.result.buildingList.data;
+            var data = res.data;
             var infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(6, -20)});
             for (var i = 0; i < data.length; i++) {
                 var marker = new AMap.Marker({
@@ -63,7 +74,7 @@ app.controller('dashboard',function ($scope) {
                 var d = e.target.getExtData();
                 var $content = $("<div class='media'></div>")
                     .append($("<div class='media-left'></div>")
-                        .append($("<img class='media-object' style='margin-bottom: 10px;' width='80'>").attr("src", d.photo))
+                        .append($("<img class='media-object' style='margin-bottom: 10px;' width='80'>").attr("src", d.photo_url))
                     ).append($("<div class='media-body' style='min-width:240px;'></div>")
                         .append($("<p></p>").html("<b>"+d.name+"</b><br>"+d.address+"<br><br>查看详情 &nbsp; <a href='monitor.php?id="+d.id+"'>监测分析</a> &nbsp; <a href='statistics.php?id="+d.id+"'>数据统计</a> &nbsp; <a href='settingsGroup.php?id="+d.id+"'>系统配置</a>"))
                     );
@@ -71,7 +82,7 @@ app.controller('dashboard',function ($scope) {
                 infoWindow.open(map, e.target.getPosition());
             }
         });
-        return datas;
+        return res;
     };
 
     // 初始化地图
@@ -124,19 +135,49 @@ app.controller('dashboard',function ($scope) {
         })
     }
 
-    $scope.buildingListTable = function (data) {
+    $scope.buildBuildingsTable = function (res) {
+        var tableData = {
+            "title": ["id", "图片", "建筑名称", "地址", "建筑面积", "建设年代"],
+            "data": [],
+        };
+        var cacheData = {};
+        res.data.map(function (cur) {
+            cur.photo_url = cur.photo_url ? cur.photo_url : settings.default_photo;
+            tableData.data.push([cur.id, cur.photo_url, cur.name, cur.address, cur.area, cur.build_year]);
+            cacheData[cur.id] = cur;
+        });
         $scope.$apply(function () {
-            $scope.datas.buildingList = data.result.buildingList;
+            $scope.datas.tableData = tableData;
+            $scope.datas.cacheData = cacheData;
+
+            // 缓存用户建筑列表
+            global.set_storage_key('session', [
+                {
+                    key: 'buildingList', 
+                    val: $scope.datas.cacheData,
+                }
+            ]);
         });
     };
 
-    $scope.view_item = function (item) {
+    $scope.viewItem = function (id) {
         global.set_storage_key('session', [
-            {key: 'buildingId', val: item.id},
+            {
+                key: 'building', 
+                val: $scope.datas.cacheData[id],
+            }
         ]);
-        window.location.href = "#/monitor?id="+item.id;
+        window.location.href = "#/monitor?id="+id;
     }
 
+
+    $scope.nameFilt = function(arr){
+        if($scope.datas.query.name != "") {
+            return arr[2].indexOf($scope.datas.query.name) >= 0;
+        } else {
+            return 1;
+        }
+    }
 
     $scope.init_page();
 });

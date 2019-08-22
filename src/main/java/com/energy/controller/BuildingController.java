@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.DecimalMax;
+import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -181,7 +184,7 @@ public class BuildingController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // 04. 所有【能耗分项】已安装的 一级分类对应的设备ids
+    // 04. 所有【能耗分项】已安装的 零级分类对应的设备ids
     @RequestMapping("/getBuildingItemTypes")
     @ResponseBody
     public Object getBuildingItemTypes(@RequestParam("buildingId") Integer buildingId) {
@@ -229,7 +232,7 @@ public class BuildingController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // 总集合数据
+    // 02. 某建筑 总汇总数据（首页4块）
     @RequestMapping("/getBuildingSummaryTotalData")
     @ResponseBody
     public Object getBuildingSummaryTotalData(@RequestParam("buildingId") Integer buildingId,
@@ -259,7 +262,7 @@ public class BuildingController {
 
             // 返回结果集
             Map<String, Object> dataMap = new HashMap<>();
-            Map<String, String> summaryMap = new HashMap<>();
+            List<Map> summaryMap = new ArrayList<>();
             Map<String, Object> chartMap = new HashMap<>();
 
             // 拿到各种类型基础数据
@@ -270,69 +273,29 @@ public class BuildingController {
             Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
 
             // ------------- 汇总数据 ---------------//
-            // 拿到电表数据
-            String elecType = Constant.ITEM_TYPE_ELE;
-            String elecTypeShort = Integer.valueOf(elecType).toString();
-            String eleItemIds = groupItems.get(elecTypeShort)+"";
-            List<String> eleItemIdList = Arrays.asList(eleItemIds.split(","));
-            long sumItemTotal = buildingService.getItemsSummaryVal(eleItemIdList, dateStart, dateEnd);
-            long sumItemLastMonth = buildingService.getItemsSummaryVal(eleItemIdList, lastMonthStart, lastMonthEnd);
-            long sumItemLastYear = buildingService.getItemsSummaryVal(eleItemIdList, lastYearStart, lastYearEnd);
-            Map map = baseMap.get(elecType);
-            summaryMap.put("totalName1" , "总"+map.get("name").toString());
-            summaryMap.put("totalUnit1" , map.get("unit").toString());
-            summaryMap.put("totalRate1" , map.get("rate").toString());
-            summaryMap.put("total1", String.valueOf(sumItemTotal));
-            summaryMap.put("totalCompareMonth1" , String.valueOf(sumItemLastMonth));
-            summaryMap.put("totalCompareYear1" , String.valueOf(sumItemLastYear));
+            // 四种表： 电，水，燃气，蒸汽
+            String[] typeStrs = {"01", "02", "03", "05"};
+            List<String> energyTypes = Arrays.asList(typeStrs);
+            for(int i = 0; i < energyTypes.size(); i++) {
+                String curType = energyTypes.get(i);
+                String curTypeShort = Integer.valueOf(curType).toString();
+                String curItemIds = groupItems.get(curTypeShort)+"";
+                List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+                float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
+                float sumItemLastMonth = buildingService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
+                float sumItemLastYear = buildingService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
+                Map map = baseMap.get(curType);
 
-            // 拿到水表数据
-            String waterType = Constant.ITEM_TYPE_WATER;
-            String waterTypeShort = Integer.valueOf(waterType).toString();
-            String waterItemIds = groupItems.get(waterTypeShort)+"";
-            List<String> waterItemIdList = Arrays.asList(waterItemIds.split(","));
-            long sumItemTotal2 = buildingService.getItemsSummaryVal(waterItemIdList, dateStart, dateEnd);
-            long sumItemLastMonth2 = buildingService.getItemsSummaryVal(waterItemIdList, lastMonthStart, lastMonthEnd);
-            long sumItemLastYear2 = buildingService.getItemsSummaryVal(waterItemIdList, lastYearStart, lastYearEnd);
-            Map map2 = baseMap.get(waterType);
-            summaryMap.put("totalName2" , "总"+map2.get("name").toString());
-            summaryMap.put("totalUnit2" , map2.get("unit").toString());
-            summaryMap.put("totalRate2" , map2.get("rate").toString());
-            summaryMap.put("total2" , String.valueOf(sumItemTotal2));
-            summaryMap.put("totalCompareMonth2" , String.valueOf(sumItemLastMonth2));
-            summaryMap.put("totalCompare1Year2" , String.valueOf(sumItemLastYear2));
+                Map itemMap = new HashMap();
+                itemMap.put("name" , "总"+(String)map.get("name"));
+                itemMap.put("unit" , map.get("unit"));
+                itemMap.put("rate" , map.get("rate"));
+                itemMap.put("total", sumItemTotal);
+                itemMap.put("lastMonth" , sumItemLastMonth);
+                itemMap.put("lastYear" , sumItemLastYear);
 
-            // 拿到燃气表数据
-            String gasType = Constant.ITEM_TYPE_GAS;
-            String gasTypeShort = Integer.valueOf(gasType).toString();
-            String gasItemIds = groupItems.get(gasTypeShort)+"";
-            List<String> gasItemIdList = Arrays.asList(gasItemIds.split(","));
-            long sumItemTotal3 = buildingService.getItemsSummaryVal(gasItemIdList, dateStart, dateEnd);
-            long sumItemLastMonth3 = buildingService.getItemsSummaryVal(gasItemIdList, lastMonthStart, lastMonthEnd);
-            long sumItemLastYear3 = buildingService.getItemsSummaryVal(gasItemIdList, lastYearStart, lastYearEnd);
-            Map map3 = baseMap.get(gasType);
-            summaryMap.put("totalName3" , "总"+map3.get("name").toString());
-            summaryMap.put("totalUnit3" , map3.get("unit").toString());
-            summaryMap.put("totalRate3" , (String)map3.get("rate"));
-            summaryMap.put("total3" , String.valueOf(sumItemTotal3));
-            summaryMap.put("totalCompareMonth3" , String.valueOf(sumItemLastMonth3));
-            summaryMap.put("totalCompare1Year3" , String.valueOf(sumItemLastYear3));
-
-            // 拿到蒸汽表数据
-            String steamType = Constant.ITEM_TYPE_GAS;
-            String steamTypeShort = Integer.valueOf(steamType).toString();
-            String steamItemIds = groupItems.get(steamTypeShort)+"";
-            List<String> steamItemIdList = Arrays.asList(steamItemIds.split(","));
-            long sumItemTotal4 = buildingService.getItemsSummaryVal(steamItemIdList, dateStart, dateEnd);
-            long sumItemLastMonth4 = buildingService.getItemsSummaryVal(steamItemIdList, lastMonthStart, lastMonthEnd);
-            long sumItemLastYear4 = buildingService.getItemsSummaryVal(steamItemIdList, lastYearStart, lastYearEnd);
-            Map map4 = baseMap.get(steamType);
-            summaryMap.put("totalName4" , "总"+map4.get("name").toString());
-            summaryMap.put("totalUnit4" , map4.get("unit").toString());
-            summaryMap.put("totalRate4" , (String)map4.get("rate"));
-            summaryMap.put("total4" , String.valueOf(sumItemTotal4));
-            summaryMap.put("totalCompareMonth4" , String.valueOf(sumItemLastMonth4));
-            summaryMap.put("totalCompare1Year4" , String.valueOf(sumItemLastYear4));
+                summaryMap.add(itemMap);
+            }
 
             res.makeSuccess(summaryMap);
         } catch (Exception ex) {
@@ -391,4 +354,279 @@ public class BuildingController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    // 03.1. 某建筑【四种表】按【时/日/月/年】汇总数据
+    @RequestMapping("/getBuildingTableDataByType")
+    @ResponseBody
+    public Object getBuildingTableDataByType(@RequestParam("buildingId") Integer buildingId,
+                                             @RequestParam("from") String from,
+                                             @RequestParam("to") String to,
+                                             @RequestParam("type") String type,
+                                             HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            // 拿到各种类型基础数据
+            Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
+
+            Map chartMap = new HashMap();
+
+            // 可以计算总量的分组类型
+            String sumType = Constant.SUM_TYPE;
+            Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
+
+            // 四种表： 电，水，燃气，蒸汽
+            String[] typeStrs = {"01", "02", "03", "05"};
+            List<String> energyTypes = Arrays.asList(typeStrs);
+
+            // 表头
+            List<String> titleList = new ArrayList<>();
+            titleList.add("日期");
+            List<List<String>> dataList = new ArrayList<>();
+
+            // 先生成第一列时间数据
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar time = Calendar.getInstance();
+            Date fromDate = formatter.parse(from);
+            Date toDate = formatter.parse(to);
+            int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000*3600*24));
+
+            for(int i=0; i<=days; i++) {
+                time.setTime(fromDate);
+                time.add(Calendar.DATE, i);
+                String date = formatter.format(time.getTime());
+                List<String> row = new ArrayList<String>();;
+                row.add(date);
+                dataList.add(row);
+            }
+
+            for(int i = 0; i < energyTypes.size(); i++) {
+                String curType = energyTypes.get(i);
+                String curTypeShort = Integer.valueOf(curType).toString();
+                String curItemIds = groupItems.get(curTypeShort)+"";
+                List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+                List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
+                Map curBaseMap = baseMap.get(curType);
+                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+                DecimalFormat df2 = new DecimalFormat("###.0000");
+
+                titleList.add((String)curBaseMap.get("name"));
+                titleList.add((String)curBaseMap.get("name")+"密度");
+                for(int k = 0; k < dataList.size(); k++) {
+                    List line = dataList.get(k);
+                    Boolean hasInsert = false;
+                    for(int j = 0; j < curList.size(); j++) {
+                        Map row = curList.get(j);
+                        if(line.get(0).toString().equals(row.get("recorded_at"))) {
+                            line.add(row.get("total_val"));
+                            String totalValAvg = ""+df2.format(Float.valueOf(row.get("total_val").toString()) / Float.valueOf(group.getArea()));
+                            line.add(totalValAvg);
+                            hasInsert = true;
+                            break;
+                        };
+                    }
+                    if(!hasInsert) {
+                        line.add("0");
+                        line.add("0");
+                    }
+                }
+            }
+
+            dataList.add(0, titleList);
+            res.makeSuccess(dataList);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 09. 某建筑【某种表】按【时/日/月/年】汇总数据
+    @RequestMapping("/getBuildingSummaryTotalDataByType")
+    @ResponseBody
+    public Object getBuildingSummaryTotalData(@RequestParam("buildingId") Integer buildingId,
+                                              @RequestParam("type") String type,
+                                              HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar time = Calendar.getInstance();
+
+            // 总量第一天和最后一天
+            String dateStart = "2000-01-01";
+            String dateEnd = "3000-01-01";
+
+            // 拿到前一个月的第一天和最后一天
+            time.add(Calendar.MONTH, -1);
+            time.set(Calendar.DAY_OF_MONTH, 1);
+            String lastMonthStart = formatter.format(time.getTime());
+            time.set(Calendar.DAY_OF_MONTH, time.getActualMaximum(Calendar.DAY_OF_MONTH));
+            String lastMonthEnd = formatter.format(time.getTime());
+            // 拿到前一年的第一天和最后一天
+            time.add(Calendar.MONTH, 1);
+            time.add(Calendar.YEAR, -1);
+            time.set(Calendar.DAY_OF_YEAR, 1);
+            String lastYearStart = formatter.format(time.getTime());
+            time.set(Calendar.DAY_OF_YEAR, time.getActualMaximum(Calendar.DAY_OF_YEAR));
+            String lastYearEnd = formatter.format(time.getTime());
+
+            // 返回结果集
+            Map<String, Object> dataMap = new HashMap<>();
+            List<Map> summaryMap = new ArrayList<>();
+            Map<String, Object> chartMap = new HashMap<>();
+
+            // 拿到各种类型基础数据
+            Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
+
+            // 可以计算总量的分组类型
+            String sumType = Constant.SUM_TYPE;
+            Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
+
+            // ------------- 汇总数据 ---------------//
+            String curTypeShort = Integer.valueOf(type).toString();
+            String curItemIds = groupItems.get(curTypeShort)+"";
+            List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+            float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
+            float sumItemLastMonth = buildingService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
+            float sumItemLastYear = buildingService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
+            ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+            Map map = baseMap.get(type);
+            String rate = map.get("rate").toString();
+
+            Map itemMap = new HashMap();
+            Map itemMap2 = new HashMap();
+            Map itemMap3 = new HashMap();
+            Map itemMap4 = new HashMap();
+
+            itemMap.put("name" , "总"+(String)map.get("name"));
+            itemMap.put("unit" , map.get("unit"));
+            itemMap.put("rate" , map.get("rate"));
+            itemMap.put("total", sumItemTotal);
+            itemMap.put("lastMonth", sumItemLastMonth);
+            itemMap.put("lastYear", sumItemLastYear);
+
+            itemMap2.put("name" , "当量标煤");
+            itemMap2.put("unit" , "吨");
+            itemMap2.put("rate" , "0.4040");
+            itemMap2.put("total", sumItemTotal*0.4040);
+            itemMap2.put("lastMonth", sumItemLastMonth*0.4040);
+            itemMap2.put("lastYear", sumItemLastYear*0.4040);
+
+            itemMap3.put("name" , "能耗密度");
+            itemMap3.put("unit" , "KWH/M2");
+            itemMap3.put("rate" , map.get("rate"));
+            itemMap3.put("total", sumItemTotal/group.getArea());
+            itemMap3.put("lastMonth", sumItemLastMonth/group.getArea());
+            itemMap3.put("lastYear", sumItemLastYear/group.getArea());
+
+            itemMap4.put("name" , "费用");
+            itemMap4.put("unit" , "元");
+            itemMap4.put("rate" , map.get("rate"));
+            itemMap4.put("total", sumItemTotal*Float.valueOf(rate));
+            itemMap4.put("lastMonth", sumItemLastMonth*Float.valueOf(rate));
+            itemMap4.put("lastYear", sumItemLastYear*Float.valueOf(rate));
+
+            summaryMap.add(itemMap);
+            summaryMap.add(itemMap2);
+            summaryMap.add(itemMap3);
+            summaryMap.add(itemMap4);
+
+            res.makeSuccess(summaryMap);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+
+    // 11. 某个分组下的所有设备
+
+
+    // 10. 某建筑【某种表】子集 按【时/日/月/年】数据
+    // 无 parent  -> 对应能耗分项汇总数据 -> 可根据传入的时间拿到同比数据
+    // 有 parent  -> 对应能耗分项中某个分项的子项
+    @RequestMapping("/getEnergyChartDataByType")
+    @ResponseBody
+    public Object getEnergyChartDataByType(@RequestParam("buildingId") Integer buildingId,
+                                           @RequestParam("from") String from,
+                                           @RequestParam("to") String to,
+                                           @RequestParam("type") String type,
+                                           @RequestParam("energyType") String energyType,
+                                           HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            String parent = request.getParameter("parent");
+
+            // 最终返回结果集
+            Map chartMap = new HashMap();
+
+            // 可以计算总量的分组类型
+            String sumType = Constant.SUM_TYPE;
+            // 拿到各种类型基础数据
+            Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
+
+            if(null == parent) {
+                // 当前时间区间数据
+                Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
+                String curType = energyType;
+                String curTypeShort = Integer.valueOf(curType).toString();
+                String curItemIds = groupItems.get(curTypeShort)+"";
+                List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+                List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
+                Map curBaseMap = baseMap.get(curType);
+                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+
+                Map curMap = new HashMap();
+                curMap.put("datas", curList);
+                curMap.put("key", "recorded_at");
+                curMap.put("val", "total_val");
+                curMap.put("name", curBaseMap.get("name"));
+                curMap.put("prop_area", group.getArea());
+                curMap.put("area", group.getArea());
+                curMap.put("fee_policy", curBaseMap.get("rate"));
+
+                chartMap.put(curType, curMap);
+
+            } else {
+                Integer parentId = Integer.valueOf(parent);
+                ItemGroup group = buildingService.getItemGroupById(parentId);
+                // 子集类汇总
+                List<Map> groupChilds = buildingService.getItemGroupChildsById(parentId);
+                Map curBaseMap = baseMap.get(energyType);
+                for(int i=0; i<groupChilds.size(); i++) {
+                    Map curGroup = groupChilds.get(i);
+                    List<Map> items = buildingService.getItemsByGroupId(Integer.valueOf(curGroup.get("id").toString()));
+                    List<String> curItemIdList = new ArrayList<>();
+                    for(int j=0; j<items.size(); j++) {
+                        Map curItem = items.get(j);
+                        if(null != curItem) {
+                            curItemIdList.add(curItem.get("id").toString());
+                        }
+                    }
+                    List<Map> curList = new ArrayList<>();
+                    if(curItemIdList.size() > 0) {
+                        curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
+                    }
+
+                    Integer area = null != curGroup.get("area") ? Integer.valueOf(curGroup.get("area").toString()) : group.getArea();
+
+                    Map curMap = new HashMap();
+                    curMap.put("datas", curList);
+                    curMap.put("key", "recorded_at");
+                    curMap.put("val", "total_val");
+                    curMap.put("name", curGroup.get("name"));
+                    curMap.put("prop_area", area);
+                    curMap.put("area", area);
+                    curMap.put("fee_policy", curBaseMap.get("rate"));
+
+                    chartMap.put(curGroup.get("id"), curMap);
+                }
+            }
+
+            res.makeSuccess(chartMap);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+
 }
