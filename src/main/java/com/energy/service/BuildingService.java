@@ -53,9 +53,9 @@ public class BuildingService {
     }
 
 
-    // 获取某建筑下所有大类
-    public List<Map> getItemGroupByType(Integer buildingId, String type) {
-        return buildingMapper.getItemGroupByType(buildingId, type);
+    // 设备分组信息
+    public List<Map> getItemGroupByType(Integer buildingId, String type, String subType, String parent) {
+        return buildingMapper.getItemGroupByType(buildingId, type, subType, parent);
     }
 
     public ItemGroup getItemGroupById(Integer id) {

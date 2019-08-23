@@ -11,6 +11,10 @@ public class Constant {
     public static Integer RES_FAIL_CODE = 500;
     public static String RES_FAIL_MESSAGE = "FAIL";
 
+    public static float COAL_ELECTRICITY = 0.4040f;
+    public static float COAL_WATER= 0.2429f;
+    public static float COAL_GAS= 0.2429f;
+    public static float COAL_STEAM= 0.2429f;
 
     public static String TYPE_AMMETER = "ammeter";
     public static String TYPE_WATERMETER = "watermeter";

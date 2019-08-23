@@ -50,26 +50,34 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'monitor_electricity_by_group',
             params: {
                 type: "01",
-                group: "01000",
+                subType: "能耗分项",
             }
         })
-        .state('monitor_electricity_by_subentry/:groupCode',{
-            url:'/monitor_electricity_by_subentry/:groupCode',
+        .state('monitor_electricity_by_subentry/:parent',{
+            url:'/monitor_electricity_by_subentry/:parent',
             templateUrl:'pages/monitor_electricity_by_group.html',
             controller: 'monitor_electricity_by_group',
             params: {
                 type: "01",
-                group: "01000",
+                subType: "能耗分项",
             }
         })
-
         .state('monitor_electricity_by_area',{
             url:'/monitor_electricity_by_area',
             templateUrl:'pages/monitor_electricity_by_group.html',
             controller: 'monitor_electricity_by_group',
             params: {
                 type: "01",
-                group: "21000",
+                subType: "建筑区域",
+            }
+        })
+        .state('monitor_electricity_by_area/:parent',{
+            url:'/monitor_electricity_by_area/:parent',
+            templateUrl:'pages/monitor_electricity_by_group.html',
+            controller: 'monitor_electricity_by_group',
+            params: {
+                type: "01",
+                subType: "建筑区域",
             }
         })
         .state('monitor_electricity_by_org',{
@@ -78,7 +86,16 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'monitor_electricity_by_group',
             params: {
                 type: "01",
-                group: "11000",
+                subType: "组织架构",
+            }
+        })
+        .state('monitor_electricity_by_org/:parent',{
+            url:'/monitor_electricity_by_org/:parent',
+            templateUrl:'pages/monitor_electricity_by_group.html',
+            controller: 'monitor_electricity_by_group',
+            params: {
+                type: "01",
+                subType: "组织架构",
             }
         })
         .state('monitor_electricity_by_custom',{
@@ -87,7 +104,16 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'monitor_electricity_by_group',
             params: {
                 type: "01",
-                group: "31000",
+                subType: "自定义",
+            }
+        })
+        .state('monitor_electricity_by_custom/:parent',{
+            url:'/monitor_electricity_by_custom/:parent',
+            templateUrl:'pages/monitor_electricity_by_group.html',
+            controller: 'monitor_electricity_by_group',
+            params: {
+                type: "01",
+                subType: "自定义",
             }
         })
 

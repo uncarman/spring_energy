@@ -66,6 +66,9 @@ var settings = {
         "getBuildingSummaryTotalDataByType": "api/getBuildingSummaryTotalDataByType", // 某一类表汇总数据
         "getEnergyChartDataByType": "api/getEnergyChartDataByType", //
 
+        "getItemGroupByType": "api/getItemGroupByType",
+        "getEnergyTableDataByType": "api/getEnergyTableDataByType",
+
         "ajaxGetItemGroups": "api/getItemGroups", // 获取所有分组列表
         "ajaxGetItemsByGroupId": "api/getItemsByGroupId",  // 获取某个分组下的所有设备
         "ajaxRemoveItemGroup": "api/removeItemGroup",  // 删除
@@ -1475,35 +1478,6 @@ var global = {
     pageJump : function(url) {
         if(url != "") {
             window.location.href = url;
-        }
-    },
-
-    // 顶部菜单加高亮
-    init_top_menu : function($scope){
-        try{
-            var pages = window.location.pathname.split("/");
-            var curPage = "";
-            // 检查是否包含buildingId
-            if(parseInt(pages[1]) == pages[1]) {
-                $scope.datas.buildingId = pages[1];
-                curPage = pages[2];
-            } else {
-                curPage = pages[1];
-            }
-            $(".top-"+curPage).addClass("active");
-        } catch (e) {
-
-        }
-    },
-    // 通用左侧菜单
-    init_left: function ($scope, callback) {
-        if($scope.datas.leftOn) {
-            $("body").addClass("left-on");
-        } else {
-            $("body").removeClass("left-on");
-        }
-        if(typeof callback == "function") {
-            callback($scope);
         }
     },
 

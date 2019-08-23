@@ -46,10 +46,6 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
 //                            name: "2018年同比数据"
 //                        }
         ],
-        query: {
-//                    type: null,
-//                    compareTo: null,
-        },
         chartType: null,  // 默认按天
         chartCompare: null,  // 默认上一年度
 
@@ -97,7 +93,7 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
     };
 
     // 生成对比年份
-    for(var i = 2; i>0 ;i--) {
+    for(var i = 5; i > 0; i--) {
         var year = moment().add(-i, 'year').format("YYYY");
         $scope.datas.chartCompares.push({
             val: year,
@@ -142,24 +138,24 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
                 summaryChartDraw($scope.datas);
             });
         });
-        //
-        // // 获取table数据
-        // var param = {
-        //     _method: 'post',
-        //     _url: settings.ajax_func.getBuildingTableDataByType,
-        //     _param: {
-        //         buildingId: $scope.datas.buildingId,
-        //         from: $scope.datas.fromDate,
-        //         to: $scope.datas.toDate,
-        //         type: $scope.datas.type,
-        //     }
-        // };
-        // global.ajax_data($scope, param, function (res) {
-        //     $scope.$apply(function(){
-        //         $scope.datas.result.tableData.title = res.data[0];
-        //         $scope.datas.result.tableData.data = res.data.slice(1, res.data.length);
-        //     });
-        // });
+
+        // 获取table数据
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getEnergyTableDataByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                from: $scope.datas.fromDate,
+                to: $scope.datas.toDate,
+                type: $scope.datas.type,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.tableData.title = res.data[0];
+                $scope.datas.result.tableData.data = res.data.slice(1, res.data.length);
+            });
+        });
     };
 
     $scope.getDatas();

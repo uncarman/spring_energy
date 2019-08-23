@@ -9,8 +9,8 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
         buildingId: global.read_storage("session", "buildingId"),
 
         type: $stateParams.type,
-        group: $stateParams.group,
-        groupCode: $stateParams.groupCode,
+        subType: $stateParams.subType,
+        parent: $stateParams.parent,
 
         fmt: "YYYY-MM-DD",
         leftOn: true,
@@ -21,23 +21,146 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
         fromDate: "2019-01-15",
         toDate: "2019-01-25",
 
-        dgt: global.request("dgt"),
-        pid: global.request("pid") || 0,
+        fromDate: "2019-01-15",
+        toDate: "2019-01-25",
 
-        summaryChartTypes: [
-            "能耗密度kwh/m2",
-            "能耗kwh",
+        chartTypes: [
+            {
+                val: "hour",
+                name: "按小时",
+                "fmt" : "D-H",
+            },
+            {
+                val: "day",
+                name: "按日",
+                "fmt" : "Y-M-D",
+            },
+            {
+                val: "month",
+                name: "按月",
+                "fmt" : "Y-M",
+            },
+            {
+                val: "year",
+                name: "按年",
+                "fmt" : "Y",
+            }
         ],
+        chartCompares: [
+//                        {
+//                            val: 2018,
+//                            name: "2018年同比数据"
+//                        }
+        ],
+        query: {
+//                    type: null,
+//                    compareTo: null,
+        },
+        chartType: null,  // 默认按天
+        chartCompare: null,  // 默认上一年度
 
-        summaryData: {
-            internationalValue: 0.15,  // 国际能耗
+        result:{
+            itemGroups: {},
+            summaryDatas: {},
+            chartDatas: {},
+            tableData: {},
         },
 
-        summaryTableTitles: [],
-        summaryTableDatas: [],
     }
 
     console.log($scope.datas.group);
+
+    // 生成对比年份
+    for(var i = 5; i > 0; i--) {
+        var year = moment().add(-i, 'year').format("YYYY");
+        $scope.datas.chartCompares.push({
+            val: year,
+            name: year+"年同比数据",
+        })
+    }
+    $scope.datas.chartType = $scope.datas.chartTypes[0];
+    $scope.datas.chartCompare = $scope.datas.chartCompares[0];
+
+    // 获取分类标题
+    $scope.getItemGroupByType = function () {
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getItemGroupByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                type: $scope.datas.type,
+                subType: $scope.datas.subType,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.itemGroups = {};
+                // 先遍历出零级分组
+                res.data.map(function (ig) {
+                    if(!ig.parent) {
+                        $scope.datas.result.itemGroups = ig;
+                        $scope.datas.result.itemGroups.childs = [];
+                    }
+                });
+                // 再遍历出一级分组
+                res.data.map(function (ig) {
+                    if(ig.parent == $scope.datas.result.itemGroups.id) {
+                        $scope.datas.result.itemGroups.childs.push(ig);
+                    }
+                });
+            });
+        });
+    }
+
+    // 获取分类标题
+    $scope.getEnergyChartDataByType = function() {
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getEnergyChartDataByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                from: $scope.datas.fromDate,
+                to: $scope.datas.toDate,
+                type: $scope.datas.type,
+                energyType: $scope.datas.type,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.chartDatas = res.data;
+                summaryChartDraw($scope.datas);
+            });
+        });
+    }
+
+    // 获取table数据
+    $scope.getEnergyTableDataByType = function() {
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getEnergyTableDataByType,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                from: $scope.datas.fromDate,
+                to: $scope.datas.toDate,
+                type: $scope.datas.type,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function(){
+                $scope.datas.result.tableData.title = res.data[0];
+                $scope.datas.result.tableData.data = res.data.slice(1, res.data.length);
+            });
+        });
+    }
+
+    $scope.getDatas = function () {
+        // 获取分类标题
+        $scope.getItemGroupByType();
+        // 获取图表数据
+        $scope.getEnergyChartDataByType();
+        // 获取table数据
+        $scope.getEnergyTableDataByType();
+    };
 
     //Date range picker
     $($scope.datas.datePickerDom).daterangepicker({
@@ -48,9 +171,20 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
         },
     });
 
+
+
+
+
+
+
+
+
+
     $scope = global.init_base_scope($scope);
     $scope.compareClass = global.normalCompareClass;
     $scope.compareValue = global.normalCompareValue;
+
+
 
     $scope.ch_datas_on = function () {
         $scope.datas.leftOn = !$scope.datas.leftOn;
@@ -89,56 +223,7 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
         }
     }
 
-    $scope.getDatas = function () {
-        $scope.ajaxAmmeterGroupsSummaryDailyByType()
-            .then($scope.initBaseDatas)
-            .then($scope.dailyChartDraw)
-            .then($scope.summaryPieDraw)
-            .then($scope.summaryChartTable)
-            .catch($scope.ajax_catch);
-    };
-    $scope.ajaxAmmeterGroupsSummaryDailyByType = function () {
-        var param = {
-            _method: 'get',
-            _url: ,
-            _param: {
-                from : $scope.datas.fromDate,
-                to: $scope.datas.toDate,
-                pid: $scope.datas.pid,
-            }
-        };
-        return global.return_promise($scope, param);
-    }
 
-    $scope.initBaseDatas = function (data) {
-        console.log(data);
-        if(!$scope.datas.pageInited) {
-            $scope.$apply(function () {
-                $scope.datas.pageInited = true;
-                $scope.datas.types = data.result.types;
-                $scope.datas.typeGroups = data.result.typeGroups;
-                $scope.datas.types.map(function (t) {
-                    if(t.id == $scope.datas.dgt) {
-                        $scope.datas.currentType = t;
-                        $scope.datas.guides.push({
-                            "href": "../monitor/ammeterByType?dgt="+t.id,
-                            "name" : t.name,
-                        })
-                    }
-                });
-                $scope.datas.typeGroups.map(function (t) {
-                    if(t.group_type == $scope.datas.dgt && t.id == $scope.datas.pid) {
-                        $scope.datas.currentTypeGroup = t;
-                        $scope.datas.guides.push({
-                            "href": "",
-                            "name" : t.name,
-                        })
-                    }
-                });
-            });
-        }
-        return data;
-    };
 
     var opts = {
         color: settings.colors,

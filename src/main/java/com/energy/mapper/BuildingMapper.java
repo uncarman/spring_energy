@@ -27,7 +27,8 @@ public interface BuildingMapper {
 
 
     // settings
-    public List<Map> getItemGroupByType(@Param("buildingId")Integer buildingId, @Param("type")String type);
+    public List<Map> getItemGroupByType(@Param("buildingId")Integer buildingId, @Param("type")String type,
+                                        @Param("subType")String subType, @Param("parent")String parent);
     public ItemGroup getItemGroupById(Integer id);
     public List<Map> getItemGroupChildsById(Integer id);
     public Integer createItemGroup(ItemGroup itemGroup);

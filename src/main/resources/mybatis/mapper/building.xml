@@ -62,7 +62,7 @@
     </select>
 
 
-    <!-- 查询某建筑下 某个大分项（能耗分项）下的 所有设备分组  -->
+    <!-- 设备分组  -->
     <select id="getItemGroupByType" resultType="java.util.LinkedHashMap">
         <![CDATA[
         SELECT
@@ -73,7 +73,20 @@
           area,
           note
         FROM a_item_group
-        where building_id = #{buildingId} and `type` = #{type}
+        where building_id = #{buildingId} and `type` = #{subType} and left(code, 2) = #{type}
+        ]]>
+        <if test="parent != null">
+            <![CDATA[
+            AND parent = #{parent}
+            ]]>
+        </if>
+        <if test="parent == null">
+            <![CDATA[
+            -- 拿到所有记录
+            -- AND (parent is null or parent = "" or parent <= 0)
+            ]]>
+        </if>
+        <![CDATA[
         order by code asc
         ]]>
     </select>
