@@ -551,8 +551,9 @@ public class BuildingController {
             List<String> energyTypes = Arrays.asList(typeStrs);
             for(int i = 0; i < energyTypes.size(); i++) {
                 String curType = energyTypes.get(i);
-                String curTypeShort = Integer.valueOf(curType).toString();
-                String curItemIds = groupItems.get(curTypeShort)+"";
+                Map curTypeGroup = buildingService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
+                String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
                 float sumItemCurMonth = buildingService.getItemsSummaryVal(curItemIdList, curMonthStart, curMonthEnd);
@@ -607,12 +608,13 @@ public class BuildingController {
             List<String> energyTypes = Arrays.asList(typeStrs);
             for(int i = 0; i < energyTypes.size(); i++) {
                 String curType = energyTypes.get(i);
-                String curTypeShort = Integer.valueOf(curType).toString();
-                String curItemIds = groupItems.get(curTypeShort)+"";
+                Map curTypeGroup = buildingService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
+                String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+                ItemGroup group = buildingService.getItemGroupById(curGroupId);
 
                 Map curMap = new HashMap();
                 curMap.put("datas", curList);
@@ -712,12 +714,13 @@ public class BuildingController {
 
             for(int i = 0; i < energyTypes.size(); i++) {
                 String curType = energyTypes.get(i);
-                String curTypeShort = Integer.valueOf(curType).toString();
-                String curItemIds = groupItems.get(curTypeShort)+"";
+                Map curTypeGroup = buildingService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
+                String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+                ItemGroup group = buildingService.getItemGroupById(curGroupId);
                 DecimalFormat df2 = new DecimalFormat("###.0000");
 
                 titleList.add((String)curBaseMap.get("name"));
@@ -801,13 +804,14 @@ public class BuildingController {
             Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
 
             // ------------- 汇总数据 ---------------//
-            String curTypeShort = Integer.valueOf(type).toString();
-            String curItemIds = groupItems.get(curTypeShort)+"";
+            Map curTypeGroupParent = buildingService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+            Integer curGroupId = null != curTypeGroupParent ? Integer.valueOf(curTypeGroupParent.get("id").toString()) : -1;
+            String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
             List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
             float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
             float sumItemLastMonth = buildingService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
             float sumItemLastYear = buildingService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
-            ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+            ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curGroupId));
             Map map = baseMap.get(type);
             String rate = map.get("rate").toString();
 

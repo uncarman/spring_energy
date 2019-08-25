@@ -13,6 +13,7 @@ app.controller('statistics',function ($scope) {
         // 建筑id
         buildingId: global.read_storage("session", "building")["id"],
 
+        dateType: "month", // 图表类型
         fmt: "YYYY-MM",
         datePickerDom: "#reservation",
         fromDate: moment().add(-1, 'year').format("YYYY-MM"),
@@ -98,11 +99,12 @@ app.controller('statistics',function ($scope) {
 
     function summaryChartDraw(data) {
         var opt = angular.copy($scope.datas.option);
+        var dateType = $scope.datas.dateType+"s";
 
         // 生成x轴内容
-        var xlen = Math.ceil(moment(moment($scope.datas.toDate).format($scope.datas.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.fmt), 'days', true));
+        var xlen = Math.ceil(moment(moment($scope.datas.toDate).format($scope.datas.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.fmt), dateType, true));
         for(var i=0; i<=xlen; i++) {
-            opt.xAxis[0].data.push(moment($scope.datas.fromDate).add('days', i).format($scope.datas.fmt));
+            opt.xAxis[0].data.push(moment($scope.datas.fromDate).add(dateType, i).format($scope.datas.fmt));
         }
 
         for(var o in data.result.chartDatas) {

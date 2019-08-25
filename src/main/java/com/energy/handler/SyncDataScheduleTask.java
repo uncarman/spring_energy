@@ -47,7 +47,7 @@ public class SyncDataScheduleTask {
         System.err.println("recordEnergyDatas: " + LocalDateTime.now());
 
         // 同步 a_energy_data 记录
-        buildingService.recordEnergyDatas();
+//        buildingService.recordEnergyDatas();
     }
 
 }

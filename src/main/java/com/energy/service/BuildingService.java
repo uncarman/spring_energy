@@ -94,7 +94,7 @@ public class BuildingService {
     // 根据类型分类, 拿到一级itemGroup
     public Map getItemGroupIdByEnergyType(Integer buildingId, String type, String subType) {
         List<Map> list = buildingMapper.getItemGroupByType(buildingId, type, subType, null);
-        if( null != list) {
+        if( null != list && list.size() > 0) {
             return list.get(0);
         }
         return null;
@@ -208,14 +208,16 @@ public class BuildingService {
     }
 
     public List<Map> getItemDatasByDate(List<String> itemIds, String from, String to, String type) {
-        if(type.equals(Constant.BY_HOUR)) {
-            return buildingMapper.getItemDatasByHour(itemIds, from, to);
-        } else if(type.equals(Constant.BY_DAY)) {
-            return buildingMapper.getItemDatasByDay(itemIds, from, to);
-        } else if(type.equals(Constant.BY_MONTH)) {
-            return buildingMapper.getItemDatasByMonth(itemIds, from, to);
-        } else if(type.equals(Constant.BY_YEAR)) {
-            return buildingMapper.getItemDatasByYear(itemIds, from, to);
+        if(null != itemIds && null != itemIds.get(0)) {
+            if (type.equals(Constant.BY_HOUR)) {
+                return buildingMapper.getItemDatasByHour(itemIds, from, to);
+            } else if (type.equals(Constant.BY_DAY)) {
+                return buildingMapper.getItemDatasByDay(itemIds, from, to);
+            } else if (type.equals(Constant.BY_MONTH)) {
+                return buildingMapper.getItemDatasByMonth(itemIds, from, to);
+            } else if (type.equals(Constant.BY_YEAR)) {
+                return buildingMapper.getItemDatasByYear(itemIds, from, to);
+            }
         }
         return null;
     };
@@ -238,7 +240,11 @@ public class BuildingService {
 
     // 某个时间段中，设备的总值
     public float getItemsSummaryVal(List<String> itemIds, String from, String to) {
-        return buildingMapper.getItemsSummaryVal(itemIds, from, to);
+        if(null != itemIds && null != itemIds.get(0)) {
+            return buildingMapper.getItemsSummaryVal(itemIds, from, to);
+        } else {
+            return 0;
+        }
     };
 
     // 某个分组下的所有设备
