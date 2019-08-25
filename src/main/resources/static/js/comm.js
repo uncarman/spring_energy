@@ -10,6 +10,10 @@ var session = {
     password: ""
 };
 
+var _colors = ["#ff7f50", "#87cefa", "#da70d6", "#32cd32", "#6495ed", "#ff69b4",
+    "#ba55d3", "#cd5c5c", "#ffa500", "#40e0d0", "#1e90ff", "#ff6347", "#7b68ee",
+    "#00fa9a", "#ffd700", "#6699FF", "#ff6666", "#3cb371", "#b8860b", "#30e0e0"];
+
 var settings = {
     default_datas :{
         ajax_loading: false,  // 是否正在执行ajax
@@ -75,15 +79,16 @@ var settings = {
         "ajaxUpdateItemGroup": "api/updateItemGroup",  // 更新
         "ajaxCreateItemGroup": "api/createItemGroup",  // 创建
 
-        "ajaxGetItems": "api/getItems",  // 所有设备
+        "ajaxGetBuildingItems": "api/getBuildingItems",  // 所有设备
         "ajaxRemoveItem": "api/removeItem",  // 删除
         "ajaxUpdateItem": "api/updateItem",  // 更新
         "ajaxCreateItem": "api/createItem",  // 创建
+        "ajaxUpdateGroupItem": "api/updateGroupItem",  // 更新设备编组下绑定的设备
 
-        "ajaxGetBaseDatas": "api/getBaseDatas", // 基础数据
-        "ajaxRemoveBaseDatas": "api/removeBaseDatas",  // 删除
-        "ajaxUpdateBaseDatas": "api/updateBaseDatas",  // 更新
-        "ajaxCreateBaseDatas": "api/createBaseDatas",  // 创建
+        "ajaxGetBasicDatas": "api/getBasicDatas", // 基础数据
+        "ajaxRemoveBasicData": "api/removeBasicData",  // 删除
+        "ajaxUpdateBasicData": "api/updateBasicData",  // 更新
+        "ajaxCreateBasicData": "api/createBasicData",  // 创建
     },
 
     // 分页参数
@@ -103,10 +108,118 @@ var settings = {
         "5": "操作被拒绝",
     },
 
-    colors : ["#ff7f50", "#87cefa", "#da70d6", "#32cd32", "#6495ed", "#ff69b4",
-        "#ba55d3", "#cd5c5c", "#ffa500", "#40e0d0", "#1e90ff", "#ff6347", "#7b68ee",
-        "#00fa9a", "#ffd700", "#6699FF", "#ff6666", "#3cb371", "#b8860b", "#30e0e0"],
+    types: {
+        "01" : "electricity",
+        "02": "water",
+        "03": "gas",
+        "04": "cah",
+        "05": "steam",
+    },
+    typeNames: {
+        "01" : "电",
+        "02": "水",
+        "03": "燃气",
+        "04": "冷热",
+        "05": "蒸汽",
+    },
+    subTypes: {
+        "能耗分项": "subentry",
+        "建筑区域": "area",
+        "组织机构": "org",
+        "自定义": "custom"
+    },
 
+    colors : _colors,
+
+    defaultDateTypes: [
+        {
+            val: "hour",
+            name: "按小时",
+            "paramFmt" : "YYYY-MM-DD HH",
+            "fmt" : "YYYY-MM-DD HH",
+        },
+        {
+            val: "day",
+            name: "按日",
+            "paramFmt" : "YYYY-MM-DD",
+            "fmt" : "YYYY-MM-DD",
+        },
+        {
+            val: "month",
+            name: "按月",
+            "paramFmt" : "YYYY-MM",
+            "fmt" : "YYYY-MM",
+        },
+        {
+            val: "year",
+            name: "按年",
+            "paramFmt" : "YYYY",
+            "fmt" : "YYYY",
+        }
+    ],
+
+    defaultLineOpt: {
+        color: _colors,
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:[],
+            y: "10px",
+        },
+        grid: {
+            top: "0",
+            left: "0",
+            right: "0",
+            bottom: "0",
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                data : []
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            // {
+            //   name:'用电量',
+            //   type:'bar',
+            //   data:[]
+            // }
+        ]
+    },
+
+    defaultPieOpt: {
+        color: _colors,
+        tooltip : {
+            trigger: 'top',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            data:[],
+            x : 'center',
+            y: "10px",
+        },
+        calculable : true,
+        series : [
+            {
+                name:'占比',
+                type:'pie',
+                radius : [30, 110],
+                center : ['50%', '50%'],
+                roseType : 'area',
+                x: '50%',               // for funnel
+                max: 40,                // for funnel
+                sort : 'ascending',     // for funnel
+                data:[]
+            }
+        ]
+    },
 };
 
 var global = {
@@ -914,9 +1027,14 @@ var global = {
 
     check_logined: function () {
         var user = global.read_storage("session", "user");
-        if(typeof user != "undefined" && typeof user["id"] != "undefined" && user["id"] > 0) {
-            // pass
-        } else {
+        try {
+            if(typeof user != "undefined" && typeof user["id"] != "undefined" && user["id"] > 0) {
+                // pass
+            } else {
+                global.clearLoginStatus();
+                window.location.href = "/login";
+            }
+        } catch (e) {
             global.clearLoginStatus();
             window.location.href = "/login";
         }

@@ -3,8 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
     <title>
         能耗管理系统
     </title>
@@ -30,7 +30,7 @@
         <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
                 <div class="navbar nav_title" style="border: 0;">
-                    <a class="site_title">
+                    <a class="site_title" ng-click="gotoHome();">
                         <i class="fa fa-bar-chart-o"></i>
                         <span>
                             能耗管理系统
@@ -39,9 +39,9 @@
                 </div>
                 <div class="clearfix"></div>
 
-                <div class="profile clearfix">
+                <div class="profile clearfix" ng-click="gotoProfile();">
                     <div class="profile_pic">
-                        <img ng-src="{{datas.user.photo_url}}" alt="datas.user.name" class="img-circle profile_img">
+                        <img ng-src="{{datas.user.photo_url}}" ng-alt="datas.user.name" class="img-circle profile_img">
                     </div>
                     <div class="profile_info">
                         <span>欢迎回来</span>
@@ -72,14 +72,23 @@
                                 <ul class="nav child_menu">
                                     <li class="monitor"><a href="#/monitor">总体用能概述</a></li>
                                     <li class="monitor_electricity monitor_electricity_by_subentry
-                                      monitor_electricity_by_area monitor_electricity_by_org
-                                      monitor_electricity_by_custom
-                                     "><a href="#/monitor_electricity">电能监测</a></li>
-                                    <li class="monitor_water monitor_water_by_group"><a href="#/monitor_water?type=02">水量监测</a></li>
-                                    <li class="monitor_gas monitor_gas_by_group"><a href="#/monitor_gas?type=03">燃气监测</a></li>
-                                    <li class="monitor_cah monitor_cah_by_group"><a href="#/monitor_cah?type=04">冷热量监测</a></li>
-                                    <li class="monitor_vapour monitor_vapour_by_group"><a href="#/monitor_vapour?type=05">蒸汽量监测</a></li>
-                                    <li class="monitor_env monitor_env_by_group"><a href="#/monitor_env?type=07">室内环境监测</a></li>
+                                        monitor_electricity_by_area monitor_electricity_by_org
+                                        monitor_electricity_by_custom"><a href="#/monitor_electricity">电能监测</a></li>
+                                    <li class="monitor_water monitor_water_by_subentry
+                                        monitor_water_by_area monitor_water_by_org
+                                        monitor_water_by_custom"><a href="#/monitor_water">水量监测</a></li>
+                                    <li class="monitor_gas monitor_gas_by_subentry
+                                        monitor_gas_by_area monitor_gas_by_org
+                                        monitor_gas_by_custom"><a href="#/monitor_gas">燃气监测</a></li>
+                                    <li class="monitor_cah monitor_cah_by_subentry
+                                        monitor_cah_by_area monitor_cah_by_org
+                                        monitor_cah_by_custom"><a href="#/monitor_cah">冷热量监测</a></li>
+                                    <li class="monitor_steam monitor_steam_by_subentry
+                                        monitor_steam_by_area monitor_steam_by_org
+                                        monitor_steam_by_custom"><a href="#/monitor_steam">蒸汽量监测</a></li>
+                                    <!--<li class="monitor_env monitor_env_by_subentry-->
+                                        <!--monitor_env_by_area monitor_env_by_org-->
+                                        <!--monitor_env_by_custom"><a href="#/monitor_env">室内环境监测</a></li>-->
                                 </ul>
                             </li>
                             <li class="statistics">
@@ -91,7 +100,7 @@
                                 <ul class="nav child_menu">
                                     <li class="statistics"><a href="#statistics">能耗统计</a></li>
                                     <li class="statistics_fee"><a href="#statistics_fee">费用分析</a></li>
-                                    <li><a href="###">评价能耗</a></li>
+                                    <!--<li><a href="###">评价能耗</a></li>-->
                                 </ul>
                             </li>
                             <li>
@@ -100,9 +109,9 @@
                                     节能管理
                                     <span class="fa fa-chevron-down"></span>
                                 </a>
-                                <ul>
-                                    <li><a href="###">###</a></li>
-                                </ul>
+                                <!--<ul>-->
+                                    <!--<li><a href="###">###</a></li>-->
+                                <!--</ul>-->
                             </li>
                             <li>
                                 <a>
@@ -161,140 +170,31 @@
                         <li class="">
                             <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
                                aria-expanded="false">
-                                <img src="images/img.jpg" alt="">
-                                John Doe
-                                <span class=" fa fa-angle-down">
-										</span>
+                                <img ng-src="{{datas.user.photo_url}}" ng-alt="datas.user.name">
+                                <span ng-bind="datas.user.name" class="ng-binding"></span>
+                                <span class=" fa fa-angle-down"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">
                                 <li>
-                                    <a href="javascript:;">
-                                        Profile
+                                    <a ng-click="gotoProfile();">
+                                        个人中心
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="javascript:;">
-												<span class="badge bg-red pull-right">
-													50%
-												</span>
-                                        <span>
-													Settings
-												</span>
+                                    <a ng-click="gotoHelp();">
+                                        帮助中心
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="javascript:;">
-                                        Help
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="login.html">
+                                    <a ng-click="doLogout();">
                                         <i class="fa fa-sign-out pull-right">
                                         </i>
-                                        Log Out
+                                        退出登录
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        <li role="presentation" class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
-                               aria-expanded="false">
-                                <i class="fa fa-envelope-o">
-                                </i>
-                                <span class="badge bg-green">
-											6
-										</span>
-                            </a>
-                            <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
-                                <li>
-                                    <a>
-												<span class="image">
-													<img src="images/img.jpg" alt="Profile Image" />
-												</span>
-                                        <span>
-													<span>
-														John Smith
-													</span>
-													<span class="time">
-														3 mins ago
-													</span>
-												</span>
-                                        <span class="message">
-													Film festivals used to be do-or-die moments for movie makers. They were
-													where...
-												</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-												<span class="image">
-													<img src="images/img.jpg" alt="Profile Image" />
-												</span>
-                                        <span>
-													<span>
-														John Smith
-													</span>
-													<span class="time">
-														3 mins ago
-													</span>
-												</span>
-                                        <span class="message">
-													Film festivals used to be do-or-die moments for movie makers. They were
-													where...
-												</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-												<span class="image">
-													<img src="images/img.jpg" alt="Profile Image" />
-												</span>
-                                        <span>
-													<span>
-														John Smith
-													</span>
-													<span class="time">
-														3 mins ago
-													</span>
-												</span>
-                                        <span class="message">
-													Film festivals used to be do-or-die moments for movie makers. They were
-													where...
-												</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-												<span class="image">
-													<img src="images/img.jpg" alt="Profile Image" />
-												</span>
-                                        <span>
-													<span>
-														John Smith
-													</span>
-													<span class="time">
-														3 mins ago
-													</span>
-												</span>
-                                        <span class="message">
-													Film festivals used to be do-or-die moments for movie makers. They were
-													where...
-												</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="text-center">
-                                        <a>
-                                            <strong>
-                                                See All Alerts
-                                            </strong>
-                                            <i class="fa fa-angle-right">
-                                            </i>
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
+
                     </ul>
                 </nav>
             </div>
@@ -321,6 +221,7 @@
 <script src="./js/daterangepicker.js"></script>
 <!-- bootstrap datepicker -->
 <script src="./js/bootstrap-datepicker.min.js"></script>
+<script src="./js/bootstrap-datepicker.zh-CN.min.js"></script>
 
 <script src="https://webapi.amap.com/maps?v=1.4.10&key=9ab87268e7b0963b097a9c6c7ddd06d9"></script>
 
@@ -338,11 +239,18 @@
 <script src="pages/dashboard.js?v4"></script>
 <script src="pages/monitor.js?v4"></script>
 <script src="pages/monitor_energy.js?v4"></script>
-<script src="pages/monitor_electricity_by_group.js?v4"></script>
+<script src="pages/monitor_energy_by_group.js?v4"></script>
+<script src="pages/statistics.js?v4"></script>
+<script src="pages/statistics_fee.js?v4"></script>
+<script src="pages/warning.js?v4"></script>
+
 
 <!-- <script src="js/LuTree.js"></script> -->
 <script src="pages/settings_group.js?v4"></script>
 <script src="pages/settings_item.js?v4"></script>
 <script src="pages/settings_base.js?v4"></script>
+
+<script src="pages/profile.js?v4"></script>
+<script src="pages/help.js?v4"></script>
 </body>
 </html>

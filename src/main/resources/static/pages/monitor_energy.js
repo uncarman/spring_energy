@@ -4,42 +4,35 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
         global.on_loaded_func($scope);    // 显示页面内容
     });
 
+    // 最后执行
+    setTimeout(function(){
+        // 初始化日期控件
+        $($scope.datas.datePickerDom).datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            language: "zh-CN",
+            format: "yyyy-mm-dd"
+        });
+        $scope.$apply(function () {
+            $scope.datas.chartType = $scope.datas.chartTypes[1];
+            $scope.datas.chartCompare = $scope.datas.chartCompares[0];
+        });
+        $scope.getDatas();
+    }, 0);
+
     $scope.datas = {
 
         buildingId: global.read_storage("session", "building")["id"],
 
         type: $stateParams.type,  // 表类型
+        typeName: settings.types[$stateParams.type],
 
         fmt: "YYYY-MM-DD",
-        datePickerDom: "#reservation",
+        datePickerDom: ".datePicker",
         fromDate: moment().add(-15, 'day').format("YYYY-MM-DD"),
         toDate: moment().format("YYYY-MM-DD"),
 
-        fromDate: "2019-01-15",
-        toDate: "2019-01-25",
-
-        chartTypes: [
-            {
-                val: "hour",
-                name: "按小时",
-                "fmt" : "D-H",
-            },
-            {
-                val: "day",
-                name: "按日",
-                "fmt" : "Y-M-D",
-            },
-            {
-                val: "month",
-                name: "按月",
-                "fmt" : "Y-M",
-            },
-            {
-                val: "year",
-                name: "按年",
-                "fmt" : "Y",
-            }
-        ],
+        chartTypes: settings.defaultDateTypes,
         chartCompares: [
 //                        {
 //                            val: 2018,
@@ -55,57 +48,20 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
             tableData: {},
         },
 
-        option: {
-            color: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
-            tooltip : {
-                trigger: 'axis'
-            },
-            legend: {
-                data:[],
-                y: "10px",
-            },
-            grid: {
-                top: "0",
-                left: "0",
-                right: "0",
-                bottom: "0",
-            },
-            calculable : true,
-            xAxis : [
-                {
-                    type : 'category',
-                    data : []
-                }
-            ],
-            yAxis : [
-                {
-                    type : 'value'
-                }
-            ],
-            series : [
-                // {
-                //   name:'用电量',
-                //   type:'bar',
-                //   data:[]
-                // }
-            ]
-        },
+        lineOpt: settings.defaultLineOpt,
     };
 
     // 生成对比年份
-    for(var i = 5; i > 0; i--) {
+    for(var i = 1; i < 6; i++) {
         var year = moment().add(-i, 'year').format("YYYY");
         $scope.datas.chartCompares.push({
             val: year,
-            name: year+"年同比数据",
+            name: year,
         })
     }
-    $scope.datas.chartType = $scope.datas.chartTypes[0];
-    $scope.datas.chartCompare = $scope.datas.chartCompares[0];
 
-    // 获取数据
-    $scope.getDatas = function(){
-        // 获取汇总数据
+    // 获取汇总数据
+    $scope.getBuildingSummaryTotalDataByType = function () {
         var param = {
             _method: 'post',
             _url: settings.ajax_func.getBuildingSummaryTotalDataByType,
@@ -119,16 +75,24 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
                 $scope.datas.result.summaryDatas = res.data;
             });
         });
+    };
 
-        // 获取图表数据
+    // 获取图表数据
+    $scope.getEnergyChartDataByType = function () {
+        var to = $scope.datas.toDate
+        if($scope.datas.chartType.val == "hour") {
+            to = $scope.datas.toDate + " 24";
+        } else {
+            to = moment($scope.datas.toDate).format($scope.datas.chartType.paramFmt);
+        }
         var param = {
             _method: 'post',
             _url: settings.ajax_func.getEnergyChartDataByType,
             _param: {
                 buildingId: $scope.datas.buildingId,
-                from: $scope.datas.fromDate,
-                to: $scope.datas.toDate,
-                type: $scope.datas.type,
+                from: moment($scope.datas.fromDate).format($scope.datas.chartType.paramFmt), // $scope.datas.fromDate,
+                to: to,   // $scope.datas.toDate,
+                type: $scope.datas.chartType.val,
                 energyType: $scope.datas.type,
             }
         };
@@ -138,16 +102,25 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
                 summaryChartDraw($scope.datas);
             });
         });
+    };
 
-        // 获取table数据
+    // 获取table数据
+    $scope.getEnergyTableDataByType = function () {
+        var to = $scope.datas.toDate
+        if($scope.datas.chartType.val == "hour") {
+            to = $scope.datas.toDate + " 24";
+        } else {
+            to = moment($scope.datas.toDate).format($scope.datas.chartType.paramFmt);
+        }
         var param = {
             _method: 'post',
             _url: settings.ajax_func.getEnergyTableDataByType,
             _param: {
                 buildingId: $scope.datas.buildingId,
-                from: $scope.datas.fromDate,
-                to: $scope.datas.toDate,
-                type: $scope.datas.type,
+                from: moment($scope.datas.fromDate).format($scope.datas.chartType.paramFmt), // $scope.datas.fromDate,
+                to: to,   // $scope.datas.toDate,
+                type: $scope.datas.chartType.val,
+                energyType: $scope.datas.type,
             }
         };
         global.ajax_data($scope, param, function (res) {
@@ -158,62 +131,35 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
         });
     };
 
-    $scope.getDatas();
+    // 获取数据
+    $scope.getDatas = function(){
+        $scope.getBuildingSummaryTotalDataByType();
+        $scope.getEnergyChartDataByType();
+        $scope.getEnergyTableDataByType();
+    };
 
-    // $scope.datas.result = monitorSummary.result;
-    // $scope.datas.result.chartDatas.ammeter.datas = [];
-    // $scope.datas.result.chartDatas.watermeter.datas = [];
-    // $scope.datas.result.chartDatas.gasmeter.datas = [];
-    // $scope.datas.result.chartDatas.vapormeter.datas = [];
-    // $scope.datas.result.dailyList.data = [];
-    // //  根据日期生成随机数据
-    // var normalAmmeterDaily = 5000;
-    // var xlen = Math.ceil(moment(moment($scope.datas.toDate).format($scope.datas.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.fmt), 'days', true));
-    // for(var i=0; i<=xlen; i++) {
-    //     var d = moment($scope.datas.fromDate).add('days', i).format($scope.datas.fmt);
-    //     var ad = (normalAmmeterDaily * Math.random()).toFixed(2);
-    //     var wd = (normalAmmeterDaily / 10 * Math.random()).toFixed(2);
-    //     var gd = (normalAmmeterDaily / 30 * Math.random()).toFixed(2);
-    //     var vd = (normalAmmeterDaily / 100 * Math.random()).toFixed(2);
-    //     $scope.datas.result.chartDatas.ammeter.datas.push({
-    //         "val": ad,
-    //         "key": d
-    //     });
-    //     $scope.datas.result.chartDatas.watermeter.datas.push({
-    //         "val": wd,
-    //         "key": d
-    //     });
-    //     $scope.datas.result.chartDatas.gasmeter.datas.push({
-    //         "val": gd,
-    //         "key": d
-    //     });
-    //     $scope.datas.result.chartDatas.vapormeter.datas.push({
-    //         "val": vd,
-    //         "key": d
-    //     });
-    //     $scope.datas.result.dailyList.data.unshift([d, ad, (ad/10000).toFixed(4), wd, (wd/10000).toFixed(4), gd, (gd/10000).toFixed(4), vd, (vd/10000).toFixed(4)]);
-    // }
-
-    //Date range picker
-    $($scope.datas.datePickerDom).daterangepicker({
-        startDate: moment($scope.datas.fromDate),
-        endDate: moment($scope.datas.toDate),
-        locale: {
-            format: $scope.datas.fmt
-        },
-    });
+    $scope.changeType = function (ind) {
+        console.log(ind);
+    };
 
     // 画图表
     $scope.summaryChart = echarts.init(document.getElementById("summaryChart"));
-    summaryChartDraw($scope.datas);
 
     function summaryChartDraw(data) {
-        var opt = angular.copy($scope.datas.option);
+        var opt = angular.copy($scope.datas.lineOpt);
+        var curFmt = $scope.datas.chartType.fmt;
+
+        var to = $scope.datas.toDate
+        if($scope.datas.chartType.val == "hour") {
+            to = $scope.datas.toDate + " 24";
+        } else {
+            to = moment($scope.datas.toDate).format($scope.datas.chartType.paramFmt);
+        }
 
         // 生成x轴内容
-        var xlen = Math.ceil(moment(moment($scope.datas.toDate).format($scope.datas.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.fmt), 'days', true));
+        var xlen = Math.ceil(moment(moment(to).format($scope.datas.chartType.fmt)).diff(moment($scope.datas.fromDate).format($scope.datas.chartType.fmt), $scope.datas.chartType.val+'s', true));
         for(var i=0; i<=xlen; i++) {
-            opt.xAxis[0].data.push(moment($scope.datas.fromDate).add('days', i).format($scope.datas.fmt));
+            opt.xAxis[0].data.push(moment($scope.datas.fromDate).add($scope.datas.chartType.val+'s', i).format($scope.datas.chartType.fmt));
         }
 
         for(var o in data.result.chartDatas) {
@@ -223,11 +169,12 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
             }
             var d = data.result.chartDatas[o];
             opt.legend.data.push(d.name);
-
-            d.datas.map(function (k) {
-                var ind = opt.xAxis[0].data.indexOf(moment(k.key).format($scope.datas.fmt));
-                sd[ind] = parseFloat(k.val).toFixed(4);
-            });
+            if(d.datas) {
+                d.datas.map(function (k) {
+                    var ind = opt.xAxis[0].data.indexOf(moment(k[d.key]).format($scope.datas.chartType.fmt));
+                    sd[ind] = parseFloat(k[d.val]).toFixed(4);
+                });
+            }
 
             var tempSeries = {
                 name: d.name,
@@ -242,4 +189,8 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
         $scope.summaryChart.resize();
     };
 
+    // 点击按刷新页面
+    $scope.refreshDatas = function () {
+        $scope.getDatas();
+    }
 });

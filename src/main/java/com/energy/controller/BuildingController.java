@@ -1,12 +1,15 @@
 package com.energy.controller;
 
+import com.energy.entity.BasicData;
 import com.energy.entity.Building;
+import com.energy.entity.Item;
 import com.energy.entity.ItemGroup;
 import com.energy.mapper.MeterMapper;
 import com.energy.service.BuildingService;
 import com.energy.service.MeterService;
 import com.energy.utils.Constant;
 import com.energy.utils.Response;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -75,6 +78,51 @@ public class BuildingController {
             res.makeFailed(ex);
         }
         return res;
+    }
+
+    // 05.1.  某建筑下的 所有【设备分组】
+    @RequestMapping("/getItemGroups")
+    @ResponseBody
+    public Object getItemGroups(@RequestParam("buildingId") Integer buildingId,
+                                     HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            List<Map> list = buildingService.getItemGroups(buildingId);
+            res.makeSuccess(list);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 05.2.  某建筑下的 所有【设备】
+    @RequestMapping("/getBuildingItems")
+    @ResponseBody
+    public Object getBuildingItems(@RequestParam("buildingId") Integer buildingId,
+                                     HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            List<Map> list = buildingService.getBuildingItems(buildingId);
+            res.makeSuccess(list);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 05.3.  某 [设备分组] 下的 所有【设备】
+    @RequestMapping("/getItemsByGroupId")
+    @ResponseBody
+    public Object getItemsByGroupId(@RequestParam("groupId") Integer groupId,
+                                   HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            List<Map> list = buildingService.getItemsByGroupId(groupId);
+            res.makeSuccess(list);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     // 06.  某建筑下的 所有【设备分组】 eg：能耗分项
@@ -173,9 +221,9 @@ public class BuildingController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @RequestMapping("/deleteItemGroup")
+    @RequestMapping("/removeItemGroup")
     @ResponseBody
-    public Object deleteItemGroup(@RequestParam("id") Integer id) {
+    public Object removeItemGroup(@RequestParam("id") Integer id) {
         Response res = new Response();
         try {
             ItemGroup group = buildingService.getItemGroupById(id);
@@ -186,6 +234,215 @@ public class BuildingController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    // 更新 [设备分组] 绑定的 [设备]
+    @RequestMapping("/updateGroupItem")
+    @ResponseBody
+    public Object updateGroupItem(@RequestParam("groupId") Integer groupId,
+                                  @RequestParam("itemIds") String itemIds) {
+        Response res = new Response();
+        try {
+            ItemGroup group = buildingService.getItemGroupById(groupId);
+            if(null != group) {
+                List<String> itemList = Arrays.asList(itemIds.split(","));
+                buildingService.updateItemsGroupItems(groupId, itemList);
+            }
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/createItem")
+    @ResponseBody
+    public Object createItem(HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            Item item = new Item();
+            if(null != request.getParameter("collectorId")) {
+                item.setCollectorId(Integer.valueOf(request.getParameter("collectorId").toString()));
+            }
+            if(null != request.getParameter("itemType")) {
+                item.setItemType(Integer.valueOf(request.getParameter("itemType").toString()));
+            }
+            if(null != request.getParameter("code")) {
+                item.setCode(request.getParameter("code"));
+            }
+            if(null != request.getParameter("name")) {
+                item.setName(request.getParameter("name"));
+            }
+            if(null != request.getParameter("description")) {
+                item.setDescription(request.getParameter("description"));
+            }
+            if(null != request.getParameter("dataType")) {
+                item.setDataType(Integer.valueOf(request.getParameter("dataType").toString()));
+            }
+            if(null != request.getParameter("dataUnit")) {
+                item.setDataUnit(request.getParameter("dataUnit"));
+            }
+            if(null != request.getParameter("coefficient")) {
+                item.setCoefficient(Double.valueOf(request.getParameter("coefficient").toString()));
+            }
+            if(null != request.getParameter("maxValue")) {
+                item.setMaxValue(Integer.valueOf(request.getParameter("maxValue").toString()));
+            }
+            buildingService.createItem(item);
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/updateItem")
+    @ResponseBody
+    public Object updateItem(@RequestParam("id") Integer id,
+                             HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            Item item = buildingService.getItemById(id);
+            if(null != item) {
+                if(null != request.getParameter("collectorId")) {
+                    item.setCollectorId(Integer.valueOf(request.getParameter("collectorId").toString()));
+                }
+                if(null != request.getParameter("itemType")) {
+                    item.setItemType(Integer.valueOf(request.getParameter("itemType").toString()));
+                }
+                if(null != request.getParameter("code")) {
+                    item.setCode(request.getParameter("code"));
+                }
+                if(null != request.getParameter("name")) {
+                    item.setName(request.getParameter("name"));
+                }
+                if(null != request.getParameter("description")) {
+                    item.setDescription(request.getParameter("description"));
+                }
+                if(null != request.getParameter("dataType")) {
+                    item.setDataType(Integer.valueOf(request.getParameter("dataType").toString()));
+                }
+                if(null != request.getParameter("dataUnit")) {
+                    item.setDataUnit(request.getParameter("dataUnit"));
+                }
+                if(null != request.getParameter("coefficient")) {
+                    item.setCoefficient(Double.valueOf(request.getParameter("coefficient").toString()));
+                }
+                if(null != request.getParameter("maxValue")) {
+                    item.setMaxValue(Integer.valueOf(request.getParameter("maxValue").toString()));
+                }
+                buildingService.updateItem(item);
+            }
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/removeItem")
+    @ResponseBody
+    public Object removeItem(@RequestParam("id") Integer id,
+                             HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            buildingService.removeItem(id);
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+
+    @RequestMapping("/getBasicDatas")
+    @ResponseBody
+    public Object getBasicDatas(HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            List<Map> list = buildingService.getBasicDatas();
+            res.makeSuccess(list);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/createBasicData")
+    @ResponseBody
+    public Object createBasicData(HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            BasicData basicData = new BasicData();
+            if(null != request.getParameter("type")) {
+                basicData.setType(Integer.valueOf(request.getParameter("type").toString()));
+            }
+            if(null != request.getParameter("name")) {
+                basicData.setName(request.getParameter("name"));
+            }
+            if(null != request.getParameter("basicCode")) {
+                basicData.setBasicCode(request.getParameter("basicCode"));
+            }
+            if(null != request.getParameter("basicName")) {
+                basicData.setBasicName(request.getParameter("basicName"));
+            }
+            if(null != request.getParameter("note")) {
+                basicData.setNote(request.getParameter("note"));
+            }
+            buildingService.createBasicData(basicData);
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/updateBasicData")
+    @ResponseBody
+    public Object updateBasicData(@RequestParam("id") Integer id,
+                             HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            BasicData basicData = buildingService.getBasicDataById(id);
+            if(null != basicData) {
+                if(null != request.getParameter("type")) {
+                    basicData.setType(Integer.valueOf(request.getParameter("type").toString()));
+                }
+                if(null != request.getParameter("name")) {
+                    basicData.setName(request.getParameter("name"));
+                }
+                if(null != request.getParameter("basicCode")) {
+                    basicData.setBasicCode(request.getParameter("basicCode"));
+                }
+                if(null != request.getParameter("basicName")) {
+                    basicData.setBasicName(request.getParameter("basicName"));
+                }
+                if(null != request.getParameter("note")) {
+                    basicData.setNote(request.getParameter("note"));
+                }
+                buildingService.updateBasicData(basicData);
+            }
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/removeBasicData")
+    @ResponseBody
+    public Object removeBasicData(@RequestParam("id") Integer id,
+                             HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            buildingService.removeBasicData(id);
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+
 
     // 04. 所有【能耗分项】已安装的 零级分类对应的设备ids
     @RequestMapping("/getBuildingItemTypes")
@@ -249,12 +506,25 @@ public class BuildingController {
             String dateStart = "2000-01-01";
             String dateEnd = "3000-01-01";
 
+            // 拿到本月的第一天和最后一天
+            time.set(Calendar.DAY_OF_MONTH, 1);
+            String curMonthStart = formatter.format(time.getTime());
+            time.set(Calendar.DAY_OF_MONTH, time.getActualMaximum(Calendar.DAY_OF_MONTH));
+            String curMonthEnd = formatter.format(time.getTime());
+
+            // 拿到本年的第一天和最后一天
+            time.set(Calendar.DAY_OF_YEAR, 1);
+            String curYearStart = formatter.format(time.getTime());
+            time.set(Calendar.DAY_OF_YEAR, time.getActualMaximum(Calendar.DAY_OF_YEAR));
+            String curYearEnd = formatter.format(time.getTime());
+
             // 拿到前一个月的第一天和最后一天
             time.add(Calendar.MONTH, -1);
             time.set(Calendar.DAY_OF_MONTH, 1);
             String lastMonthStart = formatter.format(time.getTime());
             time.set(Calendar.DAY_OF_MONTH, time.getActualMaximum(Calendar.DAY_OF_MONTH));
             String lastMonthEnd = formatter.format(time.getTime());
+
             // 拿到前一年的第一天和最后一天
             time.add(Calendar.MONTH, 1);
             time.add(Calendar.YEAR, -1);
@@ -285,15 +555,20 @@ public class BuildingController {
                 String curItemIds = groupItems.get(curTypeShort)+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
+                float sumItemCurMonth = buildingService.getItemsSummaryVal(curItemIdList, curMonthStart, curMonthEnd);
+                float sumItemCurYear = buildingService.getItemsSummaryVal(curItemIdList, curYearStart, curYearEnd);
                 float sumItemLastMonth = buildingService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
                 float sumItemLastYear = buildingService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
                 Map map = baseMap.get(curType);
 
                 Map itemMap = new HashMap();
+                itemMap.put("type" , curType);
                 itemMap.put("name" , "总"+(String)map.get("name"));
                 itemMap.put("unit" , map.get("unit"));
                 itemMap.put("rate" , map.get("rate"));
                 itemMap.put("total", sumItemTotal);
+                itemMap.put("curMonth" , sumItemCurMonth);
+                itemMap.put("curYear" , sumItemCurYear);
                 itemMap.put("lastMonth" , sumItemLastMonth);
                 itemMap.put("lastYear" , sumItemLastYear);
 
@@ -387,15 +662,48 @@ public class BuildingController {
             List<List<String>> dataList = new ArrayList<>();
 
             // 先生成第一列时间数据
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter = null;
+            if(type.equals(Constant.BY_HOUR)) {
+                formatter = new SimpleDateFormat("yyyy-MM-dd HH");
+            } else if(type.equals(Constant.BY_MONTH)) {
+                formatter = new SimpleDateFormat("yyyy-MM");
+            } else if(type.equals(Constant.BY_YEAR)) {
+                formatter = new SimpleDateFormat("yyyy");
+            } else {
+                formatter = new SimpleDateFormat("yyyy-MM-dd");
+            }
             Calendar time = Calendar.getInstance();
             Date fromDate = formatter.parse(from);
             Date toDate = formatter.parse(to);
-            int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000*3600*24));
 
-            for(int i=0; i<=days; i++) {
+            Calendar cf = Calendar.getInstance();
+            Calendar ct = Calendar.getInstance();
+            cf.setTime(fromDate);
+            ct.setTime(toDate);
+
+            int xlen = 0;
+
+            if(type.equals(Constant.BY_HOUR)) {
+                xlen = (int) ((ct.getTime().getTime() - cf.getTime().getTime()) / (1000*3600));
+            } else if(type.equals(Constant.BY_MONTH)) {
+                xlen = ct.get(Calendar.MONTH) - cf.get(Calendar.MONTH) + 12 * (ct.get(Calendar.YEAR) - cf.get(Calendar.YEAR));
+            } else if(type.equals(Constant.BY_YEAR)) {
+                xlen = ct.get(Calendar.YEAR) - cf.get(Calendar.YEAR);
+            } else {
+                xlen = (int) ((ct.getTime().getTime() - cf.getTime().getTime()) / (1000*3600*24));
+            }
+
+            for(int i=0; i<=xlen; i++) {
                 time.setTime(fromDate);
-                time.add(Calendar.DATE, i);
+                if(type.equals(Constant.BY_HOUR)) {
+                    time.add(Calendar.HOUR, i);
+                } else if(type.equals(Constant.BY_MONTH)) {
+                    time.add(Calendar.MONTH, i);
+                } else if(type.equals(Constant.BY_YEAR)) {
+                    time.add(Calendar.YEAR, i);
+                } else {
+                    time.add(Calendar.DATE, i);
+                }
                 String date = formatter.format(time.getTime());
                 List<String> row = new ArrayList<String>();;
                 row.add(date);
@@ -573,9 +881,6 @@ public class BuildingController {
     }
 
 
-    // 11. 某个分组下的所有设备
-
-
     // 10. 某建筑【某种表】子集 按【时/日/月/年】数据
     // 无 parent  -> 对应能耗分项汇总数据 -> 可根据传入的时间拿到同比数据
     // 有 parent  -> 对应能耗分项中某个分项的子项
@@ -603,12 +908,13 @@ public class BuildingController {
                 // 当前时间区间数据
                 Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
                 String curType = energyType;
-                String curTypeShort = Integer.valueOf(curType).toString();
-                String curItemIds = groupItems.get(curTypeShort)+"";
+                Map curTypeGroupParent = buildingService.getItemGroupIdByEnergyType(buildingId, energyType, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroupParent ? Integer.valueOf(curTypeGroupParent.get("id").toString()) : -1;
+                String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curGroupId));
 
                 Map curMap = new HashMap();
                 curMap.put("datas", curList);
@@ -622,14 +928,16 @@ public class BuildingController {
                 chartMap.put(curType, curMap);
 
             } else {
+                Map curBaseMap = baseMap.get(energyType);
                 Integer parentId = Integer.valueOf(parent);
                 ItemGroup group = buildingService.getItemGroupById(parentId);
                 // 子集类汇总
                 List<Map> groupChilds = buildingService.getItemGroupChildsById(parentId);
-                Map curBaseMap = baseMap.get(energyType);
-                for(int i=0; i<groupChilds.size(); i++) {
-                    Map curGroup = groupChilds.get(i);
-                    List<Map> items = buildingService.getItemsByGroupId(Integer.valueOf(curGroup.get("id").toString()));
+
+                // 是否包含子类
+                if(null == groupChilds || groupChilds.size() <= 0) {
+                    // 无子类, 拿到当前类的汇总数据
+                    List<Map> items = buildingService.getItemsByGroupId(group.getId());
                     List<String> curItemIdList = new ArrayList<>();
                     for(int j=0; j<items.size(); j++) {
                         Map curItem = items.get(j);
@@ -637,23 +945,56 @@ public class BuildingController {
                             curItemIdList.add(curItem.get("id").toString());
                         }
                     }
+
                     List<Map> curList = new ArrayList<>();
                     if(curItemIdList.size() > 0) {
                         curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                     }
-
-                    Integer area = null != curGroup.get("area") ? Integer.valueOf(curGroup.get("area").toString()) : group.getArea();
+                    Integer area = !"".equals(group.getArea()) ? group.getArea() : group.getArea();
 
                     Map curMap = new HashMap();
                     curMap.put("datas", curList);
                     curMap.put("key", "recorded_at");
                     curMap.put("val", "total_val");
-                    curMap.put("name", curGroup.get("name"));
+                    curMap.put("name", group.getName());
                     curMap.put("prop_area", area);
                     curMap.put("area", area);
                     curMap.put("fee_policy", curBaseMap.get("rate"));
 
-                    chartMap.put(curGroup.get("id"), curMap);
+                    chartMap.put(group.getId(), curMap);
+
+                } else {
+                    // 有子类
+                    for(int i=0; i<groupChilds.size(); i++) {
+                        Map curGroup = groupChilds.get(i);
+                        List<Map> items = buildingService.getItemsByGroupId(Integer.valueOf(curGroup.get("id").toString()));
+                        List<String> curItemIdList = new ArrayList<>();
+                        if(null != items) {
+                            for(int j=0; j<items.size(); j++) {
+                                Map curItem = items.get(j);
+                                if(null != curItem) {
+                                    curItemIdList.add(curItem.get("id").toString());
+                                }
+                            }
+                        }
+                        List<Map> curList = new ArrayList<>();
+                        if(curItemIdList.size() > 0) {
+                            curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
+                        }
+
+                        Integer area = !"".equals(curGroup.get("area")) ? Integer.valueOf(curGroup.get("area").toString()) : group.getArea();
+
+                        Map curMap = new HashMap();
+                        curMap.put("datas", curList);
+                        curMap.put("key", "recorded_at");
+                        curMap.put("val", "total_val");
+                        curMap.put("name", curGroup.get("name"));
+                        curMap.put("prop_area", area);
+                        curMap.put("area", area);
+                        curMap.put("fee_policy", curBaseMap.get("rate"));
+
+                        chartMap.put(curGroup.get("id"), curMap);
+                    }
                 }
             }
 
@@ -694,27 +1035,61 @@ public class BuildingController {
                 // 当前时间区间数据
                 Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
                 String curType = energyType;
-                String curTypeShort = Integer.valueOf(curType).toString();
-                String curItemIds = groupItems.get(curTypeShort)+"";
+                Map curTypeGroupParent = buildingService.getItemGroupIdByEnergyType(buildingId, energyType, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroupParent ? Integer.valueOf(curTypeGroupParent.get("id").toString()) : -1;
+                String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curTypeShort));
+                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curGroupId));
 
                 // 表头
                 List<String> titleList = new ArrayList<>();
                 titleList.add("日期");
 
                 // 先生成第一列时间数据
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat formatter = null;
+                if(type.equals(Constant.BY_HOUR)) {
+                    formatter = new SimpleDateFormat("yyyy-MM-dd HH");
+                } else if(type.equals(Constant.BY_MONTH)) {
+                    formatter = new SimpleDateFormat("yyyy-MM");
+                } else if(type.equals(Constant.BY_YEAR)) {
+                    formatter = new SimpleDateFormat("yyyy");
+                } else {
+                    formatter = new SimpleDateFormat("yyyy-MM-dd");
+                }
                 Calendar time = Calendar.getInstance();
                 Date fromDate = formatter.parse(from);
                 Date toDate = formatter.parse(to);
-                int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000*3600*24));
 
-                for(int i=0; i<=days; i++) {
+                Calendar cf = Calendar.getInstance();
+                Calendar ct = Calendar.getInstance();
+                cf.setTime(fromDate);
+                ct.setTime(toDate);
+
+                int xlen = 0;
+
+                if(type.equals(Constant.BY_HOUR)) {
+                    xlen = (int) ((ct.getTime().getTime() - cf.getTime().getTime()) / (1000*3600));
+                } else if(type.equals(Constant.BY_MONTH)) {
+                    xlen = ct.get(Calendar.MONTH) - cf.get(Calendar.MONTH) + 12 * (ct.get(Calendar.YEAR) - cf.get(Calendar.YEAR));
+                } else if(type.equals(Constant.BY_YEAR)) {
+                    xlen = ct.get(Calendar.YEAR) - cf.get(Calendar.YEAR);
+                } else {
+                    xlen = (int) ((ct.getTime().getTime() - cf.getTime().getTime()) / (1000*3600*24));
+                }
+
+                for(int i=0; i<=xlen; i++) {
                     time.setTime(fromDate);
-                    time.add(Calendar.DATE, i);
+                    if(type.equals(Constant.BY_HOUR)) {
+                        time.add(Calendar.HOUR, i);
+                    } else if(type.equals(Constant.BY_MONTH)) {
+                        time.add(Calendar.MONTH, i);
+                    } else if(type.equals(Constant.BY_YEAR)) {
+                        time.add(Calendar.YEAR, i);
+                    } else {
+                        time.add(Calendar.DATE, i);
+                    }
                     String date = formatter.format(time.getTime());
                     List<String> row = new ArrayList<String>();;
                     row.add(date);
@@ -762,31 +1137,33 @@ public class BuildingController {
                 List<Map> groupChilds = buildingService.getItemGroupChildsById(parentId);
                 Map curBaseMap = baseMap.get(energyType);
 
-                // 表头
-                List<String> titleList = new ArrayList<>();
-                titleList.add("日期");
 
-                // 先生成第一列时间数据
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar time = Calendar.getInstance();
-                Date fromDate = formatter.parse(from);
-                Date toDate = formatter.parse(to);
-                int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000*3600*24));
+                // 是否包含子类
+                if(null == groupChilds || groupChilds.size() <= 0) {
+                    // 无子类, 拿到当前类的汇总数据
+                    List<String> titleList = new ArrayList<>();
+                    titleList.add("日期");
 
-                for(int j=0; j<=days; j++) {
-                    time.setTime(fromDate);
-                    time.add(Calendar.DATE, j);
-                    String date = formatter.format(time.getTime());
-                    List<String> row = new ArrayList<String>();;
-                    row.add(date);
-                    dataList.add(row);
-                }
+                    // 先生成第一列时间数据
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Calendar time = Calendar.getInstance();
+                    Date fromDate = formatter.parse(from);
+                    Date toDate = formatter.parse(to);
+                    int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000 * 3600 * 24));
 
-                DecimalFormat df2 = new DecimalFormat("###.0000");
+                    for (int j = 0; j <= days; j++) {
+                        time.setTime(fromDate);
+                        time.add(Calendar.DATE, j);
+                        String date = formatter.format(time.getTime());
+                        List<String> row = new ArrayList<String>();
+                        ;
+                        row.add(date);
+                        dataList.add(row);
+                    }
 
-                for(int i=0; i<groupChilds.size(); i++) {
-                    Map curGroup = groupChilds.get(i);
-                    List<Map> items = buildingService.getItemsByGroupId(Integer.valueOf(curGroup.get("id").toString()));
+                    DecimalFormat df2 = new DecimalFormat("###.0000");
+
+                    List<Map> items = buildingService.getItemsByGroupId(group.getId());
                     List<String> curItemIdList = new ArrayList<>();
                     for(int j=0; j<items.size(); j++) {
                         Map curItem = items.get(j);
@@ -794,48 +1171,137 @@ public class BuildingController {
                             curItemIdList.add(curItem.get("id").toString());
                         }
                     }
+
                     List<Map> curList = new ArrayList<>();
                     if(curItemIdList.size() > 0) {
                         curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                     }
-                    Integer area = null != curGroup.get("area") ? Integer.valueOf(curGroup.get("area").toString()) : group.getArea();
+                    Integer area = !"".equals(group.getArea()) ? group.getArea() : group.getArea();
+                    titleList.add((String) group.getName());
+                    titleList.add((String) group.getName()+"密度");
 
-                    titleList.add((String)curGroup.get("name"));
-                    titleList.add((String)curGroup.get("name")+"密度");
-                    titleList.add((String)curGroup.get("name")+"费用");
-                    String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : null ;
-
-                    for(int k = 0; k < dataList.size(); k++) {
+                    for (int k = 0; k < dataList.size(); k++) {
                         List line = dataList.get(k);
                         Boolean hasInsert = false;
-                        for(int j = 0; j < curList.size(); j++) {
+                        for (int j = 0; j < curList.size(); j++) {
                             Map row = curList.get(j);
-                            if(line.get(0).toString().equals(row.get("recorded_at"))) {
+                            if (line.get(0).toString().equals(row.get("recorded_at"))) {
                                 line.add(row.get("total_val"));
                                 float totalValAvg = Float.valueOf(row.get("total_val").toString()) / Float.valueOf(group.getArea());
                                 line.add(totalValAvg);
-                                if(null != rate) {
-                                    float fee = Float.valueOf(row.get("total_val").toString()) * Float.valueOf(rate);
-                                    line.add(fee);
-                                } else {
-                                    line.add(0);
-                                }
+//                                if(null != rate) {
+//                                    float fee = Float.valueOf(row.get("total_val").toString()) * Float.valueOf(rate);
+//                                    line.add(fee);
+//                                } else {
+//                                    line.add(0);
+//                                }
                                 hasInsert = true;
                                 break;
-                            };
+                            }
                         }
-                        if(!hasInsert) {
+                        if (!hasInsert) {
                             line.add("0");
                             line.add("0");
-                            line.add("0");
+//                                line.add("0");
                         }
                     }
-                }
+                    dataList.add(0, titleList);
 
-                dataList.add(0, titleList);
+                } else {
+                    // 有子类
+                    // 表头
+                    List<String> titleList = new ArrayList<>();
+                    titleList.add("日期");
+
+                    // 先生成第一列时间数据
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Calendar time = Calendar.getInstance();
+                    Date fromDate = formatter.parse(from);
+                    Date toDate = formatter.parse(to);
+                    int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000 * 3600 * 24));
+
+                    for (int j = 0; j <= days; j++) {
+                        time.setTime(fromDate);
+                        time.add(Calendar.DATE, j);
+                        String date = formatter.format(time.getTime());
+                        List<String> row = new ArrayList<String>();
+                        ;
+                        row.add(date);
+                        dataList.add(row);
+                    }
+
+                    DecimalFormat df2 = new DecimalFormat("###.0000");
+
+                    for (int i = 0; i < groupChilds.size(); i++) {
+                        Map curGroup = groupChilds.get(i);
+                        List<Map> items = buildingService.getItemsByGroupId(Integer.valueOf(curGroup.get("id").toString()));
+                        List<String> curItemIdList = new ArrayList<>();
+                        for (int j = 0; j < items.size(); j++) {
+                            Map curItem = items.get(j);
+                            if (null != curItem) {
+                                curItemIdList.add(curItem.get("id").toString());
+                            }
+                        }
+                        List<Map> curList = new ArrayList<>();
+                        if (curItemIdList.size() > 0) {
+                            curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
+                        }
+
+                        Integer area = !"".equals(curGroup.get("area")) ? Integer.valueOf(curGroup.get("area").toString()) : group.getArea();
+
+                        titleList.add((String) curGroup.get("name"));
+                        titleList.add((String)curGroup.get("name")+"密度");
+//                        titleList.add((String)curGroup.get("name")+"费用");
+                        String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : null;
+
+                        for (int k = 0; k < dataList.size(); k++) {
+                            List line = dataList.get(k);
+                            Boolean hasInsert = false;
+                            for (int j = 0; j < curList.size(); j++) {
+                                Map row = curList.get(j);
+                                if (line.get(0).toString().equals(row.get("recorded_at"))) {
+                                    line.add(row.get("total_val"));
+                                    float totalValAvg = Float.valueOf(row.get("total_val").toString()) / Float.valueOf(group.getArea());
+                                    line.add(totalValAvg);
+//                                    if(null != rate) {
+//                                        float fee = Float.valueOf(row.get("total_val").toString()) * Float.valueOf(rate);
+//                                        line.add(fee);
+//                                    } else {
+//                                        line.add(0);
+//                                    }
+                                    hasInsert = true;
+                                    break;
+                                }
+                                ;
+                            }
+                            if (!hasInsert) {
+                                line.add("0");
+                                line.add("0");
+//                                line.add("0");
+                            }
+                        }
+                    }
+
+                    dataList.add(0, titleList);
+                }
             }
 
             res.makeSuccess(dataList);
+
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+
+    @RequestMapping("/recordEnergyDatas")
+    @ResponseBody
+    public Object getEnergyTableDataByType(){
+        Response res = new Response();
+        try {
+            buildingService.recordEnergyDatas();
+            res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);
         }

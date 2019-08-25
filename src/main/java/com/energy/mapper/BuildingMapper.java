@@ -1,7 +1,6 @@
 package com.energy.mapper;
 
-import com.energy.entity.Building;
-import com.energy.entity.ItemGroup;
+import com.energy.entity.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -27,6 +26,8 @@ public interface BuildingMapper {
 
 
     // settings
+    public List<Map> getBuildingItems(@Param("buildingId")Integer buildingId);
+    public List<Map> getItemGroups(@Param("buildingId")Integer buildingId);
     public List<Map> getItemGroupByType(@Param("buildingId")Integer buildingId, @Param("type")String type,
                                         @Param("subType")String subType, @Param("parent")String parent);
     public ItemGroup getItemGroupById(Integer id);
@@ -35,6 +36,19 @@ public interface BuildingMapper {
     public void updateItemGroup(ItemGroup itemGroup);
     public void deleteItemGroup(Integer itemGroup);
 
+    public void deleteItemGroupMapper(@Param("groupId")Integer groupId);
+    public void insertItemGroupMapper(@Param("groupId")Integer groupId, @Param("itemIds")List<String> itemIds);
+
+    public Item getItemById(@Param("id")Integer id);
+    public void createItem(Item item);
+    public void updateItem(Item item);
+    public void deleteItem(@Param("id")Integer id);
+
+    public List<Map> getBasicDatas();
+    public BasicData getBasicDataById(@Param("id")Integer id);
+    public void createBasicData(BasicData basicData);
+    public void updateBasicData(BasicData basicData);
+    public void deleteBasicData(@Param("id")Integer id);
 
     public List<Map> getBuildingItemTypes(@Param("buildingId")Integer buildingId, @Param("type")String type);
 
@@ -49,6 +63,13 @@ public interface BuildingMapper {
 
     public List<Map> getItemTypeBaseInfo();
 
+
+    public List<ItemData> getItemData();
+    public void updateItemDatas(); // 模拟随机增加所有数据
+
+    public void recordEnergyDatas(@Param("energyDataList")List<EnergyData> energyDataList);
+
+    public List<EnergyData> getEnergyDataLatest();
 }
 
 

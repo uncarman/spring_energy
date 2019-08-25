@@ -43,17 +43,6 @@ var settings = {
         getList: "getList",
         profile: "profile",
 
-        "baseTableList": "/system/base/table_list", // table列表
-        "baseTableDetail": "/system/base/table_detail/{table_name}", // table列表
-
-
-        "ajaxGetSummary": "/ajax_get_building_total", //
-        "ajaxGetSummaryByDate": "/ajax_get_building_total_by_date", //
-        "ajaxGetMeters": "/ajax_get_meters", //
-        "ajaxGetMeterDatas": "/ajax_get_meter_datas", //
-
-
-
         // 可用apis
         "ajaxLogin": "ajax/login",
         "ajaxLogout": "ajax/logout",

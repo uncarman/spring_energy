@@ -1,19 +1,11 @@
-app.controller('monitor',function ($scope) {
+app.controller('statistics',function ($scope) {
 
-    $scope.$watch('$viewContentLoaded', function() {
+    $scope.$watch('$viewContentLoaded', function () {
         global.on_loaded_func($scope);    // 显示页面内容
     });
 
     // 最后执行
-    setTimeout(function(){
-        // 初始化日期控件
-        $($scope.datas.datePickerDom).datepicker({
-            autoclose: true,
-            todayHighlight: true,
-            language: "zh-CN",
-            format: "yyyy-mm-dd"
-        });
-
+    setTimeout(function () {
         $scope.getDatas();
     }, 0);
 
@@ -21,56 +13,38 @@ app.controller('monitor',function ($scope) {
         // 建筑id
         buildingId: global.read_storage("session", "building")["id"],
 
-        fmt: "YYYY-MM-DD",
+        fmt: "YYYY-MM",
         datePickerDom: "#reservation",
-        fromDate: moment().add(-15, 'day').format("YYYY-MM-DD"),
-        toDate: moment().format("YYYY-MM-DD"),
-        todayStr:moment().format("YYYY-MM-DD"),
-        type: "day", // 默认按天显示
+        fromDate: moment().add(-1, 'year').format("YYYY-MM"),
+        toDate: moment().format("YYYY-MM"),
+        todayStr: moment().format("YYYY-MM-DD"),
+        type: "month", // 默认按天显示
 
-        result:{
+        result: {
             summaryDatas: {},
             chartDatas: {},
             tableData: {},
         },
 
-        option: {
-            color: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
-            tooltip : {
-                trigger: 'axis'
-            },
-            legend: {
-                data:[],
-                y: "10px",
-            },
-            grid: {
-                top: "0",
-                left: "0",
-                right: "0",
-                bottom: "0",
-            },
-            calculable : true,
-            xAxis : [
-                {
-                    type : 'category',
-                    data : []
-                }
-            ],
-            yAxis : [
-                {
-                    type : 'value'
-                }
-            ],
-            series : [
-                // {
-                //   name:'用电量',
-                //   type:'bar',
-                //   data:[]
-                // }
-            ]
-        },
+        option: settings.defaultLineOpt,
 
     }
+
+    // 获取汇总数据
+    $scope.getBuildingSummaryTotalData = function () {
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getBuildingSummaryTotalData,
+            _param: {
+                buildingId: $scope.datas.buildingId
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            $scope.$apply(function () {
+                $scope.datas.result.summaryDatas = res.data;
+            });
+        });
+    };
 
     // 获取图表数据
     $scope.getBuildingChartDataByType = function () {
@@ -85,7 +59,7 @@ app.controller('monitor',function ($scope) {
             }
         };
         global.ajax_data($scope, param, function (res) {
-            $scope.$apply(function(){
+            $scope.$apply(function () {
                 $scope.datas.result.chartDatas = res.data;
                 summaryChartDraw($scope.datas);
             });
@@ -105,7 +79,7 @@ app.controller('monitor',function ($scope) {
             }
         };
         global.ajax_data($scope, param, function (res) {
-            $scope.$apply(function(){
+            $scope.$apply(function () {
                 $scope.datas.result.tableData.title = res.data[0];
                 $scope.datas.result.tableData.data = res.data.slice(1, res.data.length);
             });
@@ -113,22 +87,11 @@ app.controller('monitor',function ($scope) {
     };
 
     // 获取数据
-    $scope.getDatas = function(){
+    $scope.getDatas = function () {
+        $scope.getBuildingSummaryTotalData();
         $scope.getBuildingChartDataByType();
         $scope.getBuildingTableDataByType();
     };
-
-    //Date range picker
-    $($scope.datas.datePickerDom).daterangepicker({
-        startDate: moment($scope.datas.fromDate),
-        endDate: moment($scope.datas.toDate),
-        locale: {
-            format: $scope.datas.fmt
-        },
-    }).on('apply.daterangepicker', function(ev, picker) {
-        $scope.datas.fromDate = (picker.startDate.format('YYYY-MM-DD'));
-        $scope.datas.toDate = (picker.endDate.format('YYYY-MM-DD'));
-    });
 
     // 画图表
     $scope.summaryChart = echarts.init(document.getElementById("summaryChart"));
@@ -166,16 +129,6 @@ app.controller('monitor',function ($scope) {
         console.log(opt);
         $scope.summaryChart.setOption(opt, true);
         $scope.summaryChart.resize();
-    };
-
-    // 点击按刷新页面
-    $scope.refreshDatas = function () {
-        $scope.getDatas();
-    };
-
-    // 点击跳转
-    $scope.gotoDetail = function (type) {
-        window.location.href = "#/monitor_" + settings.types[type];
     };
 
 });

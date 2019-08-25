@@ -6,7 +6,7 @@ app.controller('settings_group',function ($scope, $stateParams) {
 
     $scope.datas = {
 
-        buildingId: global.read_storage("session", "buildingId"),
+        buildingId: global.read_storage("session", "building")["id"],
 
         type: $stateParams.type,
 
@@ -15,6 +15,8 @@ app.controller('settings_group',function ($scope, $stateParams) {
         itemList: [],   // 所有设备列表 
         tableData: {},  // 显示table的分类数据
         cacheData: {},  // 原始分类数据
+
+        filterKey: "",
 
         // 当前编辑的item
         curMethod: "view",
@@ -33,7 +35,7 @@ app.controller('settings_group',function ($scope, $stateParams) {
             _method: 'post',
             _url: settings.ajax_func.ajaxGetItemGroups,
             _param: {
-                building_id: $scope.datas.buildingId
+                buildingId: $scope.datas.buildingId
             }
         };
         return global.return_promise($scope, param);
@@ -41,7 +43,7 @@ app.controller('settings_group',function ($scope, $stateParams) {
 
     $scope.buildItemGroupTable = function (res) {
         var tableData = {
-            "title": ["id", "编号", "名称", "面积", "设备数量", "备注"],
+            "title": ["id", "编号", "名称", "类型", "面积", "设备数量", "备注"],
             "data": [],
         };
         var cacheData = {};
@@ -51,7 +53,7 @@ app.controller('settings_group',function ($scope, $stateParams) {
             for(var i=1; i<level; i++) {
                 displayName = (cur.code.substring($scope.datas.levelLength*i, (i+1)*$scope.datas.levelLength) != 0 ? "|------" : "" ) + displayName;
             }
-            tableData.data.push([cur.id, cur.code, displayName, cur.area, cur.itemNum, cur.note]);
+            tableData.data.push([cur.id, cur.code, displayName, cur.type, cur.area, cur.itemNum, cur.note]);
             cacheData[cur.id] = cur;
         });
         $scope.$apply(function () {
@@ -64,8 +66,10 @@ app.controller('settings_group',function ($scope, $stateParams) {
         // 缓存系统中所有设备类型
         var param = {
             _method: 'post',
-            _url: settings.ajax_func.ajaxGetItems,
-            _param: {}
+            _url: settings.ajax_func.ajaxGetBuildingItems,
+            _param: {
+                buildingId: $scope.datas.buildingId
+            }
         };
         global.ajax_data($scope, param, function (res) {
             $scope.$apply(function(){
@@ -130,6 +134,8 @@ app.controller('settings_group',function ($scope, $stateParams) {
             _param: {
                 id: curItem.id,
                 code: curItem.code,
+                buildingId: $scope.datas.buildingId,
+                type: curItem.type,
                 name: curItem.name,
                 parent: curItem.parent,
                 area: curItem.area,
@@ -151,6 +157,8 @@ app.controller('settings_group',function ($scope, $stateParams) {
             _param: {
                 code: curItem.code,
                 name: curItem.name,
+                buildingId: $scope.datas.buildingId,
+                type: curItem.type,
                 parent: curItem.parent,
                 area: curItem.area,
                 note: curItem.note,
@@ -168,15 +176,17 @@ app.controller('settings_group',function ($scope, $stateParams) {
             _method: 'post',
             _url: settings.ajax_func.ajaxGetItemsByGroupId,
             _param: {
-                id: group.id
+                groupId: group.id
             }
         };
         global.ajax_data($scope, param, function (res) {
             $scope.$apply(function(){
                 var list = [];
-                res.data.map(function(i){
-                    list.push(i.id);
-                });
+                if(res.data) {
+                    res.data.map(function(i){
+                        list.push(i.id);
+                    });
+                }
                 $scope.datas.itemList.map(function(i){
                     if(list.indexOf(i.id) >= 0) {
                         i.checked = true;
@@ -199,7 +209,7 @@ app.controller('settings_group',function ($scope, $stateParams) {
             _method: 'post',
             _url: settings.ajax_func.ajaxUpdateGroupItem,
             _param: {
-                gid: $scope.datas.curItemCache.id,
+                groupId: $scope.datas.curItemCache.id,
                 itemIds: list.join(",")
             }
         };

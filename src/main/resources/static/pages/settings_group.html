@@ -21,7 +21,10 @@
                 <div class="x_content">
                     <div class="row">
                         <div class="col-xs-12">
-                            <input type="button" class="btn btn-success" ng-click="createItem();" value="创建分组" />
+                            <button class="btn btn-success" ng-click="createItem();">
+                                <i class="fa fa-plus"></i>
+                                创建分组
+                            </button>
                             <table class="table table-hover table-bordered" id="summaryTable">
                                 <thead>
                                 <tr>
@@ -102,6 +105,14 @@
                                     </div>
                                 </div>
                                 <div class="item form-group">
+                                    <label class="control-label col-xs-4">类型:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="type" name="type" ng-model="datas.curItem.type" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
                                     <label class="control-label col-xs-4">面积(m3):</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
@@ -137,12 +148,18 @@
                         <h4 class="modal-title" ng-bind="datas.curItemCache.name + '设备'"></h4>
                     </div>
                     <div class="modal-body">
+                        <p class="form-inline">
+                            输入关键字:
+                            <input class="form-control" type="text" ng-model="datas.filterKey" />
+                        </p>
                         <ul class="list-group" style="max-height:400px; overflow:auto;">
-                            <li ng-repeat="i in datas.itemList">
-                                <input type="checkbox" name="selectedItem" ng-model="i.checked" />
-                                <span ng-bind="i.type_name"></span> - 
-                                <span ng-bind="i.name"></span> - 
-                                <span ng-bind="i.description"></span>
+                            <li class="list-group-item" ng-repeat="i in datas.itemList | filter : {name:datas.filterKey}">
+                                <label style="display: block; cursor:pointer;">
+                                    <input type="checkbox" name="selectedItem" ng-model="i.checked" />
+                                    <span ng-bind="i.type_name"></span> -
+                                    <span ng-bind="i.name"></span> -
+                                    <span ng-bind="i.description"></span>
+                                </label>
                             </li>
                         </ul>
                     </div>

@@ -1,13 +1,13 @@
 package com.energy.service;
 
-import com.energy.entity.Building;
-import com.energy.entity.ItemGroup;
+import com.energy.entity.*;
 import com.energy.mapper.BuildingMapper;
 import com.energy.utils.Constant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +28,21 @@ public class BuildingService {
     }
 
     public List<Map> getBuildingsByUserId(Integer userId) {
-        return buildingMapper.getBuildingsByUserId(userId);
+        List<Map> list = buildingMapper.getBuildingsByUserId(userId);
+        if (null != list && null != list.get(0)) {
+            return list;
+        } else {
+            return null;
+        }
     }
 
     public List<Map> getBuildingsByUserName(String userName) {
-        return buildingMapper.getBuildingsByUserName(userName);
+        List<Map> list = buildingMapper.getBuildingsByUserName(userName);
+        if (null != list && null != list.get(0)) {
+            return list;
+        } else {
+            return null;
+        }
     }
 
     // collector 相关
@@ -52,10 +62,50 @@ public class BuildingService {
         return null;
     }
 
+    // 某建筑下所有[设备]
+    public List<Map> getBuildingItems(Integer buildingId) {
+        List<Map> list = buildingMapper.getBuildingItems(buildingId);
+        if (null != list && null != list.get(0)) {
+            return list;
+        } else {
+            return null;
+        }
+    }
+    // 某建筑下所有[设备分组]
+    public List<Map> getItemGroups(Integer buildingId) {
+        List<Map> list = buildingMapper.getItemGroups(buildingId);
+        if (null != list && null != list.get(0)) {
+            return list;
+        } else {
+            return null;
+        }
+    }
 
-    // 设备分组信息
+    // [设备分组]信息
     public List<Map> getItemGroupByType(Integer buildingId, String type, String subType, String parent) {
-        return buildingMapper.getItemGroupByType(buildingId, type, subType, parent);
+        List<Map> list = buildingMapper.getItemGroupByType(buildingId, type, subType, parent);
+        if (null != list && null != list.get(0)) {
+            return list;
+        } else {
+            return null;
+        }
+    }
+
+    // 根据类型分类, 拿到一级itemGroup
+    public Map getItemGroupIdByEnergyType(Integer buildingId, String type, String subType) {
+        List<Map> list = buildingMapper.getItemGroupByType(buildingId, type, subType, null);
+        if( null != list) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+
+    // 更新设备分组和设备绑定关系
+    @Transactional(rollbackFor = Exception.class)
+    public void updateItemsGroupItems(Integer groupId, List<String>ItemIds) {
+        buildingMapper.deleteItemGroupMapper(groupId);
+        buildingMapper.insertItemGroupMapper(groupId, ItemIds);
     }
 
     public ItemGroup getItemGroupById(Integer id) {
@@ -63,7 +113,12 @@ public class BuildingService {
     }
 
     public List<Map> getItemGroupChildsById(Integer id) {
-        return buildingMapper.getItemGroupChildsById(id);
+        List<Map> list = buildingMapper.getItemGroupChildsById(id);
+        if (null != list && list.size() > 0) {
+            return list;
+        } else {
+            return null;
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -79,6 +134,55 @@ public class BuildingService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteItemGroup(Integer id) {
         buildingMapper.deleteItemGroup(id);
+    }
+
+
+    public Item getItemById(Integer id) {
+        return buildingMapper.getItemById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void createItem(Item item) {
+        buildingMapper.createItem(item);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateItem(Item item) {
+        buildingMapper.updateItem(item);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeItem(Integer id) {
+        buildingMapper.deleteItem(id);
+    }
+
+
+
+    public List<Map> getBasicDatas() {
+        List<Map> list = buildingMapper.getBasicDatas();
+        if (null != list && null != list.get(0)) {
+            return list;
+        } else {
+            return null;
+        }
+    }
+
+    public BasicData getBasicDataById(Integer id) {
+        return buildingMapper.getBasicDataById(id);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void createBasicData(BasicData basicData) {
+        buildingMapper.createBasicData(basicData);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateBasicData(BasicData basicData) {
+        buildingMapper.updateBasicData(basicData);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeBasicData(Integer id) {
+        buildingMapper.deleteBasicData(id);
     }
 
 
@@ -139,6 +243,75 @@ public class BuildingService {
 
     // 某个分组下的所有设备
     public List<Map> getItemsByGroupId(Integer groupId) {
-        return buildingMapper.getItemsByGroupId(groupId);
+        List<Map> list = buildingMapper.getItemsByGroupId(groupId);
+        if (null != list && null != list.get(0)) {
+            return list;
+        } else {
+            return null;
+        }
     }
+
+
+
+    public List<ItemData> getItemData() {
+        return buildingMapper.getItemData();
+    }
+
+    // 模拟随机增加数据
+    @Transactional(rollbackFor = Exception.class)
+    public void updateItemDatas() {
+        buildingMapper.updateItemDatas();
+    }
+
+    // 记录实时数据到能耗表
+    @Transactional(rollbackFor = Exception.class)
+    public void recordEnergyDatas(List<EnergyData> energyDataList) {
+        buildingMapper.recordEnergyDatas(energyDataList);
+    }
+
+    public List<EnergyData> getEnergyDataLatest() {
+        return buildingMapper.getEnergyDataLatest();
+    };
+
+
+    // 实时同步
+    @Transactional(rollbackFor = Exception.class)
+    public void recordEnergyDatas() {
+        List<ItemData> itemDataCurList = getItemData();
+        List<EnergyData> EnergyDataLatest = getEnergyDataLatest();
+        Map<Integer, Float> EnergyDataMap = new HashMap<>();
+        if(null != EnergyDataLatest && EnergyDataLatest.size() > 0) {
+            for(int i = 0; i < EnergyDataLatest.size(); i++) {
+                EnergyData e = EnergyDataLatest.get(i);
+                if(null != e) {
+                    EnergyDataMap.put(e.getItemId(), e.getIndication());
+                }
+            }
+        }
+
+        List<EnergyData> energyDataList = new ArrayList<>();
+        for(int i = 0; i < itemDataCurList.size(); i++) {
+            ItemData it = itemDataCurList.get(i);
+            if(null != it) {
+                float diff = 0;
+                if(null != EnergyDataMap.get(it.getItemId())) {
+                    diff = it.getIndication() - EnergyDataMap.get(it.getItemId());
+                }
+
+                EnergyData energyData = new EnergyData();
+                energyData.setItemId(it.getItemId());
+                energyData.setIndication(it.getIndication());
+                energyData.setDiffIndication(diff);
+                energyData.setOtherData(it.getOtherData());
+                energyData.setRecordedAt(it.getUpdatedAt());
+
+                energyDataList.add(energyData);
+            }
+        }
+
+        if(energyDataList.size() > 0) {
+            recordEnergyDatas(energyDataList);
+        }
+    }
+
 }

@@ -6,7 +6,7 @@ app.controller('settings_item',function ($scope, $stateParams) {
 
     $scope.datas = {
 
-        buildingId: global.read_storage("session", "buildingId"),
+        buildingId: global.read_storage("session", "building")["id"],
 
         type: $stateParams.type,
 
@@ -22,9 +22,9 @@ app.controller('settings_item',function ($scope, $stateParams) {
     $scope.ajaxGetItems = function() {
         var param = {
             _method: 'post',
-            _url: settings.ajax_func.ajaxGetItems,
+            _url: settings.ajax_func.ajaxGetBuildingItems,
             _param: {
-                building_id: $scope.datas.buildingId
+                buildingId: $scope.datas.buildingId
             }
         };
         return global.return_promise($scope, param);
@@ -98,15 +98,15 @@ app.controller('settings_item',function ($scope, $stateParams) {
             _url: settings.ajax_func.ajaxUpdateItem,
             _param: {
                 id: curItem.id,
-                collector_id: curItem.collector_id,
-                item_type: curItem.item_type,
+                collectorId: curItem.collector_id,
+                itemType: curItem.item_type,
                 code: curItem.code,
                 name: curItem.name,
                 description: curItem.description,
-                data_type: curItem.data_type,
-                data_unit: curItem.data_unit,
+                dataType: curItem.data_type,
+                dataUnit: curItem.data_unit,
                 coefficient: curItem.coefficient,
-                max_value: curItem.max_value,
+                maxValue: curItem.max_value,
             }
         };
         global.ajax_data($scope, param, function (res) {
@@ -122,11 +122,15 @@ app.controller('settings_item',function ($scope, $stateParams) {
             _method: 'post',
             _url: settings.ajax_func.ajaxCreateItem,
             _param: {
+                collectorId: curItem.collector_id,
+                itemType: curItem.item_type,
                 code: curItem.code,
                 name: curItem.name,
-                parent: curItem.parent,
-                area: curItem.area,
-                note: curItem.note,
+                description: curItem.description,
+                dataType: curItem.data_type,
+                dataUnit: curItem.data_unit,
+                coefficient: curItem.coefficient,
+                maxValue: curItem.max_value,
             }
         };
         global.ajax_data($scope, param, function (res) {

@@ -2,7 +2,7 @@
     <div class="page-title">
         <div class="title_left">
             <h3>
-                总用电概述
+                总用<i ng-bind="datas.typeNames[datas.type]"></i>概述
                 <small ng-bind="datas.todayStr"></small>
             </h3>
         </div>
@@ -19,19 +19,19 @@
         <div class="x_content">
             <ul class="nav nav-tabs bar_tabs">
                 <li>
-                    <a href="#/monitor_electricity" data-toggle="tab">总用电概述</a>
+                    <a ng-href='{{"#/monitor_"+datas.typeName}}' data-toggle="tab">总用电概述</a>
                 </li>
                 <li ng-class="datas.subType=='能耗分项' ? 'active' : ''">
-                    <a href="#/monitor_electricity_by_subentry">按能耗分项监测</a>
+                    <a ng-href='{{"#/monitor_"+datas.typeName+"_by_subentry"}}'>按能耗分项监测</a>
                 </li>
                 <li ng-class="datas.subType=='建筑区域' ? 'active' : ''">
-                    <a href="#/monitor_electricity_by_area">按建筑区域监测</a>
+                    <a ng-href='{{"#/monitor_"+datas.typeName+"_by_area"}}'>按建筑区域监测</a>
                 </li>
                 <li ng-class="datas.subType=='组织机构' ? 'active' : ''">
-                    <a href="#/monitor_electricity_by_org">按组织机构监测</a>
+                    <a ng-href='{{"#/monitor_"+datas.typeName+"_by_org"}}'>按组织机构监测</a>
                 </li>
                 <li ng-class="datas.subType=='自定义' ? 'active' : ''">
-                    <a href="#/monitor_electricity_by_custom">按自定义分类监测</a>
+                    <a ng-href='{{"#/monitor_"+datas.typeName+"_by_custom"}}'>按自定义分类监测</a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -42,19 +42,20 @@
                             <div class="row">
                                 <div class="col-xs-12">
                                     <ul class="nav nav-tabs nav-cus">
-                                        <li ng-class="!datas.parent ? 'active' : ''"><a href="#/monitor_electricity_by_subentry">所有</a></li>
+                                        <li ng-class="!datas.parent ? 'active' : ''"><a ng-href='{{"#/monitor_"+datas.typeName+"_by_"+datas.subTypeName}}'>所有</a></li>
                                         <li ng-repeat="ig in datas.result.itemGroups.childs"
-                                            ng-class="datas.parent == ig.id">
-                                            <a ng-href='{{"#/monitor_electricity_by_subentry"+ig.id}}'
+                                            ng-class="datas.parent == ig.id ? 'active' : ''">
+                                            <a ng-href='{{"#/monitor_"+datas.typeName+"_by_"+datas.subTypeName+"/"+ig.id}}'
                                                ng-bind="ig.name"></a>
                                         </li>
-<!--                                        <li ng-class="datas.groupCode=='01A00' ? 'active' : ''"><a href="#/monitor_electricity_by_subentry/01A00">照明与插座</a></li>-->
-<!--                                        <li ng-class="datas.groupCode=='01B00' ? 'active' : ''"><a href="#/monitor_electricity_by_subentry/01B00">空调用电</a></li>-->
-<!--                                        <li ng-class="datas.groupCode=='01C00' ? 'active' : ''"><a href="#/monitor_electricity_by_subentry/01C00">动力用电</a></li>-->
-<!--                                        <li ng-class="datas.groupCode=='01D00' ? 'active' : ''"><a href="#/monitor_electricity_by_subentry/01D00">特殊用电</a></li>-->
                                         <div class="pull-right form-inline">
-                                            <input type="text" class="form-control mr10" id="reservation">
-                                            <button ng-click="refresh_datas();" class="btn btn-primary"><spam class="glyphicon glyphicon-refresh"></spam> 更新</button>
+                                            查询条件:
+                                            <!--<input type="text" class="form-control mr10" id="reservation">-->
+                                            <input type="text" class="form-control datePicker" ng-model="datas.fromDate">
+                                            ~
+                                            <input type="text" class="form-control mr10 datePicker" ng-model="datas.toDate">
+
+                                            <button ng-click="refreshDatas();" class="btn btn-primary"><spam class="glyphicon glyphicon-refresh"></spam> 更新</button>
                                         </div>
                                     </ul>
                                 </div>
@@ -66,33 +67,33 @@
                                     <div class="x_panel">
                                         <div class="x_title">
                                             <h2>
-                                                所有分项
+                                                数据内容
                                             </h2>
                                             <div class="pull-right form-inline">
                                                 <div class="form-group">
                                                     <label class="">国标值:</label>
-                                                    <span class="form-control without_border" ng-bind="datas.summaryData.internationalValue"></span>
+                                                    <span class="form-control without_border" ng-bind="datas.internationalValues[datas.type]"></span>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label class="">数据单位:</label>
-                                                    <select class="form-control" ng-model="datas.selectSummaryChartType" ng-change="chSummaryChartInput()">
-                                                        <option ng-repeat="(o,n) in datas.summaryChartTypes"
-                                                                ng-value="o"
-                                                                ng-bind="n"
-                                                                ng-selected="datas.selectSummaryChartType==o"
-                                                        ></option>
-                                                    </select>
-                                                </div>
+                                                <!--<div class="form-group">-->
+                                                    <!--<label class="">数据单位:</label>-->
+                                                    <!--<select class="form-control" ng-model="datas.selectSummaryChartType" ng-change="chSummaryChartInput()">-->
+                                                        <!--<option ng-repeat="(o,n) in datas.summaryChartTypes"-->
+                                                                <!--ng-value="o"-->
+                                                                <!--ng-bind="n"-->
+                                                                <!--ng-selected="datas.selectSummaryChartType==o"-->
+                                                        <!--&gt;</option>-->
+                                                    <!--</select>-->
+                                                <!--</div>-->
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
 
                                         <div class="x_content">
                                             <div class="row">
-                                                <div class="col-xs-4">
+                                                <div class="col-xs-4" ng-show="datas.hasChilds">
                                                     <div id="summaryPieChart" style="height:400px;"></div>
                                                 </div>
-                                                <div class="col-xs-8">
+                                                <div ng-class="datas.hasChilds ? 'col-xs-8' : 'col-xs-12'">
                                                     <div id="dailyChart" style="height:400px;"></div>
                                                 </div>
                                             </div>
@@ -106,7 +107,7 @@
                                                 详细数据
                                             </h2>
                                             <div class="pull-right form-inline">
-                                                <button ng-click="exportData();" class="btn btn-primary"><spam class="fa fa-download"></spam> 导出报表</button>
+                                                <!--<button ng-click="exportData();" class="btn btn-primary"><spam class="fa fa-download"></spam> 导出报表</button>-->
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
@@ -114,16 +115,16 @@
                                         <div class="x_content">
                                             <div class="row">
                                                 <div class="col-xs-12">
-                                                    <table class="table table-hover">
+                                                    <table class="table table-hover" id="summaryTable">
                                                         <thead>
                                                         <tr>
-                                                            <th ng-repeat="t in datas.summaryTableTitles" ng-bind="t"></th>
+                                                            <th ng-repeat="(k,n) in datas.result.tableData.title" ng-bind="n"></th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <tr ng-repeat="(k,v) in datas.summaryTableDatas">
-                                                            <td ng-repeat="t in datas.summaryTableTitles"
-                                                                ng-bind="v[$index]"></td>
+                                                        <tr ng-repeat="v in datas.result.tableData.data">
+                                                            <td ng-repeat="(k,n) in datas.result.tableData.title"
+                                                                ng-bind="v[k]"></td>
                                                         </tr>
                                                         </tbody>
                                                     </table>

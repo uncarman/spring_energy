@@ -15,7 +15,10 @@
                 <div class="x_content">
                     <div class="row">
                         <div class="col-xs-12">
-                            <input type="button" class="btn btn-success" ng-click="createItem();" value="创建基础数据" />
+                            <button class="btn btn-success" ng-click="createItem();">
+                                <i class="fa fa-plus"></i>
+                                创建基础数据
+                            </button>
                             <table class="table table-hover table-bordered" id="summaryTable">
                                 <thead>
                                 <tr>
@@ -98,6 +101,14 @@
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
                                                id="basic_name" ng-model="datas.curItem.basic_name" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">备注:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="note" ng-model="datas.curItem.note" />
                                     </div>
                                 </div>
                             </div>

@@ -6,7 +6,7 @@ app.controller('settings_base',function ($scope, $stateParams) {
 
     $scope.datas = {
 
-        buildingId: global.read_storage("session", "buildingId"),
+        buildingId: global.read_storage("session", "building")["id"],
 
         tableData: {},  // 显示table的分类数据
         cacheData: {},  // 原始分类数据
@@ -20,7 +20,7 @@ app.controller('settings_base',function ($scope, $stateParams) {
     $scope.ajaxGetBaseDatas = function() {
         var param = {
             _method: 'post',
-            _url: settings.ajax_func.ajaxGetBaseDatas,
+            _url: settings.ajax_func.ajaxGetBasicDatas,
             _param: {}
         };
         return global.return_promise($scope, param);
@@ -34,12 +34,12 @@ app.controller('settings_base',function ($scope, $stateParams) {
 
     $scope.buildBaseDatasTable = function(res) {
         var tableData = {
-            "title": ["id", "类型ID", "类型名称", "数据编码", "数据名称"],
+            "title": ["id", "类型ID", "类型名称", "数据编码", "数据名称", "备注"],
             "data": [],
         };
         var cacheData = {};
         res.data.map(function (cur) {
-            tableData.data.push([cur.id, cur.type, cur.name, cur.basic_code, cur.basic_name]);
+            tableData.data.push([cur.id, cur.type, cur.name, cur.basic_code, cur.basic_name, cur.note]);
             cacheData[cur.id] = cur;
         });
         $scope.$apply(function () {
@@ -76,7 +76,7 @@ app.controller('settings_base',function ($scope, $stateParams) {
         if(confirm("确定删除?")) {
             var param = {
                 _method: 'post',
-                _url: settings.ajax_func.ajaxRemoveBaseData,
+                _url: settings.ajax_func.ajaxRemoveBasicData,
                 _param: {
                     id: ig[0]
                 }
@@ -91,13 +91,14 @@ app.controller('settings_base',function ($scope, $stateParams) {
         var curItem = $scope.datas.curItem;
         var param = {
             _method: 'post',
-            _url: settings.ajax_func.ajaxUpdateBaseData,
+            _url: settings.ajax_func.ajaxUpdateBasicData,
             _param: {
                 id: curItem.id,
                 type: curItem.type,
                 name: curItem.name,
-                basic_code: curItem.basic_code,
-                basic_name: curItem.basic_name,
+                basicCode: curItem.basic_code,
+                basicName: curItem.basic_name,
+                note: curItem.note,
             }
         };
         global.ajax_data($scope, param, function (res) {
@@ -111,12 +112,12 @@ app.controller('settings_base',function ($scope, $stateParams) {
         var curItem = $scope.datas.curItem;
         var param = {
             _method: 'post',
-            _url: settings.ajax_func.ajaxCreateBaseData,
+            _url: settings.ajax_func.ajaxCreateBasicData,
             _param: {
-                code: curItem.code,
+                type: curItem.type,
                 name: curItem.name,
-                parent: curItem.parent,
-                area: curItem.area,
+                basicCode: curItem.basic_code,
+                basicName: curItem.basic_name,
                 note: curItem.note,
             }
         };

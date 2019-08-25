@@ -7,8 +7,19 @@ app.controller('index',function ($scope) {
 
     $scope.datas = {
         user: global.read_storage("session", "user"),
+        curBuilding: global.read_storage("session", "building"),
+        buildingList: global.read_storage("session", "buildingList"),
     };
 
+    $scope.changeBuilding = function(building) {
+        $scope.datas.curBuilding = building;
+        global.set_storage_key('session', [
+            {
+                key: 'building',
+                val: building,
+            }
+        ]);
+    }
 });
 app.config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
