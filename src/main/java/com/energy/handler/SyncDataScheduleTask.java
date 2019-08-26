@@ -37,7 +37,7 @@ public class SyncDataScheduleTask {
         System.err.println("syncItemRealTimeData: " + LocalDateTime.now());
         // TODO 更新 a_item_data 记录
         //List<ItemData> itemDataList = buildingService.getItemData();
-        buildingService.updateItemDatas();
+//        buildingService.updateItemDatas();
     }
 
     //2. 同步设备实时数据到记录
@@ -47,7 +47,7 @@ public class SyncDataScheduleTask {
         System.err.println("recordEnergyDatas: " + LocalDateTime.now());
 
         // 同步 a_energy_data 记录
-        buildingService.recordEnergyDatas();
+//        buildingService.recordEnergyDatas();
     }
 
 }

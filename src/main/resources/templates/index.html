@@ -103,17 +103,27 @@
                                     <!--<li><a href="###">评价能耗</a></li>-->
                                 </ul>
                             </li>
-                            <li>
+                            <li class="plan">
                                 <a>
                                     <i class="fa fa-laptop"></i>
-                                    节能管理
+                                    用能计划
                                     <span class="fa fa-chevron-down"></span>
                                 </a>
-                                <!--<ul>-->
-                                    <!--<li><a href="###">###</a></li>-->
-                                <!--</ul>-->
+                                <ul class="nav child_menu">
+                                    <li class="plan_electricity"><a href="#plan_electricity">电能计划</a></li>
+                                    <li class="plan_water"><a href="#plan_water">水能计划</a></li>
+                                    <li class="plan_gas"><a href="#plan_gas">燃气能计划</a></li>
+                                    <li class="plan_cah"><a href="#plan_cah">冷热能计划</a></li>
+                                    <li class="plan_steam"><a href="#plan_steam">蒸汽能计划</a></li>
+                                </ul>
                             </li>
-                            <li>
+                            <li class="remould">
+                                <a href="#remould">
+                                    <i class="fa fa-laptop"></i>
+                                    节能改造
+                                </a>
+                            </li>
+                            <li class="warning">
                                 <a>
                                     <i class="fa fa-envelope"></i>
                                     报警处理
@@ -121,7 +131,7 @@
                                 </a>
                                 <ul class="nav child_menu">
                                     <li class="warning"><a href="#warning">所有报警</a></li>
-                                    <li class="warning_setting"><a href="#warning_setting">报警设置</a></li>
+                                    <li class="warning_settings"><a href="#warning_settings">报警设置</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -134,8 +144,8 @@
                                     <li class="settings_group"><a href="#settings_group">监测配置</a></li>
                                     <li class="settings_item"><a href="#settings_item">设备管理</a></li>
                                     <li class="settings_base"><a href="#settings_base">基本配置</a></li>
-                                    <li class="settings_profile"><a href="#settings_profile">账号管理</a></li>
-                                    <li class="settings_roles"><a href="#settings_roles">权限和角色</a></li>
+                                    <li class="settings_profile"><a href="javascript:;">账号管理</a></li>
+                                    <li class="settings_roles"><a href="javascript:;">权限和角色</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -143,7 +153,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="top_nav">
             <div class="nav_menu">
@@ -242,8 +251,10 @@
 <script src="pages/monitor_energy_by_group.js?v4"></script>
 <script src="pages/statistics.js?v4"></script>
 <script src="pages/statistics_fee.js?v4"></script>
+<script src="pages/plan_energy.js?v4"></script>
+<script src="pages/remould.js?v4"></script>
 <script src="pages/warning.js?v4"></script>
-
+<script src="pages/warning_settings.js?v4"></script>
 
 <!-- <script src="js/LuTree.js"></script> -->
 <script src="pages/settings_group.js?v4"></script>

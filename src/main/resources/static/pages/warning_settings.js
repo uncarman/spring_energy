@@ -1,4 +1,4 @@
-app.controller('warning',function ($scope) {
+app.controller('warning_settings',function ($scope) {
 
     $scope.$watch('$viewContentLoaded', function () {
         global.on_loaded_func($scope);    // 显示页面内容
@@ -11,6 +11,7 @@ app.controller('warning',function ($scope) {
 
     $scope.datas = {
         // 建筑id
+        user: global.read_storage("session", "user"),
         buildingId: global.read_storage("session", "building")["id"],
 
         fmt: "YYYY-MM",
@@ -38,12 +39,12 @@ app.controller('warning',function ($scope) {
             }
 
 
-            var tableData = fake_data["/undefined/warning/ajaxWarning"]["result"]["warningList"];
+            var tableData = fake_data["/undefined/warning/ajaxAlertList"]["result"]["warningList"];
             $scope.datas.result.tableData = tableData;
         });
     }
-    
+
     $scope.updateItem = function () {
-        
+
     }
 });

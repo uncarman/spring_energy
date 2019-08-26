@@ -491,12 +491,66 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'statistics_fee',
         })
 
+        // 用能计划
+        .state('plan_electricity',{
+            url:'/plan_electricity',
+            templateUrl:'pages/plan_energy.html',
+            controller: 'plan_energy',
+            params: {
+                type: "01",
+            }
+        })
+        .state('plan_water',{
+            url:'/plan_water',
+            templateUrl:'pages/plan_energy.html',
+            controller: 'plan_energy',
+            params: {
+                type: "02",
+            }
+        })
+        .state('plan_gas',{
+            url:'/plan_gas',
+            templateUrl:'pages/plan_energy.html',
+            controller: 'plan_energy',
+            params: {
+                type: "03",
+            }
+        })
+        .state('plan_cah',{
+            url:'/plan_cah',
+            templateUrl:'pages/plan_energy.html',
+            controller: 'plan_energy',
+            params: {
+                type: "04",
+            }
+        })
+        .state('plan_steam',{
+            url:'/plan_steam',
+            templateUrl:'pages/plan_energy.html',
+            controller: 'plan_energy',
+            params: {
+                type: "05",
+            }
+        })
 
-        // 数据分析
+        // 节能管理
+        .state('remould',{
+            url:'/remould',
+            templateUrl:'pages/remould.html',
+            controller: 'remould',
+        })
+
+
+        // 报警管理
         .state('warning',{
             url:'/warning',
             templateUrl:'pages/warning.html',
             controller: 'warning',
+        })
+        .state('warning_settings',{
+            url:'/warning_settings',
+            templateUrl:'pages/warning_settings.html',
+            controller: 'warning_settings',
         })
 
         // 分组编辑

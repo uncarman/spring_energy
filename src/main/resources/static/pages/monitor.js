@@ -29,7 +29,7 @@ app.controller('monitor',function ($scope) {
         type: "day", // 默认按天显示
 
         result:{
-            summaryDatas: {},
+            summaryDatas: [],
             chartDatas: {},
             tableData: {},
         },

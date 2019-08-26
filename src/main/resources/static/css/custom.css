@@ -4683,7 +4683,7 @@ ul.bar_tabs>li.active {
     color:#1ABB9C;
 }
 
-.navbar-left .open .dropdown-menu { left:0; right: auto; width: auto; }
+.navbar-left .open .dropdown-menu { left:0; right: auto; width: auto; min-width: 100%; }
 
 .tile-stats .icon { top: 10px; right: 35px; }
 .nav-title { margin: 2px 5px; }
