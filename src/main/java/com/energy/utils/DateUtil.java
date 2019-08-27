@@ -8,6 +8,9 @@ import java.util.List;
 
 public class DateUtil {
 
+    public static String MIN_DATE = "2000-01-01";
+    public static String MAX_DATE = "5000-01-01";
+
     // 时间类型，返回对应格式化格式
     public static SimpleDateFormat typeToFormatter(String type) {
         SimpleDateFormat fmt = null;

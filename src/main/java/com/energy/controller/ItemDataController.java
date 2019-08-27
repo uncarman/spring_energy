@@ -54,13 +54,13 @@ public class ItemDataController {
                                               HttpServletRequest request) {
         Response res = new Response();
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            // 默认按天汇总
+            SimpleDateFormat formatter = DateUtil.typeToFormatter(Constant.BY_DAY);
             Calendar time = Calendar.getInstance();
 
             // 总量第一天和最后一天
-            String dateStart = "2000-01-01";
-            String dateEnd = "3000-01-01";
-
+            String dateStart = DateUtil.MIN_DATE;
+            String dateEnd = DateUtil.MAX_DATE;
             // 拿到本月的第一天和最后一天
             String curMonthStart = formatter.format(DateUtil.monthFirstDay(time.getTime()));
             String curMonthEnd = formatter.format(DateUtil.monthLastDay(time.getTime()));
@@ -252,7 +252,8 @@ public class ItemDataController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // 09. 某建筑【某种表】按【时/日/月/年】汇总数据
+    // 09. 某建筑【某种表】汇总数据
+    // type = 表类型 eg: 01
     @RequestMapping("/getBuildingSummaryTotalDataByType")
     @ResponseBody
     public Object getBuildingSummaryTotalData(@RequestParam("buildingId") Integer buildingId,
@@ -260,13 +261,13 @@ public class ItemDataController {
                                               HttpServletRequest request) {
         Response res = new Response();
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            // 默认按天汇总
+            SimpleDateFormat formatter = DateUtil.typeToFormatter(Constant.BY_DAY);
             Calendar time = Calendar.getInstance();
 
             // 总量第一天和最后一天
-            String dateStart = "2000-01-01";
-            String dateEnd = "3000-01-01";
-
+            String dateStart = DateUtil.MIN_DATE;
+            String dateEnd = DateUtil.MAX_DATE;
             // 拿到前一个月的第一天和最后一天
             String lastMonthStart = formatter.format(DateUtil.monthFirstDay(DateUtil.monthAdd(time.getTime(), -1)));
             String lastMonthEnd = formatter.format(DateUtil.monthLastDay(DateUtil.monthAdd(time.getTime(), -1)));
@@ -275,9 +276,7 @@ public class ItemDataController {
             String lastYearEnd = formatter.format(DateUtil.yearLastDay(DateUtil.yearAdd(time.getTime(), -1)));
 
             // 返回结果集
-            Map<String, Object> dataMap = new HashMap<>();
             List<Map> summaryMap = new ArrayList<>();
-            Map<String, Object> chartMap = new HashMap<>();
 
             // 拿到各种类型基础数据
             Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
@@ -342,7 +341,7 @@ public class ItemDataController {
             }
 
             itemMap3.put("name" , "能耗密度");
-            itemMap3.put("unit" , "KWH/M2");
+            itemMap3.put("unit" , map.get("unit")+"/M2");
             itemMap3.put("rate" , map.get("rate"));
             itemMap3.put("total", sumItemTotal/group.getArea());
             itemMap3.put("lastMonth", sumItemLastMonth/group.getArea());
