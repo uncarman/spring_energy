@@ -70,6 +70,11 @@ public interface BuildingMapper {
     public void recordEnergyDatas(@Param("energyDataList")List<EnergyData> energyDataList);
 
     public List<EnergyData> getEnergyDataLatest();
+
+    public List<EnergyPlan> getEnergyPlans(@Param("type")String type);
+    public void createEnergyPlan(EnergyPlan energyPlan);
+    public void updateEnergyPlan(EnergyPlan energyPlan);
+    public void deleteEnergyPlan(@Param("id")Integer id);
 }
 
 

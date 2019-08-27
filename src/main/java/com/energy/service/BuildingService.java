@@ -3,6 +3,7 @@ package com.energy.service;
 import com.energy.entity.*;
 import com.energy.mapper.BuildingMapper;
 import com.energy.utils.Constant;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -222,8 +223,6 @@ public class BuildingService {
         return null;
     };
 
-
-
     public List<Map> getItemTypeBaseInfo() {
         return buildingMapper.getItemTypeBaseInfo();
     }
@@ -252,7 +251,23 @@ public class BuildingService {
         return list;
     }
 
+    public List<EnergyPlan> getEnergyPlans(@Param("type")String type) {
+        return buildingMapper.getEnergyPlans(type);
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void createEnergyPlan(EnergyPlan energyPlan) {
+        buildingMapper.createEnergyPlan(energyPlan);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateEnergyPlan(EnergyPlan energyPlan) {
+        buildingMapper.updateEnergyPlan(energyPlan);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteEnergyPlan(@Param("id")Integer id) {
+        buildingMapper.deleteEnergyPlan(id);
+    }
 
     public List<ItemData> getItemData() {
         return buildingMapper.getItemData();
@@ -273,7 +288,6 @@ public class BuildingService {
     public List<EnergyData> getEnergyDataLatest() {
         return buildingMapper.getEnergyDataLatest();
     };
-
 
     // 实时同步
     @Transactional(rollbackFor = Exception.class)

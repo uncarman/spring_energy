@@ -160,7 +160,7 @@ app.controller('plan_energy',function ($scope, $stateParams) {
             name: "计划值",
             type: "line",
             symbol: 'none',
-            itemStyle: {normal: {lineStyle: {type: 'dotted'}}},
+            //itemStyle: {normal: {lineStyle: {type: 'dotted'}}},
             data: fmtEChartPlanData(opt.xAxis[0].data, $scope.datas.result.tableData.data),
             z: 100,  // 显示在最顶层
         });
