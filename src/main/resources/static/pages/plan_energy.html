@@ -45,6 +45,9 @@
                     数据对照
                 </h2>
                 <div class="pull-right form-inline">
+                    <label class="">国标值:</label>
+                    <span class="form-control without_border mr10" ng-bind="datas.internationalValues[datas.type]"></span>
+
                     查询条件:
                     <!--<input type="text" class="form-control mr10" id="reservation">-->
                     <input type="text" class="form-control datePicker" ng-model="datas.fromDate">

@@ -393,6 +393,7 @@ public class ItemDataController {
         Response res = new Response();
         try {
             String parent = request.getParameter("parent");
+            String viewType = request.getParameter("viewType");
 
             // 最终返回结果集
             Map chartMap = new HashMap();
@@ -415,12 +416,22 @@ public class ItemDataController {
                 Map curBaseMap = baseMap.get(curType);
                 ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curGroupId));
 
+                if(null != curList && !curList.isEmpty()) {
+                    for(Map item : curList) {
+                        item.put("total_val_avg", Float.valueOf(item.get("total_val").toString())/(float)group.getArea());
+                    }
+                }
+
                 Map curMap = new HashMap();
                 curMap.put("datas", curList);
                 curMap.put("key", "recorded_at");
-                curMap.put("val", "total_val");
-                curMap.put("name", curBaseMap.get("name"));
-                curMap.put("prop_area", group.getArea());
+                if("avg".equals(viewType)) {
+                    curMap.put("name", curBaseMap.get("name")+"密度");
+                    curMap.put("val", "total_val_avg");
+                } else {
+                    curMap.put("name", curBaseMap.get("name"));
+                    curMap.put("val", "total_val");
+                }
                 curMap.put("area", group.getArea());
 
                 chartMap.put(curType, curMap);
@@ -516,16 +527,13 @@ public class ItemDataController {
         try {
             String parent = request.getParameter("parent");
 
-            // 最终返回结果集
-            Map chartMap = new HashMap();
-
             // 可以计算总量的分组类型
             String sumType = Constant.SUM_TYPE;
             // 拿到各种类型基础数据
             Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
 
             // 输出结果
-            List<List<String>> dataList = new ArrayList<>();
+            List<List> dataList = null;
 
             if(null == parent) {
                 // 当前时间区间数据
@@ -544,53 +552,10 @@ public class ItemDataController {
                 titleList.add("日期");
 
                 // 先生成第一列时间数据
-                SimpleDateFormat formatter = null;
-                if(type.equals(Constant.BY_HOUR)) {
-                    formatter = new SimpleDateFormat("yyyy-MM-dd HH");
-                } else if(type.equals(Constant.BY_MONTH)) {
-                    formatter = new SimpleDateFormat("yyyy-MM");
-                } else if(type.equals(Constant.BY_YEAR)) {
-                    formatter = new SimpleDateFormat("yyyy");
-                } else {
-                    formatter = new SimpleDateFormat("yyyy-MM-dd");
-                }
-                Calendar time = Calendar.getInstance();
+                SimpleDateFormat formatter = DateUtil.typeToFormatter(type);
                 Date fromDate = formatter.parse(from);
                 Date toDate = formatter.parse(to);
-
-                Calendar cf = Calendar.getInstance();
-                Calendar ct = Calendar.getInstance();
-                cf.setTime(fromDate);
-                ct.setTime(toDate);
-
-                int xlen = 0;
-
-                if(type.equals(Constant.BY_HOUR)) {
-                    xlen = (int) ((ct.getTime().getTime() - cf.getTime().getTime()) / (1000*3600));
-                } else if(type.equals(Constant.BY_MONTH)) {
-                    xlen = ct.get(Calendar.MONTH) - cf.get(Calendar.MONTH) + 12 * (ct.get(Calendar.YEAR) - cf.get(Calendar.YEAR));
-                } else if(type.equals(Constant.BY_YEAR)) {
-                    xlen = ct.get(Calendar.YEAR) - cf.get(Calendar.YEAR);
-                } else {
-                    xlen = (int) ((ct.getTime().getTime() - cf.getTime().getTime()) / (1000*3600*24));
-                }
-
-                for(int i=0; i<=xlen; i++) {
-                    time.setTime(fromDate);
-                    if(type.equals(Constant.BY_HOUR)) {
-                        time.add(Calendar.HOUR, i);
-                    } else if(type.equals(Constant.BY_MONTH)) {
-                        time.add(Calendar.MONTH, i);
-                    } else if(type.equals(Constant.BY_YEAR)) {
-                        time.add(Calendar.YEAR, i);
-                    } else {
-                        time.add(Calendar.DATE, i);
-                    }
-                    String date = formatter.format(time.getTime());
-                    List<String> row = new ArrayList<String>();;
-                    row.add(date);
-                    dataList.add(row);
-                }
+                dataList = DateUtil.dateList(fromDate, toDate, type);
 
                 DecimalFormat df2 = new DecimalFormat("###.0000");
                 titleList.add((String)curBaseMap.get("name"));
