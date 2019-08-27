@@ -297,6 +297,18 @@ public class ItemDataController {
             Map map = baseMap.get(type);
             String rate = map.get("rate").toString();
 
+//            itemMap.put("type" , curType);
+//            itemMap.put("typeName" , (String)baseInfo.get("name"));
+//            itemMap.put("name" , "总"+(String)baseInfo.get("name"));
+//            itemMap.put("unit" , baseInfo.get("unit"));
+//            itemMap.put("rate" , baseInfo.get("rate"));
+//            itemMap.put("area", group.getArea());
+//            itemMap.put("total", sumItemTotal);
+//            itemMap.put("curMonth" , sumItemCurMonth);
+//            itemMap.put("curYear" , sumItemCurYear);
+//            itemMap.put("lastMonth" , sumItemLastMonth);
+//            itemMap.put("lastYear" , sumItemLastYear);
+
             Map itemMap = new HashMap();
             Map itemMap2 = new HashMap();
             Map itemMap3 = new HashMap();
