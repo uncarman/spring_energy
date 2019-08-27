@@ -94,7 +94,7 @@ public class BuildingService {
     // 根据类型分类, 拿到一级itemGroup
     public Map getItemGroupIdByEnergyType(Integer buildingId, String type, String subType) {
         List<Map> list = buildingMapper.getItemGroupByType(buildingId, type, subType, null);
-        if( null != list && list.size() > 0) {
+        if( null != list && !list.isEmpty()) {
             return list.get(0);
         }
         return null;
@@ -114,7 +114,7 @@ public class BuildingService {
 
     public List<Map> getItemGroupChildsById(Integer id) {
         List<Map> list = buildingMapper.getItemGroupChildsById(id);
-        if (null != list && list.size() > 0) {
+        if (null != list && !list.isEmpty()) {
             return list;
         } else {
             return null;
@@ -160,7 +160,7 @@ public class BuildingService {
 
     public List<Map> getBasicDatas() {
         List<Map> list = buildingMapper.getBasicDatas();
-        if (null != list && null != list.get(0)) {
+        if (null != list && !list.isEmpty()) {
             return list;
         } else {
             return null;
@@ -208,7 +208,7 @@ public class BuildingService {
     }
 
     public List<Map> getItemDatasByDate(List<String> itemIds, String from, String to, String type) {
-        if(null != itemIds && null != itemIds.get(0)) {
+        if(null != itemIds && !itemIds.isEmpty()) {
             if (type.equals(Constant.BY_HOUR)) {
                 return buildingMapper.getItemDatasByHour(itemIds, from, to);
             } else if (type.equals(Constant.BY_DAY)) {
@@ -230,9 +230,8 @@ public class BuildingService {
 
     public Map<String, Map> getItemTypeBaseInfoToMap() {
         List<Map> list = buildingMapper.getItemTypeBaseInfo();
-        Map<String, Map> baseMap = new HashMap<>();
-        for(int i = 0; i < list.size(); i++) {
-            Map map = list.get(i);
+        Map baseMap = new HashMap<>();
+        for ( Map map : list) {
             baseMap.put(map.get("type_code").toString(), map);
         }
         return baseMap;
@@ -240,7 +239,7 @@ public class BuildingService {
 
     // 某个时间段中，设备的总值
     public float getItemsSummaryVal(List<String> itemIds, String from, String to) {
-        if(null != itemIds && null != itemIds.get(0)) {
+        if(null != itemIds && !itemIds.isEmpty()) {
             return buildingMapper.getItemsSummaryVal(itemIds, from, to);
         } else {
             return 0;
@@ -250,11 +249,7 @@ public class BuildingService {
     // 某个分组下的所有设备
     public List<Map> getItemsByGroupId(Integer groupId) {
         List<Map> list = buildingMapper.getItemsByGroupId(groupId);
-        if (null != list && null != list.get(0)) {
-            return list;
-        } else {
-            return null;
-        }
+        return list;
     }
 
 
@@ -286,7 +281,7 @@ public class BuildingService {
         List<ItemData> itemDataCurList = getItemData();
         List<EnergyData> EnergyDataLatest = getEnergyDataLatest();
         Map<Integer, Float> EnergyDataMap = new HashMap<>();
-        if(null != EnergyDataLatest && EnergyDataLatest.size() > 0) {
+        if(null != EnergyDataLatest && !EnergyDataLatest.isEmpty()) {
             for(int i = 0; i < EnergyDataLatest.size(); i++) {
                 EnergyData e = EnergyDataLatest.get(i);
                 if(null != e) {

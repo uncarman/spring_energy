@@ -13,7 +13,6 @@ public class Building {
     private Integer capacity;
     private String capacity_text;
     private Integer area;
-    private String fee_policy;
     private String status;
     private String type;
     private String photo;
@@ -62,14 +61,6 @@ public class Building {
 
     public void setArea(Integer area) {
         this.area = area;
-    }
-
-    public String getFee_policy() {
-        return fee_policy;
-    }
-
-    public void setFee_policy(String fee_policy) {
-        this.fee_policy = fee_policy;
     }
 
     public String getStatus() {
@@ -152,7 +143,6 @@ public class Building {
                 ", capacity=" + capacity +
                 ", capacity_text='" + capacity_text + '\'' +
                 ", area=" + area +
-                ", fee_policy='" + fee_policy + '\'' +
                 ", status='" + status + '\'' +
                 ", type='" + type + '\'' +
                 ", photo='" + photo + '\'' +

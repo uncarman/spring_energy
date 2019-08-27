@@ -78,7 +78,7 @@ app.controller('statistics_fee',function ($scope) {
                     var d = $scope.datas.result.chartDatas[o];
                     if(d.datas && d.datas.length > 0) {
                         d.datas.map(function (di) {
-                            di[d.val] = di[d.val] * d["fee_policy"];
+                            di[d.val] = di[d.val] * d["rate"];
                         });
                     }
                     d["name"] = d["name"].replace("量", "费");
