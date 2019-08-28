@@ -251,8 +251,8 @@ public class BuildingService {
         return list;
     }
 
-    public List<EnergyPlan> getEnergyPlans(@Param("type")String type) {
-        return buildingMapper.getEnergyPlans(type);
+    public List<EnergyPlan> getEnergyPlans(@Param("buildingId")Integer buildingId, @Param("type")String type) {
+        return buildingMapper.getEnergyPlans(buildingId, type);
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -39,36 +39,43 @@ app.controller('plan_energy',function ($scope, $stateParams) {
             "05": 1.05,
         },
 
+        tableData: {},  // 显示table的分类数据
+        cacheData: {},  // 原始分类数据
+
         result: {
             summaryDatas: {},
             chartDatas: {},
-            tableData: {},
         },
 
         lineOpt: settings.defaultLineOpt,
     };
 
     // 获取所有计划数据
-    $scope.getPlantDatas = function() {
+    $scope.getPlanDatas = function() {
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.getEnergyPlans,
+            _param: {
+                buildingId: $scope.datas.buildingId,
+                type: $scope.datas.type,
+            }
+        };
+        return global.return_promise($scope, param);
+    };
+
+    $scope.buildPlanDatasTable = function(res) {
+        var tableData = {
+            "title": ["id", 日期", "计划用量", "计划平均量", "计算方式", "备注"],
+            "data": [],
+        };
+        var cacheData = {};
+        res.data.map(function (cur) {
+            tableData.data.push([cur.id, cur.planDate, cur.planVal, cur.planValAvg, cur.planMethod, cur.note]);
+            cacheData[cur.id] = cur;
+        });
         $scope.$apply(function () {
-            $scope.datas.result.tableData = {
-                "title": ["ID", "类型", "日期", "计划电量(kwh)", "平均密度(kwh/m2)", "计算方式", "备注"],
-                "data": [
-                    [1, "工作日", "", 12000, 1.0976, "所有用电 * 8小时 + 部分用电 * 16小时", ""],
-                    [2, "周末", "", 6000, 0.5488, "部分用电 * 24小时", ""],
-                    [3, "五一长假", "2019-05-01", 8000, 0.7318, "所有用电 * 4小时 + 部分用电 * 16小时", ""],
-                    [3, "五一长假", "2019-05-02", 8000, 0.7318, "所有用电 * 4小时 + 部分用电 * 16小时", ""],
-                    [3, "五一长假", "2019-05-03", 8000, 0.7318, "所有用电 * 4小时 + 部分用电 * 16小时", ""],
-                    [3, "中秋", "2019-09-13", 8000, 0.7318, "所有用电 * 4小时 + 部分用电 * 16小时", ""],
-                    [3, "十一长假", "2019-10-01", 11000, 1.0062, "所有用电 * 8小时 + 部分用电 * 16小时 - 节能部分 * 8", ""],
-                    [3, "十一长假", "2019-10-02", 11000, 1.0062, "所有用电 * 8小时 + 部分用电 * 16小时 - 节能部分 * 8", ""],
-                    [3, "十一长假", "2019-10-03", 11000, 1.0062, "所有用电 * 8小时 + 部分用电 * 16小时 - 节能部分 * 8", ""],
-                    [3, "十一长假", "2019-10-04", 11000, 1.0062, "所有用电 * 8小时 + 部分用电 * 16小时 - 节能部分 * 8", ""],
-                    [3, "十一长假", "2019-10-05", 11000, 1.0062, "所有用电 * 8小时 + 部分用电 * 16小时 - 节能部分 * 8", ""],
-                    [3, "十一长假", "2019-10-06", 11000, 1.0062, "所有用电 * 8小时 + 部分用电 * 16小时 - 节能部分 * 8", ""],
-                    [3, "十一长假", "2019-10-07", 11000, 1.0062, "所有用电 * 8小时 + 部分用电 * 16小时 - 节能部分 * 8", ""],
-                ]
-            };
+            $scope.datas.tableData = tableData;
+            $scope.datas.cacheData = cacheData;
         });
     }
 
@@ -97,7 +104,10 @@ app.controller('plan_energy',function ($scope, $stateParams) {
     // 获取汇总数据
     $scope.getDatas = function () {
         // 获取所有计划数据
-        $scope.getPlantDatas();
+        $scope.getPlanDatas()
+            .then($scope.buildPlanDatasTable)
+            .catch($scope.ajaxCatch);
+
         // 获取最近15日对照图表数据
         $scope.getEnergyChartDataByType();
     };
@@ -220,5 +230,32 @@ app.controller('plan_energy',function ($scope, $stateParams) {
     $scope.refreshDatas = function () {
         // 获取最近15日对照图表数据
         $scope.getEnergyChartDataByType();
+    }
+
+    $scope.viewItem = function (ig) {
+        $scope.datas.curMethod = "view";
+        $scope.datas.curMethodReadOnly = true;
+        $scope.datas.curItem = angular.copy($scope.datas.cacheData[ig[0]]);
+        $scope.datas.curItemCache = angular.copy($scope.datas.cacheData[ig[0]]);
+        $(".itemEdit").modal("show");
+    };
+
+    $scope.editItem = function (ig) {
+        $scope.datas.curMethod = "edit";
+        $scope.datas.curMethodReadOnly = false;
+        $scope.datas.curItem = angular.copy($scope.datas.cacheData[ig[0]]);
+        $scope.datas.curItemCache = angular.copy($scope.datas.cacheData[ig[0]]);
+        $(".itemEdit").modal("show");
+    };
+
+    $scope.createItem = function() {
+        $scope.datas.curMethod = "create";
+        $scope.datas.curMethodReadOnly = false;
+        $scope.datas.curItem = {
+            buildingId: $scope.datas.buildingId,
+            type: $scope.datas.type,
+        };
+        $scope.datas.curItemCache = {};
+        $(".itemEdit").modal("show");
     }
 });

@@ -11,10 +11,10 @@ public class EnergyPlan {
     private Integer id;
     private String type;     // 能耗类型
     private String planType;  // 计划类型 周末/节假日/普通
-    private Date plantDate; // 计划日期
-    private float plantVal;  // 计划值
-    private float plantValAvg;
-    private String plantMethod;
+    private Date planDate; // 计划日期
+    private float planVal;  // 计划值
+    private float planValAvg;
+    private String planMethod;
     private String note;
 
     public Integer getId() {
@@ -41,36 +41,36 @@ public class EnergyPlan {
         this.planType = planType;
     }
 
-    public Date getPlantDate() {
-        return plantDate;
+    public Date getPlanDate() {
+        return planDate;
     }
 
-    public void setPlantDate(Date plantDate) {
-        this.plantDate = plantDate;
+    public void setPlanDate(Date planDate) {
+        this.planDate = planDate;
     }
 
-    public float getPlantVal() {
-        return plantVal;
+    public float getPlanVal() {
+        return planVal;
     }
 
-    public void setPlantVal(float plantVal) {
-        this.plantVal = plantVal;
+    public void setPlanVal(float planVal) {
+        this.planVal = planVal;
     }
 
-    public float getPlantValAvg() {
-        return plantValAvg;
+    public float getPlanValAvg() {
+        return planValAvg;
     }
 
-    public void setPlantValAvg(float plantValAvg) {
-        this.plantValAvg = plantValAvg;
+    public void setPlanValAvg(float planValAvg) {
+        this.planValAvg = planValAvg;
     }
 
-    public String getPlantMethod() {
-        return plantMethod;
+    public String getPlanMethod() {
+        return planMethod;
     }
 
-    public void setPlantMethod(String plantMethod) {
-        this.plantMethod = plantMethod;
+    public void setPlanMethod(String planMethod) {
+        this.planMethod = planMethod;
     }
 
     public String getNote() {
@@ -87,10 +87,10 @@ public class EnergyPlan {
                 "id=" + id +
                 ", type='" + type + '\'' +
                 ", planType='" + planType + '\'' +
-                ", plantDate=" + plantDate +
-                ", plantVal=" + plantVal +
-                ", plantValAvg=" + plantValAvg +
-                ", plantMethod='" + plantMethod + '\'' +
+                ", plantDate=" + planDate +
+                ", plantVal=" + planVal +
+                ", plantValAvg=" + planValAvg +
+                ", plantMethod='" + planMethod + '\'' +
                 ", note='" + note + '\'' +
                 '}';
     }

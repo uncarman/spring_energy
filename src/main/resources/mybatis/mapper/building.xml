@@ -407,6 +407,7 @@
     <select id="getEnergyPlans" resultType="com.energy.entity.EnergyPlan">
         SELECT
           id,
+          `building_id` as buildingId,
           `type`,
           plan_type as planType,
           plan_date as planDate,
@@ -415,19 +416,19 @@
           plan_method as planMethod,
           note
         FROM a_energy_plan
-        WHERE `type` = #{type}
+        WHERE building_id=#{buildingId} and `type` = #{type}
     </select>
     
     <insert id="createEnergyPlan" parameterType="com.energy.entity.EnergyPlan">
-        INSERT INTO `a_item_group` (`type`, `plan_type`, `plan_date`, `plan_val`, `plan_val_avg`, `plan_method`, `note`)
-        VALUES ( #{type}, #{planType}, #{planDate}, #{planVal}, #{planValAvg}, #{planMethod}, #{note})
+        INSERT INTO `a_item_group` (`building_id`, `type`, `plan_type`, `plan_date`, `plan_val`, `plan_val_avg`, `plan_method`, `note`)
+        VALUES ( #{buildingId}, #{type}, #{planType}, #{planDate}, #{planVal}, #{planValAvg}, #{planMethod}, #{note})
         <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
             select LAST_INSERT_ID()
         </selectKey>
     </insert>
     <update id="updateEnergyPlan" parameterType="com.energy.entity.EnergyPlan">
         UPDATE `a_energy_plan`
-        set `type` = #{type}, `plan_type` = #{planType}, `plan_date`= #{planDate}, `plan_val`= #{planVal},
+        set `building_id` = #{buildingId}, `type` = #{type}, `plan_type` = #{planType}, `plan_date`= #{planDate}, `plan_val`= #{planVal},
           `plan_val_avg`= #{planValAvg}, `plan_method`= #{planMethod}, `note`= #{note}
         where id = ${id}
     </update>

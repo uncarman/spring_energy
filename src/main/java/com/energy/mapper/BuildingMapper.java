@@ -71,7 +71,7 @@ public interface BuildingMapper {
 
     public List<EnergyData> getEnergyDataLatest();
 
-    public List<EnergyPlan> getEnergyPlans(@Param("type")String type);
+    public List<EnergyPlan> getEnergyPlans(@Param("buildingId")Integer buildingId, @Param("type")String type);
     public void createEnergyPlan(EnergyPlan energyPlan);
     public void updateEnergyPlan(EnergyPlan energyPlan);
     public void deleteEnergyPlan(@Param("id")Integer id);
