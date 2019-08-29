@@ -21,10 +21,10 @@
             b.heating_area as heatingArea,
             b.heating_area,
             b.air_conditioning as airConditioning,
-            b.heating;
-            b.coefficient;
-            b.ratio;
-            b.structure;
+            b.heating,
+            b.coefficient,
+            b.ratio,
+            b.structure,
             b.wall_material as wallMaterial,
             b.wall_warm as wallWarm,
             b.window,
@@ -37,7 +37,7 @@
             b.photo_url as photoUrl,
             b.insert_date as insertDate,
             b.monitoring
-        from building_base
+        from a_building b
         where id = #{id}
     </select>
 
@@ -59,10 +59,10 @@
             b.heating_area as heatingArea,
             b.heating_area,
             b.air_conditioning as airConditioning,
-            b.heating;
-            b.coefficient;
-            b.ratio;
-            b.structure;
+            b.heating,
+            b.coefficient,
+            b.ratio,
+            b.structure,
             b.wall_material as wallMaterial,
             b.wall_warm as wallWarm,
             b.window,

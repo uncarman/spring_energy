@@ -95,8 +95,8 @@ public class ItemDataController {
             // 默认四种表： 电，水，燃气，蒸汽
             List<String> energyTypes = BaseUtil.energyTypes();
             for(String curType : energyTypes) {
-                Map curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // [能耗分项]的总类
-                Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
+                ItemGroup curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // [能耗分项]的总类
+                Integer curGroupId = null != curTypeGroup ? curTypeGroup.getId() : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
@@ -152,8 +152,8 @@ public class ItemDataController {
             // 默认四种表： 电，水，燃气，蒸汽
             List<String> energyTypes = BaseUtil.energyTypes();
             for(String curType : energyTypes) {
-                Map curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // Integer.valueOf(curType).toString();
-                Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
+                ItemGroup curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroup ? curTypeGroup.getId() : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
@@ -209,8 +209,8 @@ public class ItemDataController {
 
             for(int i = 0; i < energyTypes.size(); i++) {
                 String curType = energyTypes.get(i);
-                Map curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType);
-                Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
+                ItemGroup curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType);
+                Integer curGroupId = null != curTypeGroup ? curTypeGroup.getId() : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
@@ -291,8 +291,8 @@ public class ItemDataController {
             Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
 
             // ------------- 汇总数据 ---------------//
-            Map curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
-            Integer curGroupId = null != curTypeGroupParent ? Integer.valueOf(curTypeGroupParent.get("id").toString()) : -1;
+            ItemGroup curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+            Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
             String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
             List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
             float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
@@ -671,21 +671,10 @@ public class ItemDataController {
                     titleList.add("日期");
 
                     // 先生成第一列时间数据
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    Calendar time = Calendar.getInstance();
+                    SimpleDateFormat formatter = DateUtil.typeToFormatter(type);
                     Date fromDate = formatter.parse(from);
                     Date toDate = formatter.parse(to);
-                    int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000 * 3600 * 24));
-
-                    for (int j = 0; j <= days; j++) {
-                        time.setTime(fromDate);
-                        time.add(Calendar.DATE, j);
-                        String date = formatter.format(time.getTime());
-                        List<String> row = new ArrayList<String>();
-                        ;
-                        row.add(date);
-                        dataList.add(row);
-                    }
+                    dataList = DateUtil.dateList(fromDate, toDate, type);
 
                     DecimalFormat df2 = new DecimalFormat("###.0000");
 

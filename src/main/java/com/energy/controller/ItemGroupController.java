@@ -2,6 +2,7 @@ package com.energy.controller;
 
 import com.energy.entity.ItemGroup;
 import com.energy.service.BuildingService;
+import com.energy.service.ItemService;
 import com.energy.utils.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class ItemGroupController {
 
     @Resource
     private BuildingService buildingService = null;
+    @Resource
+    private ItemService itemService = null;
 
     // 05.1.  某建筑下的 所有【设备分组】
     @RequestMapping("/getItemGroups")
@@ -31,7 +34,7 @@ public class ItemGroupController {
                                 HttpServletRequest request) {
         Response res = new Response();
         try {
-            List<Map> list = buildingService.getItemGroups(buildingId);
+            List<Map> list = itemService.getItemGroups(buildingId);
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -49,7 +52,7 @@ public class ItemGroupController {
         Response res = new Response();
         try {
             String parent = request.getParameter("parent");
-            List<Map> list = buildingService.getItemGroupByType(buildingId, type, subType, parent);
+            List<ItemGroup> list = itemService.getItemGroupByType(buildingId, type, subType, parent);
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -63,8 +66,8 @@ public class ItemGroupController {
     public Object getItemGroupByCode(@RequestParam("groupId") Integer groupId) {
         Response res = new Response();
         try {
-            ItemGroup group = buildingService.getItemGroupById(groupId);
-            List<Map> list = buildingService.getItemGroupChildsById(groupId);
+            ItemGroup group = itemService.getItemGroupById(groupId);
+            List<ItemGroup> list = itemService.getItemGroupChildsById(groupId);
             Map resMap = new HashMap();
             resMap.put("itemGroup", group);
             resMap.put("itemGroupChilds", list);
@@ -87,7 +90,7 @@ public class ItemGroupController {
                                   @RequestParam("note") String note) {
         Response res = new Response();
         try {
-            ItemGroup group = buildingService.getItemGroupById(id);
+            ItemGroup group = itemService.getItemGroupById(id);
             if (null == group) {
                 res.makeFailed("数据不存在");
             } else {
@@ -98,7 +101,7 @@ public class ItemGroupController {
                 group.setParent(parent);
                 group.setArea(area);
                 group.setNote(note);
-                buildingService.updateItemGroup(group);
+                itemService.updateItemGroup(group);
             }
             res.makeSuccess("");
         } catch (Exception ex) {
@@ -126,7 +129,7 @@ public class ItemGroupController {
             group.setParent(parent);
             group.setArea(area);
             group.setNote(note);
-            buildingService.createItemGroup(group);
+            itemService.createItemGroup(group);
 
             res.makeSuccess("");
         } catch (Exception ex) {
@@ -140,8 +143,8 @@ public class ItemGroupController {
     public Object removeItemGroup(@RequestParam("id") Integer id) {
         Response res = new Response();
         try {
-            ItemGroup group = buildingService.getItemGroupById(id);
-            buildingService.deleteItemGroup(id);
+            ItemGroup group = itemService.getItemGroupById(id);
+            itemService.deleteItemGroup(id);
             res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -156,10 +159,10 @@ public class ItemGroupController {
                                   @RequestParam("itemIds") String itemIds) {
         Response res = new Response();
         try {
-            ItemGroup group = buildingService.getItemGroupById(groupId);
+            ItemGroup group = itemService.getItemGroupById(groupId);
             if(null != group) {
                 List<String> itemList = Arrays.asList(itemIds.split(","));
-                buildingService.updateItemsGroupItems(groupId, itemList);
+                itemService.updateItemsGroupItems(groupId, itemList);
             }
             res.makeSuccess("");
         } catch (Exception ex) {
