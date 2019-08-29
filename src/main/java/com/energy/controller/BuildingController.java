@@ -2,6 +2,7 @@ package com.energy.controller;
 
 import com.energy.entity.Building;
 import com.energy.service.BuildingService;
+import com.energy.utils.Constant;
 import com.energy.utils.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,17 +53,33 @@ public class BuildingController {
         return res;
     }
 
-    @RequestMapping("/getBuildingsByUserName")
+    // 04. 所有【能耗分项】已安装的 零级分类对应的设备ids
+    @RequestMapping("/getBuildingItemTypes")
     @ResponseBody
-    public Object getBuildingsByUserName(@RequestParam("userName") String userName) {
+    public Object getBuildingItemTypes(@RequestParam("buildingId") Integer buildingId) {
         Response res = new Response();
         try {
-            List<Building> list = buildingService.getBuildingsByUserName(userName);
+            String type = Constant.SUM_TYPE;
+            Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, type);
+            res.makeSuccess(groupItems);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 测试用： 获取能耗类型基础数据
+    @RequestMapping("/getItemTypeBaseInfo")
+    @ResponseBody
+    public Object getItemTypeBaseInfo() {
+        Response res = new Response();
+        try {
+            List<Map> list = buildingService.getItemTypeBaseInfo();
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
         }
-        return res;
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
 }

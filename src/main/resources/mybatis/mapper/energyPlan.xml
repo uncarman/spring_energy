@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.EnergyPlanMapper">
+
+    <select id="getEnergyPlans" resultType="com.energy.entity.EnergyPlan">
+        SELECT
+            id,
+            `building_id` as buildingId,
+            `type`,
+            plan_type as planType,
+            plan_date as planDate,
+            plan_val as planVal,
+            plan_val_avg as planValAvg,
+            plan_method as planMethod,
+            note
+        FROM a_energy_plan
+        WHERE building_id=#{buildingId} and `type` = #{type}
+    </select>
+
+    <select id="getEnergyPlanById" resultType="com.energy.entity.EnergyPlan">
+        SELECT
+            id,
+            `building_id` as buildingId,
+            `type`,
+            plan_type as planType,
+            plan_date as planDate,
+            plan_val as planVal,
+            plan_val_avg as planValAvg,
+            plan_method as planMethod,
+            note
+        FROM a_energy_plan
+        WHERE id=#{id}
+    </select>
+
+    <insert id="createEnergyPlan" parameterType="com.energy.entity.EnergyPlan">
+        INSERT INTO `a_item_group` (`building_id`, `type`, `plan_type`, `plan_date`, `plan_val`, `plan_val_avg`, `plan_method`, `note`)
+            VALUES ( #{buildingId}, #{type}, #{planType}, #{planDate}, #{planVal}, #{planValAvg}, #{planMethod}, #{note})
+        <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <update id="updateEnergyPlan" parameterType="com.energy.entity.EnergyPlan">
+        UPDATE `a_energy_plan`
+            set `building_id` = #{buildingId}, `type` = #{type}, `plan_type` = #{planType}, `plan_date`= #{planDate}, `plan_val`= #{planVal},
+            `plan_val_avg`= #{planValAvg}, `plan_method`= #{planMethod}, `note`= #{note}
+        where id = ${id}
+    </update>
+
+    <delete id="deleteEnergyPlan" parameterType="Integer">
+        DELETE FROM a_energy_plan WHERE id = #{id}
+    </delete>
+
+</mapper>

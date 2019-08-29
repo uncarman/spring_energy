@@ -1,8 +1,11 @@
 package com.energy.controller;
 
 import com.energy.entity.BasicData;
+import com.energy.entity.Building;
+import com.energy.entity.Item;
 import com.energy.entity.ItemGroup;
 import com.energy.service.BuildingService;
+import com.energy.service.ItemService;
 import com.energy.utils.BaseUtil;
 import com.energy.utils.Constant;
 import com.energy.utils.DateUtil;
@@ -27,6 +30,8 @@ public class ItemDataController {
 
     @Resource
     private BuildingService buildingService = null;
+    @Resource
+    private ItemService itemService = null;
 
     // 01. 【多个设备】按【时/日/月/年】汇总数据
     @RequestMapping("/getItemDatasByDate")
@@ -90,7 +95,7 @@ public class ItemDataController {
             // 默认四种表： 电，水，燃气，蒸汽
             List<String> energyTypes = BaseUtil.energyTypes();
             for(String curType : energyTypes) {
-                Map curTypeGroup = buildingService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // [能耗分项]的总类
+                Map curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // [能耗分项]的总类
                 Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
@@ -99,7 +104,7 @@ public class ItemDataController {
                 float sumItemCurYear = buildingService.getItemsSummaryVal(curItemIdList, curYearStart, curYearEnd);
                 float sumItemLastMonth = buildingService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
                 float sumItemLastYear = buildingService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
-                ItemGroup group = buildingService.getItemGroupById(curGroupId);
+                ItemGroup group = itemService.getItemGroupById(curGroupId);
                 Map baseInfo = baseMap.get(curType);
 
                 Map itemMap = new HashMap();
@@ -147,13 +152,13 @@ public class ItemDataController {
             // 默认四种表： 电，水，燃气，蒸汽
             List<String> energyTypes = BaseUtil.energyTypes();
             for(String curType : energyTypes) {
-                Map curTypeGroup = buildingService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // Integer.valueOf(curType).toString();
+                Map curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // Integer.valueOf(curType).toString();
                 Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map baseInfo = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(curGroupId);
+                ItemGroup group = itemService.getItemGroupById(curGroupId);
 
                 Map curMap = new HashMap();
                 curMap.put("datas", curList);
@@ -204,13 +209,13 @@ public class ItemDataController {
 
             for(int i = 0; i < energyTypes.size(); i++) {
                 String curType = energyTypes.get(i);
-                Map curTypeGroup = buildingService.getItemGroupIdByEnergyType(buildingId, curType, sumType);
+                Map curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType);
                 Integer curGroupId = null != curTypeGroup ? Integer.valueOf(curTypeGroup.get("id").toString()) : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(curGroupId);
+                ItemGroup group = itemService.getItemGroupById(curGroupId);
                 DecimalFormat df2 = new DecimalFormat("###.0000");
 
                 titleList.add((String)curBaseMap.get("name"));
@@ -286,14 +291,14 @@ public class ItemDataController {
             Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
 
             // ------------- 汇总数据 ---------------//
-            Map curTypeGroupParent = buildingService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+            Map curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
             Integer curGroupId = null != curTypeGroupParent ? Integer.valueOf(curTypeGroupParent.get("id").toString()) : -1;
             String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
             List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
             float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
             float sumItemLastMonth = buildingService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
             float sumItemLastYear = buildingService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
-            ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curGroupId));
+            ItemGroup group = itemService.getItemGroupById(Integer.valueOf(curGroupId));
             Map map = baseMap.get(type);
             String rate = map.get("rate").toString();
 
@@ -392,6 +397,8 @@ public class ItemDataController {
                                            HttpServletRequest request) {
         Response res = new Response();
         try {
+            Building building = buildingService.getBuildingById(buildingId);
+
             String parent = request.getParameter("parent");
             String viewType = request.getParameter("viewType");
 
@@ -408,13 +415,13 @@ public class ItemDataController {
                 // 当前时间区间数据
                 Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
                 String curType = energyType;
-                Map curTypeGroupParent = buildingService.getItemGroupIdByEnergyType(buildingId, energyType, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
-                Integer curGroupId = null != curTypeGroupParent ? Integer.valueOf(curTypeGroupParent.get("id").toString()) : -1;
+                ItemGroup curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, energyType, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curGroupId));
+                ItemGroup group = itemService.getItemGroupById(Integer.valueOf(curGroupId));
 
                 if(null != curList && !curList.isEmpty()) {
                     for(Map item : curList) {
@@ -439,14 +446,14 @@ public class ItemDataController {
             } else {
                 Map curBaseMap = baseMap.get(energyType);
                 Integer parentId = Integer.valueOf(parent);
-                ItemGroup group = buildingService.getItemGroupById(parentId);
+                ItemGroup group = itemService.getItemGroupById(parentId);
                 // 子集类汇总
-                List<Map> groupChilds = buildingService.getItemGroupChildsById(parentId);
+                List<ItemGroup> groupChilds = itemService.getItemGroupChildsById(parentId);
 
                 // 是否包含子类
-                if(null == groupChilds || groupChilds.size() <= 0) {
+                if(null == groupChilds || groupChilds.isEmpty()) {
                     // 无子类, 拿到当前类的汇总数据
-                    List<Map> items = buildingService.getItemsByGroupId(group.getId());
+                    List<Map> items = itemService.getItemsByGroupId(group.getId());
                     List<String> curItemIdList = new ArrayList<>();
                     for(int j=0; j<items.size(); j++) {
                         Map curItem = items.get(j);
@@ -459,7 +466,7 @@ public class ItemDataController {
                     if(curItemIdList.size() > 0) {
                         curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                     }
-                    Integer area = !"".equals(group.getArea()) ? group.getArea() : group.getArea();
+                    float area = group.getArea() > 0 ? group.getArea() : group.getArea();
 
                     Map curMap = new HashMap();
                     curMap.put("datas", curList);
@@ -473,9 +480,8 @@ public class ItemDataController {
 
                 } else {
                     // 有子类
-                    for(int i=0; i<groupChilds.size(); i++) {
-                        Map curGroup = groupChilds.get(i);
-                        List<Map> items = buildingService.getItemsByGroupId(Integer.valueOf(curGroup.get("id").toString()));
+                    for(ItemGroup curGroup : groupChilds) {
+                        List<Map> items = itemService.getItemsByGroupId(curGroup.getId());
                         List<String> curItemIdList = new ArrayList<>();
                         if(null != items) {
                             for(int j=0; j<items.size(); j++) {
@@ -490,17 +496,18 @@ public class ItemDataController {
                             curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                         }
 
-                        Integer area = !"".equals(curGroup.get("area")) ? Integer.valueOf(curGroup.get("area").toString()) : group.getArea();
+                        float area = curGroup.getArea() > 0 ? curGroup.getArea()
+                                         : (group.getArea() > 0 ? group.getArea() : building.getArea()) ;
 
                         Map curMap = new HashMap();
                         curMap.put("datas", curList);
                         curMap.put("key", "recorded_at");
                         curMap.put("val", "total_val");
-                        curMap.put("name", curGroup.get("name"));
+                        curMap.put("name", curGroup.getName());
                         curMap.put("prop_area", area);
                         curMap.put("area", area);
 
-                        chartMap.put(curGroup.get("id"), curMap);
+                        chartMap.put(curGroup.getId(), curMap);
                     }
                 }
             }
@@ -525,6 +532,8 @@ public class ItemDataController {
                                            HttpServletRequest request) {
         Response res = new Response();
         try {
+            Building building = buildingService.getBuildingById(buildingId);
+
             String parent = request.getParameter("parent");
 
             // 可以计算总量的分组类型
@@ -539,13 +548,13 @@ public class ItemDataController {
                 // 当前时间区间数据
                 Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
                 String curType = energyType;
-                Map curTypeGroupParent = buildingService.getItemGroupIdByEnergyType(buildingId, energyType, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
-                Integer curGroupId = null != curTypeGroupParent ? Integer.valueOf(curTypeGroupParent.get("id").toString()) : -1;
+                ItemGroup curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, energyType, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = buildingService.getItemGroupById(Integer.valueOf(curGroupId));
+                ItemGroup group = itemService.getItemGroupById(Integer.valueOf(curGroupId));
 
                 // 表头
                 List<String> titleList = new ArrayList<>();
@@ -593,81 +602,68 @@ public class ItemDataController {
 
             } else {
                 Integer parentId = Integer.valueOf(parent);
-                ItemGroup group = buildingService.getItemGroupById(parentId);
+                ItemGroup group = itemService.getItemGroupById(parentId);
                 // 子集类汇总
-                List<Map> groupChilds = buildingService.getItemGroupChildsById(parentId);
+                List<ItemGroup> groupChilds = itemService.getItemGroupChildsById(parentId);
                 Map curBaseMap = baseMap.get(energyType);
 
-
                 // 是否包含子类
-                if(null == groupChilds || groupChilds.size() <= 0) {
+                if(null == groupChilds || groupChilds.isEmpty()) {
                     // 无子类, 拿到当前类的汇总数据
                     List<String> titleList = new ArrayList<>();
                     titleList.add("日期");
 
                     // 先生成第一列时间数据
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    Calendar time = Calendar.getInstance();
+                    SimpleDateFormat formatter = DateUtil.typeToFormatter(type);
                     Date fromDate = formatter.parse(from);
                     Date toDate = formatter.parse(to);
-                    int days = (int) ((toDate.getTime() - fromDate.getTime()) / (1000 * 3600 * 24));
-
-                    for (int j = 0; j <= days; j++) {
-                        time.setTime(fromDate);
-                        time.add(Calendar.DATE, j);
-                        String date = formatter.format(time.getTime());
-                        List<String> row = new ArrayList<String>();
-                        ;
-                        row.add(date);
-                        dataList.add(row);
-                    }
+                    dataList = DateUtil.dateList(fromDate, toDate, type);
 
                     DecimalFormat df2 = new DecimalFormat("###.0000");
 
-                    List<Map> items = buildingService.getItemsByGroupId(group.getId());
+                    List<Map> items = itemService.getItemsByGroupId(group.getId());
                     List<String> curItemIdList = new ArrayList<>();
-                    for(int j=0; j<items.size(); j++) {
-                        Map curItem = items.get(j);
-                        if(null != curItem) {
-                            curItemIdList.add(curItem.get("id").toString());
+                    if(null != items && !items.isEmpty()) {
+                        for(int j=0; j<items.size(); j++) {
+                            Map curItem = items.get(j);
+                            if(null != curItem) {
+                                curItemIdList.add(curItem.get("id").toString());
+                            }
                         }
                     }
 
                     List<Map> curList = new ArrayList<>();
-                    if(curItemIdList.size() > 0) {
+                    if(!curItemIdList.isEmpty()) {
                         curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                     }
-                    Integer area = !"".equals(group.getArea()) ? group.getArea() : group.getArea();
-                    titleList.add((String) group.getName());
-                    titleList.add((String) group.getName()+"密度");
+                    float area = group.getArea() > 0 ? group.getArea() : building.getArea();
+
+                    titleList.add(group.getName());
+                    titleList.add(group.getName()+"密度");
 
                     for (int k = 0; k < dataList.size(); k++) {
                         List line = dataList.get(k);
                         Boolean hasInsert = false;
-                        for (int j = 0; j < curList.size(); j++) {
-                            Map row = curList.get(j);
-                            if (line.get(0).toString().equals(row.get("recorded_at"))) {
-                                line.add(row.get("total_val"));
-                                float totalValAvg = Float.valueOf(row.get("total_val").toString()) / Float.valueOf(group.getArea());
-                                line.add(totalValAvg);
-//                                if(null != rate) {
-//                                    float fee = Float.valueOf(row.get("total_val").toString()) * Float.valueOf(rate);
-//                                    line.add(fee);
-//                                } else {
-//                                    line.add(0);
-//                                }
-                                hasInsert = true;
-                                break;
+                        if(null != curList && !curList.isEmpty()) {
+                            for (int j = 0; j < curList.size(); j++) {
+                                Map row = curList.get(j);
+                                if (line.get(0).toString().equals(row.get("recorded_at"))) {
+                                    line.add(row.get("total_val"));
+                                    float totalValAvg = Float.valueOf(row.get("total_val").toString()) / area;
+                                    line.add(df2.format(totalValAvg));
+                                    hasInsert = true;
+                                    break;
+                                }
                             }
                         }
+                        // 补充 0
                         if (!hasInsert) {
-                            line.add("0");
-                            line.add("0");
-//                                line.add("0");
+                            line.add(0);
+                            line.add(0);
                         }
                     }
+                    // 补充标题
                     dataList.add(0, titleList);
-
                 } else {
                     // 有子类
                     // 表头
@@ -694,8 +690,8 @@ public class ItemDataController {
                     DecimalFormat df2 = new DecimalFormat("###.0000");
 
                     for (int i = 0; i < groupChilds.size(); i++) {
-                        Map curGroup = groupChilds.get(i);
-                        List<Map> items = buildingService.getItemsByGroupId(Integer.valueOf(curGroup.get("id").toString()));
+                        ItemGroup curGroup = groupChilds.get(i);
+                        List<Map> items = itemService.getItemsByGroupId(curGroup.getId());
                         List<String> curItemIdList = new ArrayList<>();
                         for (int j = 0; j < items.size(); j++) {
                             Map curItem = items.get(j);
@@ -708,41 +704,37 @@ public class ItemDataController {
                             curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                         }
 
-                        Integer area = !"".equals(curGroup.get("area")) ? Integer.valueOf(curGroup.get("area").toString()) : group.getArea();
+                        float area = curGroup.getArea() > 0 ? curGroup.getArea()
+                                : (group.getArea() > 0 ? group.getArea() : building.getArea()) ;
 
-                        titleList.add((String) curGroup.get("name"));
-                        titleList.add((String)curGroup.get("name")+"密度");
+                        titleList.add((String) curGroup.getName());
+                        titleList.add((String)curGroup.getName()+"密度");
 //                        titleList.add((String)curGroup.get("name")+"费用");
                         String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : null;
 
                         for (int k = 0; k < dataList.size(); k++) {
                             List line = dataList.get(k);
                             Boolean hasInsert = false;
-                            for (int j = 0; j < curList.size(); j++) {
-                                Map row = curList.get(j);
-                                if (line.get(0).toString().equals(row.get("recorded_at"))) {
-                                    line.add(row.get("total_val"));
-                                    float totalValAvg = Float.valueOf(row.get("total_val").toString()) / Float.valueOf(group.getArea());
-                                    line.add(totalValAvg);
-//                                    if(null != rate) {
-//                                        float fee = Float.valueOf(row.get("total_val").toString()) * Float.valueOf(rate);
-//                                        line.add(fee);
-//                                    } else {
-//                                        line.add(0);
-//                                    }
-                                    hasInsert = true;
-                                    break;
+                            if(null != curList && !curList.isEmpty()) {
+                                for (int j = 0; j < curList.size(); j++) {
+                                    Map row = curList.get(j);
+                                    if (line.get(0).toString().equals(row.get("recorded_at"))) {
+                                        line.add(row.get("total_val"));
+                                        float totalValAvg = Float.valueOf(row.get("total_val").toString()) / area;
+                                        line.add(totalValAvg);
+                                        hasInsert = true;
+                                        break;
+                                    }
                                 }
-                                ;
                             }
+                            // 补充 0
                             if (!hasInsert) {
                                 line.add("0");
                                 line.add("0");
-//                                line.add("0");
                             }
                         }
                     }
-
+                    // 补充标题
                     dataList.add(0, titleList);
                 }
             }

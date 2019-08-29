@@ -2,6 +2,7 @@ package com.energy.service;
 
 import com.energy.entity.*;
 import com.energy.mapper.BuildingMapper;
+import com.energy.mapper.ItemMapper;
 import com.energy.utils.Constant;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
@@ -36,31 +37,22 @@ public class BuildingService {
         }
     }
 
-    public List<Building> getBuildingsByUserName(String userName) {
-        List<Building> list = buildingMapper.getBuildingsByUserName(userName);
-        if (null != list && !list.isEmpty()) {
-            return list;
-        } else {
-            return null;
-        }
-    }
-
     // collector 相关
     public List<Map> getBuildingCollectors(Integer buildingId) {
         return buildingMapper.getBuildingCollectors(buildingId);
     }
 
-    // 综合数据
-    public List<Map> getUserBuildingSummary(Integer userId, String type) {
-        if(type == Constant.TYPE_AMMETER) {
-            return buildingMapper.getUserBuildingAmmeterSummary(userId);
-        } else if( type == Constant.TYPE_WATERMETER) {
-            return buildingMapper.getUserBuildingWatermeterSummary(userId);
-        } else if( type == Constant.TYPE_ENERGYMETER) {
-            return buildingMapper.getUserBuildingEnergymeterSummary(userId);
-        }
-        return null;
-    }
+//    // 综合数据
+//    public List<Map> getUserBuildingSummary(Integer userId, String type) {
+//        if(type == Constant.TYPE_AMMETER) {
+//            return buildingMapper.getUserBuildingAmmeterSummary(userId);
+//        } else if( type == Constant.TYPE_WATERMETER) {
+//            return buildingMapper.getUserBuildingWatermeterSummary(userId);
+//        } else if( type == Constant.TYPE_ENERGYMETER) {
+//            return buildingMapper.getUserBuildingEnergymeterSummary(userId);
+//        }
+//        return null;
+//    }
 
     // 某建筑下所有[设备]
     public List<Map> getBuildingItems(Integer buildingId) {
@@ -71,91 +63,6 @@ public class BuildingService {
             return null;
         }
     }
-    // 某建筑下所有[设备分组]
-    public List<Map> getItemGroups(Integer buildingId) {
-        List<Map> list = buildingMapper.getItemGroups(buildingId);
-        if (null != list && null != list.get(0)) {
-            return list;
-        } else {
-            return null;
-        }
-    }
-
-    // [设备分组]信息
-    public List<Map> getItemGroupByType(Integer buildingId, String type, String subType, String parent) {
-        List<Map> list = buildingMapper.getItemGroupByType(buildingId, type, subType, parent);
-        if (null != list && null != list.get(0)) {
-            return list;
-        } else {
-            return null;
-        }
-    }
-
-    // 根据类型分类, 拿到一级itemGroup
-    public Map getItemGroupIdByEnergyType(Integer buildingId, String type, String subType) {
-        List<Map> list = buildingMapper.getItemGroupByType(buildingId, type, subType, null);
-        if( null != list && !list.isEmpty()) {
-            return list.get(0);
-        }
-        return null;
-    }
-
-
-    // 更新设备分组和设备绑定关系
-    @Transactional(rollbackFor = Exception.class)
-    public void updateItemsGroupItems(Integer groupId, List<String>ItemIds) {
-        buildingMapper.deleteItemGroupMapper(groupId);
-        buildingMapper.insertItemGroupMapper(groupId, ItemIds);
-    }
-
-    public ItemGroup getItemGroupById(Integer id) {
-        return buildingMapper.getItemGroupById(id);
-    }
-
-    public List<Map> getItemGroupChildsById(Integer id) {
-        List<Map> list = buildingMapper.getItemGroupChildsById(id);
-        if (null != list && !list.isEmpty()) {
-            return list;
-        } else {
-            return null;
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Integer createItemGroup(ItemGroup itemGroup) {
-        return buildingMapper.createItemGroup(itemGroup);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void updateItemGroup(ItemGroup itemGroup) {
-        buildingMapper.updateItemGroup(itemGroup);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteItemGroup(Integer id) {
-        buildingMapper.deleteItemGroup(id);
-    }
-
-
-    public Item getItemById(Integer id) {
-        return buildingMapper.getItemById(id);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void createItem(Item item) {
-        buildingMapper.createItem(item);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void updateItem(Item item) {
-        buildingMapper.updateItem(item);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void removeItem(Integer id) {
-        buildingMapper.deleteItem(id);
-    }
-
 
 
     public List<Map> getBasicDatas() {
@@ -243,29 +150,6 @@ public class BuildingService {
         }
     };
 
-    // 某个分组下的所有设备
-    public List<Map> getItemsByGroupId(Integer groupId) {
-        List<Map> list = buildingMapper.getItemsByGroupId(groupId);
-        return list;
-    }
-
-    public List<EnergyPlan> getEnergyPlans(@Param("buildingId")Integer buildingId, @Param("type")String type) {
-        return buildingMapper.getEnergyPlans(buildingId, type);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void createEnergyPlan(EnergyPlan energyPlan) {
-        buildingMapper.createEnergyPlan(energyPlan);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void updateEnergyPlan(EnergyPlan energyPlan) {
-        buildingMapper.updateEnergyPlan(energyPlan);
-    }
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteEnergyPlan(@Param("id")Integer id) {
-        buildingMapper.deleteEnergyPlan(id);
-    }
 
     public List<ItemData> getItemData() {
         return buildingMapper.getItemData();

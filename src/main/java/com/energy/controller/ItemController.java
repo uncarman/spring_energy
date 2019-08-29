@@ -2,6 +2,7 @@ package com.energy.controller;
 
 import com.energy.entity.Item;
 import com.energy.service.BuildingService;
+import com.energy.service.ItemService;
 import com.energy.utils.Constant;
 import com.energy.utils.Response;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,8 @@ public class ItemController {
 
     @Resource
     private BuildingService buildingService = null;
+    @Resource
+    private ItemService itemService = null;
 
     // 05.2.  某建筑下的 所有【设备】
     @RequestMapping("/getBuildingItems")
@@ -45,36 +48,7 @@ public class ItemController {
                                     HttpServletRequest request) {
         Response res = new Response();
         try {
-            List<Map> list = buildingService.getItemsByGroupId(groupId);
-            res.makeSuccess(list);
-        } catch (Exception ex) {
-            res.makeFailed(ex);
-        }
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
-    // 04. 所有【能耗分项】已安装的 零级分类对应的设备ids
-    @RequestMapping("/getBuildingItemTypes")
-    @ResponseBody
-    public Object getBuildingItemTypes(@RequestParam("buildingId") Integer buildingId) {
-        Response res = new Response();
-        try {
-            String type = Constant.SUM_TYPE;
-            Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, type);
-            res.makeSuccess(groupItems);
-        } catch (Exception ex) {
-            res.makeFailed(ex);
-        }
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
-    // 测试用： 获取能耗类型基础数据
-    @RequestMapping("/getItemTypeBaseInfo")
-    @ResponseBody
-    public Object getItemTypeBaseInfo() {
-        Response res = new Response();
-        try {
-            List<Map> list = buildingService.getItemTypeBaseInfo();
+            List<Map> list = itemService.getItemsByGroupId(groupId);
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -115,7 +89,7 @@ public class ItemController {
             if(null != request.getParameter("maxValue")) {
                 item.setMaxValue(Integer.valueOf(request.getParameter("maxValue").toString()));
             }
-            buildingService.createItem(item);
+            itemService.createItem(item);
             res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -129,7 +103,7 @@ public class ItemController {
                              HttpServletRequest request) {
         Response res = new Response();
         try {
-            Item item = buildingService.getItemById(id);
+            Item item = itemService.getItemById(id);
             if(null != item) {
                 if(null != request.getParameter("collectorId")) {
                     item.setCollectorId(Integer.valueOf(request.getParameter("collectorId").toString()));
@@ -158,7 +132,7 @@ public class ItemController {
                 if(null != request.getParameter("maxValue")) {
                     item.setMaxValue(Integer.valueOf(request.getParameter("maxValue").toString()));
                 }
-                buildingService.updateItem(item);
+                itemService.updateItem(item);
             }
             res.makeSuccess("");
         } catch (Exception ex) {
@@ -173,7 +147,7 @@ public class ItemController {
                              HttpServletRequest request) {
         Response res = new Response();
         try {
-            buildingService.removeItem(id);
+            itemService.removeItem(id);
             res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);

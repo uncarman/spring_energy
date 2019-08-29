@@ -13,7 +13,7 @@ public class ItemGroup {
     private String name;
     private Integer parent;
     private String note;
-    private Integer area;
+    private float area;
     private Integer building_id;
 
     public Integer getId() {
@@ -64,7 +64,7 @@ public class ItemGroup {
         this.note = note;
     }
 
-    public Integer getArea() {
+    public float getArea() {
         return area;
     }
 

@@ -9,6 +9,7 @@ import java.util.Date;
 public class EnergyPlan {
 
     private Integer id;
+    private Integer buildingId;
     private String type;     // 能耗类型
     private String planType;  // 计划类型 周末/节假日/普通
     private Date planDate; // 计划日期
@@ -23,6 +24,14 @@ public class EnergyPlan {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getBuildingId() {
+        return buildingId;
+    }
+
+    public void setBuildingId(Integer buildingIdbuildingId) {
+        this.buildingId = buildingId;
     }
 
     public String getType() {
@@ -85,6 +94,7 @@ public class EnergyPlan {
     public String toString() {
         return "EnergyPlan{" +
                 "id=" + id +
+                "buildingId=" + buildingId +
                 ", type='" + type + '\'' +
                 ", planType='" + planType + '\'' +
                 ", plantDate=" + planDate +
