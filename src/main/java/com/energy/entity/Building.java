@@ -1,157 +1,45 @@
 package com.energy.entity;
 
+import lombok.Data;
+
 import java.util.Date;
 
 /**
  * Created by Administrator on 2019/8/17.
  */
 
+@Data
 public class Building {
 
     private Integer id;
+    private String code;                // 建筑编码
     private String name;
-    private Integer capacity;
-    private String capacity_text;
-    private Integer area;
-    private String status;
-    private String type;
-    private String photo;
-    private String address;
-    private Double latitude;
-    private Double longitude;
-    private String note;
-    private Date created_at;
-    private Date updated_at;
+    private String type;                // 建筑类型
+    private String province;
+    private String city;
+    private String address;             // 建筑地址
+    private Date buildYear;           // 建筑年代
+    private int floorNum;            // 建筑层数
+    private float area;                 // 建筑面积
+    private float refrigerationArea;    // 冷却面积
+    private float heatingArea;          // 采暖面积
+    private float heating_area;         // 采暖面积
+    private String airConditioning;     // 空调系统形式
+    private String heating;             // 采暖系统形式
+    private String coefficient;         // 建筑体型系数
+    private String ratio;               // 窗墙面积比
+    private String structure;           // 建筑结构形式
+    private String wallMaterial;        // 建筑外墙形式
+    private String wallWarm;            // 建筑外墙保温形式
+    private String window;              // 建筑外窗类型
+    private String glass;               // 建筑玻璃类型
+    private String windowFrame;         // 窗框材料类型
+    private float latitude;             // 纬度
+    private float longitude;            // 经度
+    private String owner;               // 建筑业主
+    private String intro;               // 建筑简介
+    private String photoUrl;            // 建筑照片路径
+    private Date insertDate;            // 接入日期
+    private int monitoring;             // 建筑监测状态(0:监测中;1:未监测)
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
-    public String getCapacity_text() {
-        return capacity_text;
-    }
-
-    public void setCapacity_text(String capacity_text) {
-        this.capacity_text = capacity_text;
-    }
-
-    public Integer getArea() {
-        return area;
-    }
-
-    public void setArea(Integer area) {
-        this.area = area;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Date getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
-    }
-
-    public Date getUpdated_at() {
-        return updated_at;
-    }
-
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
-    }
-
-    @Override
-    public String toString() {
-        return "Building{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", capacity=" + capacity +
-                ", capacity_text='" + capacity_text + '\'' +
-                ", area=" + area +
-                ", status='" + status + '\'' +
-                ", type='" + type + '\'' +
-                ", photo='" + photo + '\'' +
-                ", address='" + address + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", note='" + note + '\'' +
-                ", created_at=" + created_at +
-                ", updated_at=" + updated_at +
-                '}';
-    }
 }

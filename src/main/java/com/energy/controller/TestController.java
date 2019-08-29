@@ -21,6 +21,19 @@ public class TestController {
     @Resource
     private BuildingService buildingService = null;
 
+    @RequestMapping("/recordEnergyDatas")
+    @ResponseBody
+    public Object getEnergyTableDataByType(){
+        Response res = new Response();
+        try {
+            buildingService.recordEnergyDatas();
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
     @RequestMapping("/test")
     @ResponseBody
     public Object test(@RequestParam("groupId") Integer groupId,

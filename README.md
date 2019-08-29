@@ -2,8 +2,8 @@
 1. item_group code 起名规则:
 	XX XX XX
 	第一个 XX 对应表类型 : 01 ~ 05
-	第二个 XX 一级分组ID : 01 ~ 99
-	第三个 XX 二级分组ID : 01 ~ 99
+	第二个 XX 一级分组编号 : 01 ~ 99
+	第三个 XX 二级分组编号 : 01 ~ 99
 
 
 building_id 关联 collector

@@ -4,27 +4,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--映射文件配置，namespace指向接口-->
 <mapper namespace="com.energy.mapper.BuildingMapper">
-    <!--
-        select标签代表查询
-        findById要与接口中的方法名对应上
-    -->
-    <select id="findById" parameterType="Integer" resultType="com.energy.entity.Building">
-        select * from building_base where id = #{id}
+
+    <select id="getBuildingById" parameterType="Integer" resultType="com.energy.entity.Building">
+        select
+
+        from building_base
+        where id = #{id}
     </select>
-
-    <!--
-    <if test="userName != null">
-        AND u.name like '%${userName}%'
-    </if>
-
-    <if test="prodType != null and prodType !='' and prodType == '1'.toString()">
-        AND purchase.prodType=1
-    </if>
-
-    <foreach item="item" index="index" collection="series" open="(" separator="," close=")">
-        #{item}
-    </foreach>
-    -->
 
     <!-- 获取用户建筑列表 -->
     <select id="getBuildingsByUserId" resultType="java.util.HashMap">

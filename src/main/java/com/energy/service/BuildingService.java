@@ -23,23 +23,22 @@ public class BuildingService {
     @Resource
     private BuildingMapper buildingMapper = null;
 
-    // buildings 相关
-    public Building findById(Integer id) {
-        return buildingMapper.findById(id);
+    public Building getBuildingById(Integer id) {
+        return buildingMapper.getBuildingById(id);
     }
 
-    public List<Map> getBuildingsByUserId(Integer userId) {
-        List<Map> list = buildingMapper.getBuildingsByUserId(userId);
-        if (null != list && null != list.get(0)) {
+    public List<Building> getBuildingsByUserId(Integer userId) {
+        List<Building> list = buildingMapper.getBuildingsByUserId(userId);
+        if (null != list && !list.isEmpty()) {
             return list;
         } else {
             return null;
         }
     }
 
-    public List<Map> getBuildingsByUserName(String userName) {
-        List<Map> list = buildingMapper.getBuildingsByUserName(userName);
-        if (null != list && null != list.get(0)) {
+    public List<Building> getBuildingsByUserName(String userName) {
+        List<Building> list = buildingMapper.getBuildingsByUserName(userName);
+        if (null != list && !list.isEmpty()) {
             return list;
         } else {
             return null;
@@ -185,7 +184,6 @@ public class BuildingService {
     public void removeBasicData(Integer id) {
         buildingMapper.deleteBasicData(id);
     }
-
 
     // 拿到所有 能耗分项 对应的总表类型
     public Map<String, String> getBuildingItemTypes(Integer buildingId, String type) {

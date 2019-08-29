@@ -12,9 +12,9 @@ import java.util.Map;
 public interface BuildingMapper {
 
     // 建筑信息
-    public Building findById(Integer id);
-    public List<Map> getBuildingsByUserId(Integer userId);
-    public List<Map> getBuildingsByUserName(String userName);
+    public Building getBuildingById(Integer id);
+    public List<Building> getBuildingsByUserId(Integer userId);
+    public List<Building> getBuildingsByUserName(String userName);
 
     // 采集器和计量表
     public List<Map> getBuildingCollectors(Integer buildingId);
