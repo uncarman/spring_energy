@@ -83,7 +83,7 @@
                     <div class="modal-body">
                         <form id="curItem" class="form-horizontal form-label-left">
                             <div>
-                                <div class="item form-group" ng-show="datas.curMethod=='view' || datas.curMethod=='edit'">
+                                <div class="item form-group" ng-hide="true">
                                     <label class="control-label col-xs-4">ID:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
@@ -91,7 +91,7 @@
                                                id="id" name="id" ng-model="datas.curItem.id" />
                                     </div>
                                 </div>
-                                <div class="item form-group" ng-show="datas.curMethod=='view' || datas.curMethod=='edit'">
+                                <div class="item form-group" ng-hide="true">
                                     <label class="control-label col-xs-4">建筑ID:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
@@ -99,12 +99,21 @@
                                                id="buildingId" name="buildingId" ng-model="datas.curItem.buildingId" />
                                     </div>
                                 </div>
-                                <div class="item form-group">
+                                <div class="item form-group" ng-hide="true">
                                     <label class="control-label col-xs-4">类型:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
                                                id="type" name="type" ng-model="datas.curItem.type" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">计划类型:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="planType" name="planType" ng-model="datas.curItem.planType" />
+                                        <small>工作日/节假日/普通</small>
                                     </div>
                                 </div>
                                 <div class="item form-group">
@@ -120,15 +129,17 @@
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
-                                               id="planVal" name="planVal" ng-model="datas.curItem.planVal" />
+                                               id="planVal" name="planVal" ng-model="datas.curItem.planVal"
+                                               ng-change="changeAvgVal();" />
                                     </div>
                                 </div>
                                 <div class="item form-group">
-                                    <label class="control-label col-xs-4">计划平均值: <small>(计划量/建筑面积)</small></label>
+                                    <label class="control-label col-xs-4">计划平均值: </label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="true"
                                                id="planValAvg" name="planValAvg" ng-model="datas.curItem.planValAvg" />
+                                        <small>(计划量除以建筑面积)</small>
                                     </div>
                                 </div>
                                 <div class="item form-group">

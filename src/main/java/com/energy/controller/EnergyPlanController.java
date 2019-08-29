@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,12 +49,13 @@ public class EnergyPlanController {
     @RequestMapping("/updateEnergyPlan")
     @ResponseBody
     public Object updateItemGroup(@RequestParam("id") Integer id,
-                                  @RequestParam("code") String code,
-                                  @RequestParam("name") String name,
-                                  @RequestParam("type") String type,
                                   @RequestParam("buildingId") Integer buildingId,
-                                  @RequestParam("parent") Integer parent,
-                                  @RequestParam("area") Integer area,
+                                  @RequestParam("type") String type,
+                                  @RequestParam("planType") String planType,
+                                  @RequestParam("planDate") Date planDate,
+                                  @RequestParam("planVal") float planVal,
+                                  @RequestParam("planValAvg") float planValAvg,
+                                  @RequestParam("planMethod") String planMethod,
                                   @RequestParam("note") String note) {
         Response res = new Response();
         try {
@@ -60,13 +63,14 @@ public class EnergyPlanController {
             if (null == energyPlan) {
                 res.makeFailed("数据不存在");
             } else {
-//                energyPlan.setType(type);
-//                energyPlan.setName(name);
-//                energyPlan.setType(type);
-//                energyPlan.setBuilding_id(buildingId);
-//                energyPlan.setParent(parent);
-//                energyPlan.setArea(area);
-//                energyPlan.setNote(note);
+                energyPlan.setBuildingId(buildingId);
+                energyPlan.setType(type);
+                energyPlan.setPlanType(planType);
+                energyPlan.setPlanDate(planDate);
+                energyPlan.setPlanVal(planVal);
+                energyPlan.setPlanValAvg(planValAvg);
+                energyPlan.setPlanMethod(planMethod);
+                energyPlan.setNote(note);
                 energyPlanService.updateEnergyPlan(energyPlan);
             }
             res.makeSuccess("");
@@ -78,26 +82,41 @@ public class EnergyPlanController {
 
     @RequestMapping("/createEnergyPlan")
     @ResponseBody
-    public Object createItemGroup(@RequestParam("code") String code,
-                                  @RequestParam("name") String name,
+    public Object createItemGroup(@RequestParam("buildingId") Integer buildingId,
                                   @RequestParam("type") String type,
-                                  @RequestParam("buildingId") Integer buildingId,
-                                  @RequestParam("parent") Integer parent,
-                                  @RequestParam("area") Integer area,
+                                  @RequestParam("planType") String planType,
+                                  @RequestParam("planDate") Date planDate,
+                                  @RequestParam("planVal") float planVal,
+                                  @RequestParam("planValAvg") float planValAvg,
+                                  @RequestParam("planMethod") String planMethod,
                                   @RequestParam("note") String note) {
         Response res = new Response();
         try {
             EnergyPlan energyPlan = new EnergyPlan();
-//            group.setCode(code);
-//            group.setName(name);
-//            group.setType(type);
-//            group.setBuilding_id(buildingId);
-//            group.setParent(parent);
-//            group.setArea(area);
-//            group.setNote(note);
-
+            energyPlan.setBuildingId(buildingId);
+            energyPlan.setType(type);
+            energyPlan.setPlanType(planType);
+            energyPlan.setPlanDate(planDate);
+            energyPlan.setPlanVal(planVal);
+            energyPlan.setPlanValAvg(planValAvg);
+            energyPlan.setPlanMethod(planMethod);
+            energyPlan.setNote(note);
             energyPlanService.createEnergyPlan(energyPlan);
 
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/removeEnergyPlan")
+    @ResponseBody
+    public Object removeEnergyPlan(@RequestParam("id") Integer id,
+                                    HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            energyPlanService.deleteEnergyPlan(id);
             res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);

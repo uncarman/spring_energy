@@ -4,10 +4,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * Created by Administrator on 2019/8/17.
- */
-
 @Data
 public class Building {
 

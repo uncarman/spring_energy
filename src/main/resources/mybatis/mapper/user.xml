@@ -6,7 +6,17 @@
 <mapper namespace="com.energy.mapper.UsersMapper">
 
     <select id="findByUserNameAndPassword" resultType="com.energy.entity.User">
-        select * from a_users where name = #{userName} and password = #{password}
+        select
+            id,
+            `name`,
+            email,
+            password,
+            photo_url as photoUrl,
+            remember_token as rememberToken,
+            created_at as createdAt,
+            updated_at as updatedAt
+        from a_users
+        where name = #{userName} and password = #{password}
     </select>
 
 </mapper>

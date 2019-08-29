@@ -33,7 +33,7 @@ public class UserController {
                            @RequestParam("password") String password) {
         Response res = new Response();
         try {
-            User user = userService.findByUserNameAndPassword(userName, DigestUtils.md5DigestAsHex(password.getBytes()));
+            User user = userService.findByUserNameAndPassword(userName, DigestUtils.md5DigestAsHex(password.getBytes("utf-8")));
             if(null != user) {
                 // TODO 以后再考虑登录后问题
                 // String tokenStr = user.getName()+user.getPassword()+(new Date()).toString();

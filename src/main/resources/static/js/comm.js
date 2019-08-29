@@ -91,6 +91,9 @@ var settings = {
         "ajaxCreateBasicData": "api/createBasicData",  // 创建
 
         "getEnergyPlans": "api/getEnergyPlans", // 节能计划列表
+        "removeEnergyPlan": "api/removeEnergyPlan",  // 删除
+        "updateEnergyPlan": "api/updateEnergyPlan",  // 更新
+        "createEnergyPlan": "api/createEnergyPlan",  // 创建
     },
 
     // 分页参数

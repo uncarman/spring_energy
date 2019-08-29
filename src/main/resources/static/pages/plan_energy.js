@@ -20,6 +20,7 @@ app.controller('plan_energy',function ($scope, $stateParams) {
     $scope.datas = {
 
         buildingId: global.read_storage("session", "building")["id"],
+        building: global.read_storage("session", "building"),
 
         type: $stateParams.type,  // 表类型
 
@@ -65,12 +66,12 @@ app.controller('plan_energy',function ($scope, $stateParams) {
 
     $scope.buildPlanDatasTable = function(res) {
         var tableData = {
-            "title": ["id", 日期", "计划用量", "计划平均量", "计算方式", "备注"],
+            "title": ["id", "计划类型", "日期", "计划用量", "计划平均量", "计算方式", "备注"],
             "data": [],
         };
         var cacheData = {};
         res.data.map(function (cur) {
-            tableData.data.push([cur.id, cur.planDate, cur.planVal, cur.planValAvg, cur.planMethod, cur.note]);
+            tableData.data.push([cur.id, cur.planType, cur.planDate, cur.planVal, cur.planValAvg, cur.planMethod, cur.note]);
             cacheData[cur.id] = cur;
         });
         $scope.$apply(function () {
@@ -171,7 +172,7 @@ app.controller('plan_energy',function ($scope, $stateParams) {
             type: "line",
             symbol: 'none',
             //itemStyle: {normal: {lineStyle: {type: 'dotted'}}},
-            data: fmtEChartPlanData(opt.xAxis[0].data, $scope.datas.result.tableData.data),
+            data: fmtEChartPlanData(opt.xAxis[0].data, $scope.datas.tableData.data),
             z: 100,  // 显示在最顶层
         });
 
@@ -210,11 +211,11 @@ app.controller('plan_energy',function ($scope, $stateParams) {
                 var dv = data[j][4]; // 平均值
 
                 // 特殊节假日
-                if(dd != "") {
+                if(dd) {
                     if(categroys[i] == dd) {
                         tmpSeriesData[i] = dv;
                     }
-                } else if (dd == "") {
+                } else {
                     var wd = moment(categroys[i]).format("d");
                     if (dt == "工作日" && wd >= 1  && wd <= 5) {
                         tmpSeriesData[i] = dv;
@@ -257,5 +258,72 @@ app.controller('plan_energy',function ($scope, $stateParams) {
         };
         $scope.datas.curItemCache = {};
         $(".itemEdit").modal("show");
+    }
+
+    // 自动更新平均值
+    $scope.changeAvgVal = function () {
+        $scope.datas.curItem.planValAvg = ($scope.datas.curItem.planVal/$scope.datas.building.area).toFixed(4);
+    }
+
+    $scope.removeItem = function (ig, ind) {
+        if(confirm("确定删除?")) {
+            var param = {
+                _method: 'post',
+                _url: settings.ajax_func.removeEnergyPlan,
+                _param: {
+                    id: ig[0]
+                }
+            };
+            global.ajax_data($scope, param, function (res) {
+                $scope.getDatas();
+            });
+        };
+    }
+
+    $scope.updateItem = function () {
+        var curItem = $scope.datas.curItem;
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.updateEnergyPlan,
+            _param: {
+                id: curItem.id,
+                buildingId: curItem.buildingId,
+                type: curItem.type,
+                planType: curItem.planType,
+                planDate: curItem.planDate,
+                planVal: curItem.planVal,
+                planValAvg: curItem.planValAvg,
+                planMethod: curItem.planMethod,
+                note: curItem.note,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            // 刷新页面
+            $scope.getDatas();
+            $(".itemEdit").modal("hide");
+        });
+    }
+
+    $scope.saveItem = function() {
+        var curItem = $scope.datas.curItem;
+        var param = {
+            _method: 'post',
+            _url: settings.ajax_func.createEnergyPlan,
+            _param: {
+                buildingId: curItem.buildingId,
+                type: curItem.type,
+                planType: curItem.planType,
+                planDate: curItem.planDate,
+                planVal: curItem.planVal,
+                planValAvg: curItem.planValAvg,
+                planMethod: curItem.planMethod,
+                note: curItem.note,
+            }
+        };
+        global.ajax_data($scope, param, function (res) {
+            // 刷新页面
+            $scope.getDatas();
+            $(".itemEdit").modal("hide");
+        });
     }
 });

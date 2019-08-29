@@ -36,7 +36,7 @@
     </select>
 
     <insert id="createEnergyPlan" parameterType="com.energy.entity.EnergyPlan">
-        INSERT INTO `a_item_group` (`building_id`, `type`, `plan_type`, `plan_date`, `plan_val`, `plan_val_avg`, `plan_method`, `note`)
+        INSERT INTO `a_energy_plan` (`building_id`, `type`, `plan_type`, `plan_date`, `plan_val`, `plan_val_avg`, `plan_method`, `note`)
             VALUES ( #{buildingId}, #{type}, #{planType}, #{planDate}, #{planVal}, #{planValAvg}, #{planMethod}, #{note})
         <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
             select LAST_INSERT_ID()

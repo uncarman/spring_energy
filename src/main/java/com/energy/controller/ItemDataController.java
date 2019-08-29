@@ -80,9 +80,9 @@ public class ItemDataController {
             String lastYearEnd = formatter.format(DateUtil.yearLastDay(DateUtil.yearAdd(time.getTime(), -1)));
 
             // 返回结果集
-            Map<String, Object> dataMap = new HashMap<>();
+            Map<String, Object> dataMap;
             List<Map> summaryMap = new ArrayList<>();
-            Map<String, Object> chartMap = new HashMap<>();
+            Map<String, Object> chartMap;
 
             // 拿到各种类型基础数据
             Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
@@ -188,6 +188,9 @@ public class ItemDataController {
                                              HttpServletRequest request) {
         Response res = new Response();
         try {
+
+            Building building = buildingService.getBuildingById(buildingId);
+
             // 拿到各种类型基础数据
             Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
 
@@ -207,8 +210,7 @@ public class ItemDataController {
             Date toDate = formatter.parse(to);
             List<List> dataList = DateUtil.dateList(fromDate, toDate, type);
 
-            for(int i = 0; i < energyTypes.size(); i++) {
-                String curType = energyTypes.get(i);
+            for(String curType : energyTypes) {
                 ItemGroup curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType);
                 Integer curGroupId = null != curTypeGroup ? curTypeGroup.getId() : -1;
                 String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
@@ -221,16 +223,15 @@ public class ItemDataController {
                 titleList.add((String)curBaseMap.get("name"));
                 titleList.add((String)curBaseMap.get("name")+"密度");
                 titleList.add((String)curBaseMap.get("name")+"费用");
+                float area = group.getArea() > 0 ? group.getArea() : building.getArea();
                 String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : null ;
-                for(int k = 0; k < dataList.size(); k++) {
-                    List line = dataList.get(k);
+                for(List line : dataList) {
                     Boolean hasInsert = false;
                     for(int j = 0; j < curList.size(); j++) {
                         Map row = curList.get(j);
                         if(line.get(0).toString().equals(row.get("recorded_at"))) {
                             line.add(row.get("total_val"));
-                            String totalValAvg = ""+df2.format(Float.valueOf(row.get("total_val").toString()) / Float.valueOf(group.getArea()));
-                            line.add(totalValAvg);
+                            line.add(df2.format(Float.valueOf(row.get("total_val").toString()) / area));
                             if(null != rate) {
                                 float fee = Float.valueOf(row.get("total_val").toString()) * Float.valueOf(rate);
                                 line.add(fee);
@@ -251,6 +252,8 @@ public class ItemDataController {
 
             dataList.add(0, titleList);
             res.makeSuccess(dataList);
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception ex) {
             res.makeFailed(ex);
         }
@@ -298,7 +301,7 @@ public class ItemDataController {
             float sumItemTotal = buildingService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
             float sumItemLastMonth = buildingService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
             float sumItemLastYear = buildingService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
-            ItemGroup group = itemService.getItemGroupById(Integer.valueOf(curGroupId));
+            ItemGroup group = itemService.getItemGroupById(curGroupId);
             Map map = baseMap.get(type);
             String rate = map.get("rate").toString();
 
@@ -421,7 +424,7 @@ public class ItemDataController {
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = itemService.getItemGroupById(Integer.valueOf(curGroupId));
+                ItemGroup group = itemService.getItemGroupById(curGroupId);
 
                 if(null != curList && !curList.isEmpty()) {
                     for(Map item : curList) {
@@ -444,7 +447,6 @@ public class ItemDataController {
                 chartMap.put(curType, curMap);
 
             } else {
-                Map curBaseMap = baseMap.get(energyType);
                 Integer parentId = Integer.valueOf(parent);
                 ItemGroup group = itemService.getItemGroupById(parentId);
                 // 子集类汇总
@@ -466,7 +468,7 @@ public class ItemDataController {
                     if(curItemIdList.size() > 0) {
                         curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                     }
-                    float area = group.getArea() > 0 ? group.getArea() : group.getArea();
+                    float area = group.getArea() > 0 ? group.getArea() : building.getArea();
 
                     Map curMap = new HashMap();
                     curMap.put("datas", curList);
@@ -554,7 +556,7 @@ public class ItemDataController {
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
                 List<Map> curList = buildingService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
-                ItemGroup group = itemService.getItemGroupById(Integer.valueOf(curGroupId));
+                ItemGroup group = itemService.getItemGroupById(curGroupId);
 
                 // 表头
                 List<String> titleList = new ArrayList<>();
@@ -566,10 +568,9 @@ public class ItemDataController {
                 Date toDate = formatter.parse(to);
                 dataList = DateUtil.dateList(fromDate, toDate, type);
 
-                DecimalFormat df2 = new DecimalFormat("###.0000");
                 titleList.add((String)curBaseMap.get("name"));
-                titleList.add((String)curBaseMap.get("name")+"密度");
-                titleList.add((String)curBaseMap.get("name")+"费用");
+                titleList.add(curBaseMap.get("name")+"密度");
+                titleList.add(curBaseMap.get("name")+"费用");
                 String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : null ;
 
                 for(int k = 0; k < dataList.size(); k++) {
@@ -579,7 +580,7 @@ public class ItemDataController {
                         Map row = curList.get(j);
                         if(line.get(0).toString().equals(row.get("recorded_at"))) {
                             line.add(row.get("total_val"));
-                            float totalValAvg = Float.valueOf(row.get("total_val").toString()) / Float.valueOf(group.getArea());
+                            float totalValAvg = Float.valueOf(row.get("total_val").toString()) / group.getArea();
                             line.add(totalValAvg);
                             if(null != rate) {
                                 float fee = Float.valueOf(row.get("total_val").toString()) * Float.valueOf(rate);
@@ -676,8 +677,6 @@ public class ItemDataController {
                     Date toDate = formatter.parse(to);
                     dataList = DateUtil.dateList(fromDate, toDate, type);
 
-                    DecimalFormat df2 = new DecimalFormat("###.0000");
-
                     for (int i = 0; i < groupChilds.size(); i++) {
                         ItemGroup curGroup = groupChilds.get(i);
                         List<Map> items = itemService.getItemsByGroupId(curGroup.getId());
@@ -730,6 +729,8 @@ public class ItemDataController {
 
             res.makeSuccess(dataList);
 
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception ex) {
             res.makeFailed(ex);
         }
