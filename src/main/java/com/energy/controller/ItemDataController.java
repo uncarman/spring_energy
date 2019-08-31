@@ -697,7 +697,6 @@ public class ItemDataController {
 
                         titleList.add((String) curGroup.getName());
                         titleList.add((String)curGroup.getName()+"密度");
-//                        titleList.add((String)curGroup.get("name")+"费用");
                         String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : null;
 
                         for (int k = 0; k < dataList.size(); k++) {

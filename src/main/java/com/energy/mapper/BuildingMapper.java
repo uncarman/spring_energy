@@ -6,9 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Administrator on 2019/8/17.
- */
+
 public interface BuildingMapper {
 
     // 建筑信息
@@ -18,14 +16,9 @@ public interface BuildingMapper {
     // 采集器和计量表
     public List<Map> getBuildingCollectors(Integer buildingId);
 
-    public List<Map> getBuildingItems(@Param("buildingId")Integer buildingId);
+    public List<Item> getBuildingItems(@Param("buildingId")Integer buildingId);
 
     // settings
-    public List<Map> getBasicDatas();
-    public BasicData getBasicDataById(@Param("id")Integer id);
-    public void createBasicData(BasicData basicData);
-    public void updateBasicData(BasicData basicData);
-    public void deleteBasicData(@Param("id")Integer id);
 
     public List<Map> getBuildingItemTypes(@Param("buildingId")Integer buildingId, @Param("type")String type);
 

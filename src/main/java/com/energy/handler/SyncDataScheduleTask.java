@@ -36,7 +36,6 @@ public class SyncDataScheduleTask {
     private void syncItemRealTimeData() {
         System.err.println("syncItemRealTimeData: " + LocalDateTime.now());
         // TODO 更新 a_item_data 记录
-        //List<ItemData> itemDataList = buildingService.getItemData();
 //        buildingService.updateItemDatas();
     }
 

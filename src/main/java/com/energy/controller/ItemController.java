@@ -33,7 +33,7 @@ public class ItemController {
                                    HttpServletRequest request) {
         Response res = new Response();
         try {
-            List<Map> list = buildingService.getBuildingItems(buildingId);
+            List<Item> list = buildingService.getBuildingItems(buildingId);
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);

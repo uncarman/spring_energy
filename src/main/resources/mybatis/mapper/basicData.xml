@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.BasicDataMapper">
+
+    <select id="getBasicDatas" resultType="com.energy.entity.BasicData">
+        SELECT
+        id,
+        `type`,
+        `name`,
+        basic_code as basicCode,
+        basic_name as basicName,
+        note as note
+        FROM a_basic_data
+    </select>
+    <select id="getBasicDataById" resultType="com.energy.entity.BasicData">
+        SELECT
+        id,
+        `type`,
+        `name`,
+        basic_code as basicCode,
+        basic_name as basicName,
+        note as note
+        FROM a_basic_data
+        WHERE id = #{id}
+    </select>
+    <insert id="createBasicData" parameterType="com.energy.entity.BasicData">
+        INSERT INTO `a_basic_data` (`type`, `name`, `basic_code`, `basic_name`, `note`)
+        VALUES ( #{type}, #{name}, #{basicCode}, #{basicName}, #{note})
+        <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    <update id="updateBasicData" parameterType="com.energy.entity.BasicData">
+        UPDATE `a_basic_data`
+        set `type` = #{type}, `name` = #{name}, `basic_code`= #{basicCode}, `basic_name`= #{basicName}, `note`= #{note}
+        where id = ${id}
+    </update>
+    <delete id="deleteBasicData" parameterType="Integer">
+        DELETE FROM a_basic_data WHERE id = #{id}
+    </delete>
+
+</mapper>

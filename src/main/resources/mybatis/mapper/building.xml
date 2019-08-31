@@ -95,42 +95,23 @@
         ]]>
     </select>
 
-    <select id="getBuildingItems" resultType="java.util.LinkedHashMap">
+    <select id="getBuildingItems" resultType="com.energy.entity.Item">
         SELECT
-        *
+            id;
+            collector_id as collectorId;
+            item_type as itemType;
+            code;
+            `name`;
+            `description`;
+            data_type as dataType;
+            data_unit as dataUnit;
+            coefficient;
+            max_value as maxValue;
+            state;
         FROM a_item i
         LEFT JOIN a_collector c on c.id = i.collector_id
         where c.building_id = #{buildingId}
     </select>
-
-
-
-
-    <select id="getBasicDatas" resultType="java.util.LinkedHashMap">
-        SELECT * FROM a_basic_data
-    </select>
-    <select id="getBasicDataById" resultType="com.energy.entity.BasicData">
-        SELECT
-        *
-        FROM a_basic_data
-        WHERE id = #{id}
-    </select>
-    <insert id="createBasicData" parameterType="com.energy.entity.BasicData">
-        INSERT INTO `a_basic_data` (`type`, `name`, `basic_code`, `basic_name`, `note`)
-        VALUES ( #{type}, #{name}, #{basicCode}, #{basicName}, #{note})
-        <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
-            select LAST_INSERT_ID()
-        </selectKey>
-    </insert>
-    <update id="updateBasicData" parameterType="com.energy.entity.BasicData">
-        UPDATE `a_basic_data`
-        set `type` = #{type}, `name` = #{name}, `basic_code`= #{basicCode}, `basic_name`= #{basicName}, `note`= #{note}
-        where id = ${id}
-    </update>
-    <delete id="deleteBasicData" parameterType="Integer">
-        DELETE FROM a_basic_data WHERE id = #{id}
-    </delete>
-
 
 
     <!-- 拿到所有 能耗分项 对应的总表类型 -->

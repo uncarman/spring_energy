@@ -55,8 +55,8 @@ public class BuildingService {
 //    }
 
     // 某建筑下所有[设备]
-    public List<Map> getBuildingItems(Integer buildingId) {
-        List<Map> list = buildingMapper.getBuildingItems(buildingId);
+    public List<Item> getBuildingItems(Integer buildingId) {
+        List<Item> list = buildingMapper.getBuildingItems(buildingId);
         if (null != list && null != list.get(0)) {
             return list;
         } else {
@@ -64,33 +64,6 @@ public class BuildingService {
         }
     }
 
-
-    public List<Map> getBasicDatas() {
-        List<Map> list = buildingMapper.getBasicDatas();
-        if (null != list && !list.isEmpty()) {
-            return list;
-        } else {
-            return null;
-        }
-    }
-
-    public BasicData getBasicDataById(Integer id) {
-        return buildingMapper.getBasicDataById(id);
-    }
-    @Transactional(rollbackFor = Exception.class)
-    public void createBasicData(BasicData basicData) {
-        buildingMapper.createBasicData(basicData);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void updateBasicData(BasicData basicData) {
-        buildingMapper.updateBasicData(basicData);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void removeBasicData(Integer id) {
-        buildingMapper.deleteBasicData(id);
-    }
 
     // 拿到所有 能耗分项 对应的总表类型
     public Map<String, String> getBuildingItemTypes(Integer buildingId, String type) {
