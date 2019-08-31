@@ -32,6 +32,7 @@ public class EnergyPlanController {
     @Resource
     private EnergyPlanService energyPlanService = null;
 
+    // 用能计划列表
     @RequestMapping("/getEnergyPlans")
     @ResponseBody
     public Object getEnergyPlans(@RequestParam("buildingId") Integer buildingId,
@@ -46,6 +47,38 @@ public class EnergyPlanController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // 用能计划创建
+    @RequestMapping("/createEnergyPlan")
+    @ResponseBody
+    public Object createItemGroup(@RequestParam("buildingId") Integer buildingId,
+                                  @RequestParam("type") String type,
+                                  @RequestParam("planType") String planType,
+                                  @RequestParam("planDate") Date planDate,
+                                  @RequestParam("planVal") float planVal,
+                                  @RequestParam("planValAvg") float planValAvg,
+                                  @RequestParam("planMethod") String planMethod,
+                                  @RequestParam("note") String note) {
+        Response res = new Response();
+        try {
+            EnergyPlan energyPlan = new EnergyPlan();
+            energyPlan.setBuildingId(buildingId);
+            energyPlan.setType(type);
+            energyPlan.setPlanType(planType);
+            energyPlan.setPlanDate(planDate);
+            energyPlan.setPlanVal(planVal);
+            energyPlan.setPlanValAvg(planValAvg);
+            energyPlan.setPlanMethod(planMethod);
+            energyPlan.setNote(note);
+            energyPlanService.createEnergyPlan(energyPlan);
+
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 用能计划更新
     @RequestMapping("/updateEnergyPlan")
     @ResponseBody
     public Object updateItemGroup(@RequestParam("id") Integer id,
@@ -80,36 +113,8 @@ public class EnergyPlanController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @RequestMapping("/createEnergyPlan")
-    @ResponseBody
-    public Object createItemGroup(@RequestParam("buildingId") Integer buildingId,
-                                  @RequestParam("type") String type,
-                                  @RequestParam("planType") String planType,
-                                  @RequestParam("planDate") Date planDate,
-                                  @RequestParam("planVal") float planVal,
-                                  @RequestParam("planValAvg") float planValAvg,
-                                  @RequestParam("planMethod") String planMethod,
-                                  @RequestParam("note") String note) {
-        Response res = new Response();
-        try {
-            EnergyPlan energyPlan = new EnergyPlan();
-            energyPlan.setBuildingId(buildingId);
-            energyPlan.setType(type);
-            energyPlan.setPlanType(planType);
-            energyPlan.setPlanDate(planDate);
-            energyPlan.setPlanVal(planVal);
-            energyPlan.setPlanValAvg(planValAvg);
-            energyPlan.setPlanMethod(planMethod);
-            energyPlan.setNote(note);
-            energyPlanService.createEnergyPlan(energyPlan);
 
-            res.makeSuccess("");
-        } catch (Exception ex) {
-            res.makeFailed(ex);
-        }
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
+    // 用能计划删除
     @RequestMapping("/removeEnergyPlan")
     @ResponseBody
     public Object removeEnergyPlan(@RequestParam("id") Integer id,
@@ -123,4 +128,5 @@ public class EnergyPlanController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
 }

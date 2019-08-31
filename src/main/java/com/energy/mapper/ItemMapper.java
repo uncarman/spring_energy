@@ -9,6 +9,7 @@ import java.util.Map;
 
 public interface ItemMapper {
 
+    public List<Item> getBuildingItems(@Param("buildingId")Integer buildingId);
     public List<Map> getItemGroups(@Param("buildingId")Integer buildingId);
     public List<ItemGroup> getItemGroupByType(@Param("buildingId")Integer buildingId, @Param("type")String type,
                                         @Param("subType")String subType, @Param("parent")String parent);
@@ -21,10 +22,12 @@ public interface ItemMapper {
     public void deleteItemGroupMapper(@Param("groupId")Integer groupId);
     public void insertItemGroupMapper(@Param("groupId")Integer groupId, @Param("itemIds")List<String> itemIds);
 
-    public List<Map> getItemsByGroupId(@Param("groupId")Integer groupId);
+    public List<Item> getItemsByGroupId(@Param("groupId")Integer groupId);
     public Item getItemById(@Param("id")Integer id);
     public void createItem(Item item);
     public void updateItem(Item item);
     public void deleteItem(@Param("id")Integer id);
+
+    public List<Map> getItemTypeBaseInfo();
 
 }

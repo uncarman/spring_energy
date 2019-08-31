@@ -237,7 +237,7 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
             tmpSeriesData[i] = defaultVal;
             for (var j in data.datas) {
                 if (data.datas[j].key == categroys[i]) {
-                    tmpSeriesData[i] = func(data.datas[j].val, data.prop_area);
+                    tmpSeriesData[i] = func(data.datas[j].val, data.area);
                     break;
                 }
             }
@@ -317,7 +317,7 @@ app.controller('monitor_electricity_by_group', function ($scope, $stateParams) {
             }
             for(var i in d.datas) {
                 $scope.datas.summaryTableDatas[d.datas[i].key][ind] = parseFloat(d.datas[i].val).toFixed(4);
-                $scope.datas.summaryTableDatas[d.datas[i].key][ind+1] = (d.datas[i].val/d.prop_area).toFixed(4);
+                $scope.datas.summaryTableDatas[d.datas[i].key][ind+1] = (d.datas[i].val/d.area).toFixed(4);
             }
         });
         console.log($scope.datas.summaryTableTitles);

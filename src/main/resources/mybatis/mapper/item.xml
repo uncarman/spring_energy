@@ -5,13 +5,39 @@
 <!--映射文件配置，namespace指向接口-->
 <mapper namespace="com.energy.mapper.ItemMapper">
 
+    <select id="getBuildingItems" resultType="com.energy.entity.Item">
+        SELECT
+            i.`id`,
+            i.collector_id as collectorId,
+            i.item_type as itemType,
+            i.`code`,
+            i.`name`,
+            i.`description`,
+            i.data_type as dataType,
+            i.data_unit as dataUnit,
+            i.coefficient,
+            i.max_value as `maxValue`,
+            i.`state`
+        FROM a_item i
+            LEFT JOIN a_collector c on c.id = i.collector_id
+        where c.building_id = #{buildingId}
+    </select>
+
     <!-- 某个分组下的所有设备 -->
-    <select id="getItemsByGroupId" resultType="java.util.HashMap">
+    <select id="getItemsByGroupId" resultType="com.energy.entity.Item">
         <![CDATA[
         select
-            i.id,
-            i.code,
-            i.name
+            i.`id`,
+            i.collector_id as collectorId,
+            i.item_type as itemType,
+            i.`code`,
+            i.`name`,
+            i.`description`,
+            i.data_type as dataType,
+            i.data_unit as dataUnit,
+            i.coefficient,
+            i.max_value as `maxValue`,
+            i.`state`
         from a_item_group g
             LEFT JOIN a_item_group_mapper m on m.group_id = g.id
             LEFT JOIN a_item i on i.id = m.item_id
@@ -38,43 +64,55 @@
 
     <select id="getItemById" resultType="com.energy.entity.Item">
         SELECT
-        *
-        FROM a_item
+            i.`id`,
+            i.collector_id as collectorId,
+            i.item_type as itemType,
+            i.`code`,
+            i.`name`,
+            i.`description`,
+            i.data_type as dataType,
+            i.data_unit as dataUnit,
+            i.coefficient,
+            i.max_value as `maxValue`,
+            i.`state`
+        FROM a_item i
         WHERE id = #{id}
     </select>
+
     <insert id="createItem" parameterType="com.energy.entity.Item">
         INSERT INTO `a_item` (`collector_id`, `item_type`, `code`, `name`, `description`, `data_type`,
-        `data_unit`, `coefficient`, `max_value`)
+        `data_unit`, `coefficient`, `max_value`, `state`)
         VALUES ( #{collectorId}, #{itemType}, #{code}, #{name}, #{description}, #{dataType}, #{dataUnit},
-        #{coefficient}, #{maxValue})
+        #{coefficient}, #{maxValue}, #{state})
         <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
             select LAST_INSERT_ID()
         </selectKey>
     </insert>
+
     <update id="updateItem" parameterType="com.energy.entity.Item">
         UPDATE `a_item`
         set `collector_id` = #{collectorId}, `item_type` = #{itemType}, `code`= #{code}, `name`= #{name},
         `description`= #{description}, `data_type`= #{dataType}, `data_unit`= #{dataUnit}, `coefficient`= #{coefficient},
-        `max_value`= #{maxValue}
+        `max_value`= #{maxValue}, `state`=#{state}
         where id = ${id}
     </update>
+
     <delete id="deleteItem" parameterType="Integer">
         DELETE FROM a_item WHERE id = #{id}
     </delete>
 
-
     <select id="getItemGroupByType" resultType="com.energy.entity.ItemGroup">
         <![CDATA[
         SELECT
-          id,
-          code,
-          type,
-          name,
-          parent,
-          area,
-          note,
-          building_id as buildingId
-        FROM a_item_group
+            g.id,
+            g.code,
+            g.type,
+            g.name,
+            g.parent,
+            g.area,
+            g.note,
+            g.building_id as buildingId
+        FROM a_item_group g
         where building_id = #{buildingId} and `type` = #{subType} and left(code, 2) = #{type}
         ]]>
         <if test="parent != null">
@@ -102,34 +140,43 @@
             g.type,
             g.name,
             g.parent,
+            g.area,
             g.note,
-            -- 如果当前分类无面积, 获取父类面积
-            case
-                when g.area > 0 then g.area
-                else gp.area
-            end area
+            g.building_id as buildingId
         FROM a_item_group g
-        left join a_item_group gp on gp.id = g.parent
         where g.id = #{id}
         ]]>
     </select>
+
     <select id="getItemGroupChildsById" resultType="com.energy.entity.ItemGroup">
         <![CDATA[
-        SELECT * FROM a_item_group where parent = #{id}
+        SELECT
+            g.id,
+            g.code,
+            g.type,
+            g.name,
+            g.parent,
+            g.area,
+            g.note,
+            g.building_id as buildingId
+        FROM a_item_group g where g.parent = #{id}
         ]]>
     </select>
+
     <insert id="createItemGroup" parameterType="com.energy.entity.ItemGroup">
         INSERT INTO `a_item_group` (`code`, `type`, `name`, `parent`, `area`, `note`, `building_id`)
-        VALUES ( #{code}, #{type}, #{name}, #{parent}, #{area}, #{note}, #{building_id})
+        VALUES ( #{code}, #{type}, #{name}, #{parent}, #{area}, #{note}, #{buildingId})
         <selectKey keyProperty="id" keyColumn="id" resultType="Integer" order="AFTER">
             select LAST_INSERT_ID()
         </selectKey>
     </insert>
+
     <update id="updateItemGroup" parameterType="com.energy.entity.ItemGroup">
-        UPDATE `a_item_group`
-        set `code` = #{code}, `type` = #{type}, `name`= #{name}, `parent`= #{parent}, `area`= #{area}, `note`= #{note}
+        UPDATE `a_item_group` set `code` = #{code}, `type` = #{type}, `name`= #{name},
+            `parent`= #{parent}, `area`= #{area}, `note`= #{note}
         where id = ${id}
     </update>
+
     <delete id="deleteItemGroup" parameterType="Integer">
         DELETE FROM a_item_group WHERE id = #{id}
     </delete>
@@ -138,6 +185,7 @@
     <delete id="deleteItemGroupMapper">
         DELETE FROM a_item_group_mapper WHERE group_id = #{groupId}
     </delete>
+
     <!-- 添加多个设备绑定 -->
     <insert id="insertItemGroupMapper">
         insert into a_item_group_mapper (item_id, group_id) VALUES

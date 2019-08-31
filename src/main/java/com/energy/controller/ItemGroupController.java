@@ -27,7 +27,7 @@ public class ItemGroupController {
     @Resource
     private ItemService itemService = null;
 
-    // 05.1.  某建筑下的 所有【设备分组】
+    // 某建筑下的所有【设备分组】
     @RequestMapping("/getItemGroups")
     @ResponseBody
     public Object getItemGroups(@RequestParam("buildingId") Integer buildingId,
@@ -42,7 +42,7 @@ public class ItemGroupController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // 06.  某建筑下的 所有【设备分组】 eg：能耗分项
+    // 某建筑下条件筛选【设备分组】
     @RequestMapping("/getItemGroupByType")
     @ResponseBody
     public Object getItemGroupByType(@RequestParam("buildingId") Integer buildingId,
@@ -60,7 +60,7 @@ public class ItemGroupController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // 05. 某个设备分组的详细信息，包含第一级子信息
+    // 设备分组的详细信息，包含子分组
     @RequestMapping("/getItemGroupById")
     @ResponseBody
     public Object getItemGroupByCode(@RequestParam("groupId") Integer groupId) {
@@ -78,66 +78,82 @@ public class ItemGroupController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // 设备分组创建
+    @RequestMapping("/createItemGroup")
+    @ResponseBody
+    public Object createItemGroup(@RequestParam("buildingId") Integer buildingId,
+                                  HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            ItemGroup group = new ItemGroup();
+            group.setBuildingId(buildingId);
+            if(null != request.getParameter("code")) {
+                group.setCode(request.getParameter("code").toString());
+            }
+            if(null != request.getParameter("name")) {
+                group.setName(request.getParameter("name").toString());
+            }
+            if(null != request.getParameter("type")) {
+                group.setType(request.getParameter("type").toString());
+            }
+            if(null != request.getParameter("parent") && !"".equals(request.getParameter("parent"))) {
+                group.setParent(Integer.valueOf(request.getParameter("parent")));
+            }
+            if(null != request.getParameter("area") && !"".equals(request.getParameter("area"))) {
+                group.setArea(Float.valueOf(request.getParameter("area")));
+            }
+            if(null != request.getParameter("note")) {
+                group.setNote(request.getParameter("note").toString());
+            }
+            itemService.createItemGroup(group);
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 设备分组更新
     @RequestMapping("/updateItemGroup")
     @ResponseBody
     public Object updateItemGroup(@RequestParam("id") Integer id,
-                                  @RequestParam("code") String code,
-                                  @RequestParam("name") String name,
-                                  @RequestParam("type") String type,
                                   @RequestParam("buildingId") Integer buildingId,
-                                  @RequestParam("parent") Integer parent,
-                                  @RequestParam("area") Integer area,
-                                  @RequestParam("note") String note) {
+                                  HttpServletRequest request) {
         Response res = new Response();
         try {
             ItemGroup group = itemService.getItemGroupById(id);
             if (null == group) {
                 res.makeFailed("数据不存在");
             } else {
-                group.setCode(code);
-                group.setName(name);
-                group.setType(type);
-                group.setBuilding_id(buildingId);
-                group.setParent(parent);
-                group.setArea(area);
-                group.setNote(note);
+                group.setBuildingId(buildingId);
+                if(null != request.getParameter("code")) {
+                    group.setCode(request.getParameter("code").toString());
+                }
+                if(null != request.getParameter("name")) {
+                    group.setName(request.getParameter("name").toString());
+                }
+                if(null != request.getParameter("type")) {
+                    group.setType(request.getParameter("type"));
+                }
+                if(null != request.getParameter("parent") && !"".equals(request.getParameter("parent"))) {
+                    group.setParent(Integer.valueOf(request.getParameter("parent")));
+                }
+                if(null != request.getParameter("area") && !"".equals(request.getParameter("area"))) {
+                    group.setArea(Float.valueOf(request.getParameter("area")));
+                }
+                if(null != request.getParameter("note")) {
+                    group.setNote(request.getParameter("note").toString());
+                }
                 itemService.updateItemGroup(group);
+                res.makeSuccess("");
             }
-            res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @RequestMapping("/createItemGroup")
-    @ResponseBody
-    public Object createItemGroup(@RequestParam("code") String code,
-                                  @RequestParam("name") String name,
-                                  @RequestParam("type") String type,
-                                  @RequestParam("buildingId") Integer buildingId,
-                                  @RequestParam("parent") Integer parent,
-                                  @RequestParam("area") Integer area,
-                                  @RequestParam("note") String note) {
-        Response res = new Response();
-        try {
-            ItemGroup group = new ItemGroup();
-            group.setCode(code);
-            group.setName(name);
-            group.setType(type);
-            group.setBuilding_id(buildingId);
-            group.setParent(parent);
-            group.setArea(area);
-            group.setNote(note);
-            itemService.createItemGroup(group);
-
-            res.makeSuccess("");
-        } catch (Exception ex) {
-            res.makeFailed(ex);
-        }
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
+    // 设备分组删除
     @RequestMapping("/removeItemGroup")
     @ResponseBody
     public Object removeItemGroup(@RequestParam("id") Integer id) {

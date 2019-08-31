@@ -26,14 +26,29 @@ public class ItemController {
     @Resource
     private ItemService itemService = null;
 
-    // 05.2.  某建筑下的 所有【设备】
+    // 建筑下已安装的【能耗分项】【零级分类】对应的设备ids
+    @RequestMapping("/getBuildingItemTypes")
+    @ResponseBody
+    public Object getBuildingItemTypes(@RequestParam("buildingId") Integer buildingId) {
+        Response res = new Response();
+        try {
+            String type = Constant.SUM_TYPE;
+            Map<Integer, String> groupItems = buildingService.getBuildingItemTypes(buildingId, type);
+            res.makeSuccess(groupItems);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 某建筑下所有设备列表
     @RequestMapping("/getBuildingItems")
     @ResponseBody
     public Object getBuildingItems(@RequestParam("buildingId") Integer buildingId,
                                    HttpServletRequest request) {
         Response res = new Response();
         try {
-            List<Item> list = buildingService.getBuildingItems(buildingId);
+            List<Item> list = itemService.getBuildingItems(buildingId);
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -41,14 +56,14 @@ public class ItemController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // 05.3.  某 [设备分组] 下的 所有【设备】
+    // 某【设备分组】下的所有【设备】
     @RequestMapping("/getItemsByGroupId")
     @ResponseBody
     public Object getItemsByGroupId(@RequestParam("groupId") Integer groupId,
                                     HttpServletRequest request) {
         Response res = new Response();
         try {
-            List<Map> list = itemService.getItemsByGroupId(groupId);
+            List<Item> list = itemService.getItemsByGroupId(groupId);
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -56,17 +71,17 @@ public class ItemController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // 设备创建
     @RequestMapping("/createItem")
     @ResponseBody
-    public Object createItem(HttpServletRequest request) {
+    public Object createItem(@RequestParam("collectorId") Integer collectorId,
+                             HttpServletRequest request) {
         Response res = new Response();
         try {
             Item item = new Item();
-            if(null != request.getParameter("collectorId")) {
-                item.setCollectorId(Integer.valueOf(request.getParameter("collectorId").toString()));
-            }
-            if(null != request.getParameter("itemType")) {
-                item.setItemType(Integer.valueOf(request.getParameter("itemType").toString()));
+            item.setCollectorId(collectorId);
+            if(null != request.getParameter("itemType") && !"".equals(request.getParameter("itemType"))) {
+                item.setItemType(Integer.valueOf(request.getParameter("itemType")));
             }
             if(null != request.getParameter("code")) {
                 item.setCode(request.getParameter("code"));
@@ -77,17 +92,20 @@ public class ItemController {
             if(null != request.getParameter("description")) {
                 item.setDescription(request.getParameter("description"));
             }
-            if(null != request.getParameter("dataType")) {
-                item.setDataType(Integer.valueOf(request.getParameter("dataType").toString()));
+            if(null != request.getParameter("dataType") && !"".equals(request.getParameter("dataType"))) {
+                item.setDataType(Integer.valueOf(request.getParameter("dataType")));
             }
             if(null != request.getParameter("dataUnit")) {
                 item.setDataUnit(request.getParameter("dataUnit"));
             }
-            if(null != request.getParameter("coefficient")) {
-                item.setCoefficient(Double.valueOf(request.getParameter("coefficient").toString()));
+            if(null != request.getParameter("coefficient") && !"".equals(request.getParameter("coefficient"))) {
+                item.setCoefficient(Double.valueOf(request.getParameter("coefficient")));
             }
-            if(null != request.getParameter("maxValue")) {
-                item.setMaxValue(Integer.valueOf(request.getParameter("maxValue").toString()));
+            if(null != request.getParameter("maxValue") && !"".equals(request.getParameter("maxValue"))) {
+                item.setMaxValue(Double.valueOf(request.getParameter("maxValue")));
+            }
+            if(null != request.getParameter("state") && !"".equals(request.getParameter("state"))) {
+                item.setState(Integer.valueOf(request.getParameter("state")));
             }
             itemService.createItem(item);
             res.makeSuccess("");
@@ -100,16 +118,15 @@ public class ItemController {
     @RequestMapping("/updateItem")
     @ResponseBody
     public Object updateItem(@RequestParam("id") Integer id,
+                             @RequestParam("collectorId") Integer collectorId,
                              HttpServletRequest request) {
         Response res = new Response();
         try {
             Item item = itemService.getItemById(id);
             if(null != item) {
-                if(null != request.getParameter("collectorId")) {
-                    item.setCollectorId(Integer.valueOf(request.getParameter("collectorId").toString()));
-                }
-                if(null != request.getParameter("itemType")) {
-                    item.setItemType(Integer.valueOf(request.getParameter("itemType").toString()));
+                item.setCollectorId(collectorId);
+                if(null != request.getParameter("itemType") && !"".equals(request.getParameter("itemType"))) {
+                    item.setItemType(Integer.valueOf(request.getParameter("itemType")));
                 }
                 if(null != request.getParameter("code")) {
                     item.setCode(request.getParameter("code"));
@@ -120,17 +137,20 @@ public class ItemController {
                 if(null != request.getParameter("description")) {
                     item.setDescription(request.getParameter("description"));
                 }
-                if(null != request.getParameter("dataType")) {
-                    item.setDataType(Integer.valueOf(request.getParameter("dataType").toString()));
+                if(null != request.getParameter("dataType") && !"".equals(request.getParameter("dataType"))) {
+                    item.setDataType(Integer.valueOf(request.getParameter("dataType")));
                 }
                 if(null != request.getParameter("dataUnit")) {
                     item.setDataUnit(request.getParameter("dataUnit"));
                 }
-                if(null != request.getParameter("coefficient")) {
-                    item.setCoefficient(Double.valueOf(request.getParameter("coefficient").toString()));
+                if(null != request.getParameter("coefficient") && !"".equals(request.getParameter("coefficient"))) {
+                    item.setCoefficient(Double.valueOf(request.getParameter("coefficient")));
                 }
-                if(null != request.getParameter("maxValue")) {
-                    item.setMaxValue(Integer.valueOf(request.getParameter("maxValue").toString()));
+                if(null != request.getParameter("maxValue") && !"".equals(request.getParameter("maxValue"))) {
+                    item.setMaxValue(Double.valueOf(request.getParameter("maxValue")));
+                }
+                if(null != request.getParameter("state") && !"".equals(request.getParameter("state"))) {
+                    item.setState(Integer.valueOf(request.getParameter("state")));
                 }
                 itemService.updateItem(item);
             }

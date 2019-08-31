@@ -13,6 +13,6 @@ public class ItemGroup {
     private Integer parent;
     private String note;
     private float area;
-    private Integer building_id;
+    private Integer buildingId;
 
 }

@@ -1,6 +1,7 @@
 package com.energy.controller;
 
 import com.energy.entity.BasicData;
+import com.energy.service.BasicDataService;
 import com.energy.service.BuildingService;
 import com.energy.utils.Response;
 import org.springframework.http.HttpStatus;
@@ -20,14 +21,15 @@ import java.util.Map;
 public class BasicDataController {
 
     @Resource
-    private BuildingService buildingService = null;
+    private BasicDataService basicDataService = null;
 
+    // 基础数据列表
     @RequestMapping("/getBasicDatas")
     @ResponseBody
     public Object getBasicDatas(HttpServletRequest request) {
         Response res = new Response();
         try {
-            List<Map> list = buildingService.getBasicDatas();
+            List<BasicData> list = basicDataService.getBasicDatas();
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -35,6 +37,7 @@ public class BasicDataController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // 基础数据创建
     @RequestMapping("/createBasicData")
     @ResponseBody
     public Object createBasicData(HttpServletRequest request) {
@@ -56,7 +59,7 @@ public class BasicDataController {
             if(null != request.getParameter("note")) {
                 basicData.setNote(request.getParameter("note"));
             }
-            buildingService.createBasicData(basicData);
+            basicDataService.createBasicData(basicData);
             res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -64,13 +67,14 @@ public class BasicDataController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // 基础数据更新
     @RequestMapping("/updateBasicData")
     @ResponseBody
     public Object updateBasicData(@RequestParam("id") Integer id,
                                   HttpServletRequest request) {
         Response res = new Response();
         try {
-            BasicData basicData = buildingService.getBasicDataById(id);
+            BasicData basicData = basicDataService.getBasicDataById(id);
             if(null != basicData) {
                 if(null != request.getParameter("type")) {
                     basicData.setType(Integer.valueOf(request.getParameter("type").toString()));
@@ -87,7 +91,7 @@ public class BasicDataController {
                 if(null != request.getParameter("note")) {
                     basicData.setNote(request.getParameter("note"));
                 }
-                buildingService.updateBasicData(basicData);
+                basicDataService.updateBasicData(basicData);
             }
             res.makeSuccess("");
         } catch (Exception ex) {
@@ -96,13 +100,14 @@ public class BasicDataController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    // 基础数据删除
     @RequestMapping("/removeBasicData")
     @ResponseBody
     public Object removeBasicData(@RequestParam("id") Integer id,
                                   HttpServletRequest request) {
         Response res = new Response();
         try {
-            buildingService.removeBasicData(id);
+            basicDataService.removeBasicData(id);
             res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class EnergyPlanService {
@@ -16,7 +17,9 @@ public class EnergyPlanService {
     private EnergyPlanMapper energyPlanMapper = null;
 
     public List<EnergyPlan> getEnergyPlans(@Param("buildingId")Integer buildingId, @Param("type")String type) {
-        return energyPlanMapper.getEnergyPlans(buildingId, type);
+        List<EnergyPlan> list = energyPlanMapper.getEnergyPlans(buildingId, type);
+        list.removeIf(Objects::isNull);
+        return list;
     }
     public EnergyPlan getEnergyPlanById(@Param("id")Integer id) {
         return energyPlanMapper.getEnergyPlanById(id);

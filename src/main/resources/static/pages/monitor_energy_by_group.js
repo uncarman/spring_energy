@@ -266,7 +266,7 @@ app.controller('monitor_energy_by_group', function ($scope, $stateParams) {
             tmpSeriesData[i] = defaultVal;
             for (var j in data.datas) {
                 if (data.datas[j][data.key] == categroys[i]) {
-                    tmpSeriesData[i] = func(data.datas[j][data.val], data.prop_area);
+                    tmpSeriesData[i] = func(data.datas[j][data.val], data.area);
                     break;
                 }
             }

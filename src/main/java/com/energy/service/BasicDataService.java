@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2019/8/31.
@@ -21,11 +22,8 @@ public class BasicDataService {
 
     public List<BasicData> getBasicDatas() {
         List<BasicData> list = basicDataMapper.getBasicDatas();
-        if (null != list && !list.isEmpty()) {
-            return list;
-        } else {
-            return null;
-        }
+        list.removeIf(Objects::isNull);
+        return list;
     }
 
     public BasicData getBasicDataById(Integer id) {

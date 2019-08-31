@@ -61,10 +61,10 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
     }
 
     // 获取汇总数据
-    $scope.getBuildingSummaryTotalDataByType = function () {
+    $scope.getEnergyTotalDataByType = function () {
         var param = {
             _method: 'post',
-            _url: settings.ajax_func.getBuildingSummaryTotalDataByType,
+            _url: settings.ajax_func.getEnergyTotalDataByType,
             _param: {
                 buildingId: $scope.datas.buildingId,
                 type: $scope.datas.type
@@ -133,7 +133,7 @@ app.controller('monitor_energy',function ($scope, $stateParams) {
 
     // 获取数据
     $scope.getDatas = function(){
-        $scope.getBuildingSummaryTotalDataByType();
+        $scope.getEnergyTotalDataByType();
         $scope.getEnergyChartDataByType();
         $scope.getEnergyTableDataByType();
     };

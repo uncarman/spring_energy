@@ -26,9 +26,10 @@ public class BuildingController {
     @Resource
     private BuildingService buildingService = null;
 
-    @RequestMapping("/building/{id}")
+    // 建筑详情
+    @RequestMapping("/building")
     @ResponseBody
-    public Object findById(@PathVariable("id") Integer id) {
+    public Object findById(@RequestParam("id") Integer id) {
         Response res = new Response();
         try {
             Building building = buildingService.getBuildingById(id);
@@ -39,7 +40,7 @@ public class BuildingController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    // 07.  用户下所有建筑列表
+    // 用户名下所有建筑列表
     @RequestMapping("/getBuildingsByUserId")
     @ResponseBody
     public Object getBuildingsByUserId(@RequestParam("userId") Integer userId) {
@@ -53,22 +54,7 @@ public class BuildingController {
         return res;
     }
 
-    // 04. 所有【能耗分项】已安装的 零级分类对应的设备ids
-    @RequestMapping("/getBuildingItemTypes")
-    @ResponseBody
-    public Object getBuildingItemTypes(@RequestParam("buildingId") Integer buildingId) {
-        Response res = new Response();
-        try {
-            String type = Constant.SUM_TYPE;
-            Map<String, String> groupItems = buildingService.getBuildingItemTypes(buildingId, type);
-            res.makeSuccess(groupItems);
-        } catch (Exception ex) {
-            res.makeFailed(ex);
-        }
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
-    // 测试用： 获取能耗类型基础数据
+    // 能耗类型基础信息
     @RequestMapping("/getItemTypeBaseInfo")
     @ResponseBody
     public Object getItemTypeBaseInfo() {

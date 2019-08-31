@@ -4675,7 +4675,6 @@ ul.notifications {
     padding: 13px 15px 12px;
     color: #1ABB9C;
 }
-.nav-cus>li>a:hover { font-size: 16px; border: none; padding: 14px 16px 13px; }
 ul.bar_tabs>li.active {
     border-right-color: #1ABB9C;
 }

@@ -15,7 +15,7 @@ public class Item {
     private Integer dataType;
     private String dataUnit;
     private Double coefficient;
-    private Integer maxValue;
+    private Double maxValue;
     private Integer state;
 
 }

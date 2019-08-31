@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Administrator on 2019/8/17.
@@ -30,79 +27,32 @@ public class BuildingService {
 
     public List<Building> getBuildingsByUserId(Integer userId) {
         List<Building> list = buildingMapper.getBuildingsByUserId(userId);
-        if (null != list && !list.isEmpty()) {
-            return list;
-        } else {
-            return null;
-        }
+        list.removeIf(Objects::isNull);
+        return list;
     }
-
-    // collector 相关
-    public List<Map> getBuildingCollectors(Integer buildingId) {
-        return buildingMapper.getBuildingCollectors(buildingId);
-    }
-
-//    // 综合数据
-//    public List<Map> getUserBuildingSummary(Integer userId, String type) {
-//        if(type == Constant.TYPE_AMMETER) {
-//            return buildingMapper.getUserBuildingAmmeterSummary(userId);
-//        } else if( type == Constant.TYPE_WATERMETER) {
-//            return buildingMapper.getUserBuildingWatermeterSummary(userId);
-//        } else if( type == Constant.TYPE_ENERGYMETER) {
-//            return buildingMapper.getUserBuildingEnergymeterSummary(userId);
-//        }
-//        return null;
-//    }
-
-    // 某建筑下所有[设备]
-    public List<Item> getBuildingItems(Integer buildingId) {
-        List<Item> list = buildingMapper.getBuildingItems(buildingId);
-        if (null != list && null != list.get(0)) {
-            return list;
-        } else {
-            return null;
-        }
-    }
-
 
     // 拿到所有 能耗分项 对应的总表类型
-    public Map<String, String> getBuildingItemTypes(Integer buildingId, String type) {
+    public Map<Integer, String> getBuildingItemTypes(Integer buildingId, String type) {
         List<Map> itemlist = buildingMapper.getBuildingItemTypes(buildingId, type);
 
         // 转换成 groupId => itemIds
-        Map<String, String> groupMap = new HashMap<>();
-        for(int i = 0; i < itemlist.size(); i++) {
-            Map map = itemlist.get(i);
-            String groupId = map.get("group_id").toString();
-            Number itemId = (Number) map.get("item_id"); // 可能有null
-            if(itemId != null && itemId.intValue() > 0 ) {
-                if(groupMap.containsKey(groupId)) {
-                    groupMap.put(groupId, groupMap.get(groupId)+","+itemId);
-                } else {
-                    groupMap.put(groupId, itemId.toString());
+        Map<Integer, String> groupMap = new HashMap<>();
+        if( null != itemlist && !itemlist.isEmpty() ) {
+            for(int i = 0; i < itemlist.size(); i++) {
+                Map map = itemlist.get(i);
+                Integer groupId = Integer.valueOf(map.get("groupId").toString());
+                Number itemId = (Number) map.get("itemId"); // 可能有null
+                if(itemId != null && itemId.intValue() > 0 ) {
+                    if(groupMap.containsKey(groupId)) {
+                        groupMap.put(groupId, groupMap.get(groupId)+","+itemId);
+                    } else {
+                        groupMap.put(groupId, itemId.toString());
+                    }
                 }
             }
-        }
-        return groupMap;
-    }
-
-    public List<Map> getItemDatasByDate(List<String> itemIds, String from, String to, String type) {
-        if(null != itemIds && !itemIds.isEmpty()) {
-            if (type.equals(Constant.BY_HOUR)) {
-                return buildingMapper.getItemDatasByHour(itemIds, from, to);
-            } else if (type.equals(Constant.BY_DAY)) {
-                return buildingMapper.getItemDatasByDay(itemIds, from, to);
-            } else if (type.equals(Constant.BY_MONTH)) {
-                return buildingMapper.getItemDatasByMonth(itemIds, from, to);
-            } else if (type.equals(Constant.BY_YEAR)) {
-                return buildingMapper.getItemDatasByYear(itemIds, from, to);
-            }
+            return groupMap;
         }
         return null;
-    };
-
-    public List<Map> getItemTypeBaseInfo() {
-        return buildingMapper.getItemTypeBaseInfo();
     }
 
     public Map<String, Map> getItemTypeBaseInfoToMap() {
@@ -114,74 +64,8 @@ public class BuildingService {
         return baseMap;
     }
 
-    // 某个时间段中，设备的总值
-    public float getItemsSummaryVal(List<String> itemIds, String from, String to) {
-        if(null != itemIds && !itemIds.isEmpty()) {
-            return buildingMapper.getItemsSummaryVal(itemIds, from, to);
-        } else {
-            return 0;
-        }
-    };
-
-
-    public List<ItemData> getItemData() {
-        return buildingMapper.getItemData();
-    }
-
-    // 模拟随机增加数据
-    @Transactional(rollbackFor = Exception.class)
-    public void updateItemDatas() {
-        buildingMapper.updateItemDatas();
-    }
-
-    // 记录实时数据到能耗表
-    @Transactional(rollbackFor = Exception.class)
-    public void recordEnergyDatas(List<EnergyData> energyDataList) {
-        buildingMapper.recordEnergyDatas(energyDataList);
-    }
-
-    public List<EnergyData> getEnergyDataLatest() {
-        return buildingMapper.getEnergyDataLatest();
-    };
-
-    // 实时同步
-    @Transactional(rollbackFor = Exception.class)
-    public void recordEnergyDatas() {
-        List<ItemData> itemDataCurList = getItemData();
-        List<EnergyData> EnergyDataLatest = getEnergyDataLatest();
-        Map<Integer, Float> EnergyDataMap = new HashMap<>();
-        if(null != EnergyDataLatest && !EnergyDataLatest.isEmpty()) {
-            for(int i = 0; i < EnergyDataLatest.size(); i++) {
-                EnergyData e = EnergyDataLatest.get(i);
-                if(null != e) {
-                    EnergyDataMap.put(e.getItemId(), e.getIndication());
-                }
-            }
-        }
-
-        List<EnergyData> energyDataList = new ArrayList<>();
-        for(int i = 0; i < itemDataCurList.size(); i++) {
-            ItemData it = itemDataCurList.get(i);
-            if(null != it) {
-                float diff = 0;
-                if(null != EnergyDataMap.get(it.getItemId())) {
-                    diff = it.getIndication() - EnergyDataMap.get(it.getItemId());
-                }
-
-                EnergyData energyData = new EnergyData();
-                energyData.setItemId(it.getItemId());
-                energyData.setIndication(it.getIndication());
-                energyData.setDiffIndication(diff);
-                energyData.setOtherData(it.getOtherData());
-                energyData.setRecordedAt(it.getUpdatedAt());
-
-                energyDataList.add(energyData);
-            }
-        }
-
-        if(energyDataList.size() > 0) {
-            recordEnergyDatas(energyDataList);
-        }
+    public List<Map> getItemTypeBaseInfo() {
+        return buildingMapper.getItemTypeBaseInfo();
     }
 
 }

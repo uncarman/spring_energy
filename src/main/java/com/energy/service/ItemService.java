@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class ItemService {
@@ -16,24 +17,25 @@ public class ItemService {
     @Resource
     private ItemMapper itemMapper = null;
 
+    // 某建筑下所有[设备]
+    public List<Item> getBuildingItems(Integer buildingId) {
+        List<Item> list = itemMapper.getBuildingItems(buildingId);
+        list.removeIf(Objects::isNull);
+        return list;
+    }
+
     // 某建筑下所有[设备分组]
     public List<Map> getItemGroups(Integer buildingId) {
         List<Map> list = itemMapper.getItemGroups(buildingId);
-        if (null != list && null != list.get(0)) {
-            return list;
-        } else {
-            return null;
-        }
+        list.removeIf(Objects::isNull);
+        return list;
     }
 
     // [设备分组]信息
     public List<ItemGroup> getItemGroupByType(Integer buildingId, String type, String subType, String parent) {
         List<ItemGroup> list = itemMapper.getItemGroupByType(buildingId, type, subType, parent);
-        if (null != list && null != list.get(0)) {
-            return list;
-        } else {
-            return null;
-        }
+        list.removeIf(Objects::isNull);
+        return list;
     }
 
     // 根据类型分类, 拿到一级itemGroup
@@ -59,16 +61,14 @@ public class ItemService {
 
     public List<ItemGroup> getItemGroupChildsById(Integer id) {
         List<ItemGroup> list = itemMapper.getItemGroupChildsById(id);
-        if (null != list && !list.isEmpty()) {
-            return list;
-        } else {
-            return null;
-        }
+        list.removeIf(Objects::isNull);
+        return list;
     }
 
     // 某个分组下的所有设备
-    public List<Map> getItemsByGroupId(Integer groupId) {
-        List<Map> list = itemMapper.getItemsByGroupId(groupId);
+    public List<Item> getItemsByGroupId(Integer groupId) {
+        List<Item> list = itemMapper.getItemsByGroupId(groupId);
+        list.removeIf(Objects::isNull);
         return list;
     }
 

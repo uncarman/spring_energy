@@ -67,7 +67,7 @@ var settings = {
         "getBuildingChartDataByType": "api/getBuildingChartDataByType", // 获取某个建筑的汇总数据
         "getBuildingTableDataByType": "api/getBuildingTableDataByType", // 获取对应的table数据(可export需要server端生成)
 
-        "getBuildingSummaryTotalDataByType": "api/getBuildingSummaryTotalDataByType", // 某一类表汇总数据
+        "getEnergyTotalDataByType": "api/getEnergyTotalDataByType", // 某一类表汇总数据
         "getEnergyChartDataByType": "api/getEnergyChartDataByType", //
 
         "getItemGroupByType": "api/getItemGroupByType",
@@ -262,17 +262,17 @@ var global = {
 
     // 根据规则生成 sign 字符串
     generateSign: function(param) {
-        let token = global.getUserToken();
+        var token = global.getUserToken();
         if(token != "" && angular.isObject(param)) {
             var tmp = [["usertoken", token]];  // 塞入默认token
-            for(let o in param) {
+            for(var o in param) {
                 tmp.push([o, param[o]]);
             }
             tmp.sort(function(a, b){
                 return a[0] > b[0];
             });
 
-            let res = "";
+            var res = "";
             tmp.map(function(s){
                 res += "&" + s[0] + "=" + s[1];
             });
@@ -1640,11 +1640,11 @@ var global = {
     },
 
     get_page_name: function (level, page_name) {
-        let _page = page_name.split("_");
-        let _level = Math.max(1, _page.length);
+        var _page = page_name.split("_");
+        var _level = Math.max(1, _page.length);
 
         if(level > _level) {
-            for (let i = 0; i < level - _level; i++) {
+            for (var i = 0; i < level - _level; i++) {
                 _page.push("1");
             }
         } else {
@@ -1658,11 +1658,11 @@ var global = {
             page = settings.top_menus;
         }
         if(angular.isArray(page)) {
-            for(let i in page) {
+            for(var i in page) {
                 if(page[i]['page'] == page_name) {
                     return page[i];
                 } else if(typeof page[i]["children"] !== "undefined" && angular.isArray(page[i]["children"])) {
-                    let ch = global.get_page_detail(page_name, page[i]["children"]);
+                    var ch = global.get_page_detail(page_name, page[i]["children"]);
                     if(ch !== null) {
                         return ch;
                     }

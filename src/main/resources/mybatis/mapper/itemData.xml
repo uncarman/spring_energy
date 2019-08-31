@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.ItemDataMapper">
+
+    <!-- 拿到所有 能耗分项 对应的总表类型 -->
+    <select id="getItemDatasByHour" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(tmp.val) as totalVal,
+            tmp.recorded_at as recordedAt
+        from v_item_val_by_hour tmp
+        where tmp.recorded_at >= #{from} and tmp.recorded_at <= #{to}
+          and tmp.item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY tmp.recorded_at
+        order by tmp.recorded_at asc
+        ]]>
+    </select>
+
+    <select id="getItemDatasByDay" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(tmp.val) as totalVal,
+            tmp.recorded_at as recordedAt
+        from v_item_val_by_day tmp
+        where tmp.recorded_at >= #{from} and tmp.recorded_at <= #{to}
+          and tmp.item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY tmp.recorded_at
+        order by tmp.recorded_at asc
+        ]]>
+    </select>
+
+    <select id="getItemDatasByMonth" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(tmp.val) as totalVal,
+            tmp.recorded_at as recordedAt
+        from v_item_val_by_month tmp
+        where tmp.recorded_at >= #{from} and tmp.recorded_at <= #{to}
+          and tmp.item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY tmp.recorded_at
+        order by tmp.recorded_at asc
+        ]]>
+    </select>
+
+    <select id="getItemDatasByYear" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        select
+            sum(tmp.val) as totalVal,
+            tmp.recorded_at as recordedAt
+        from v_item_val_by_year tmp
+        where tmp.recorded_at >= #{from} and tmp.recorded_at <= #{to}
+          and tmp.item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        GROUP BY tmp.recorded_at
+        order by tmp.recorded_at asc
+        ]]>
+    </select>
+
+    <!-- 多个设备，某个时间段内 总值 -->
+    <select id="getItemsSummaryVal" resultType="float">
+        <![CDATA[
+        select
+            IFNULL(sum(val),0) as totalVal
+        from v_item_val_by_year
+        where recorded_at >= #{from} and recorded_at <= #{to}
+          and item_id in
+        ]]>
+        <foreach item="item" index="index" collection="itemIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+
+
+    <select id="getItemData" resultType="com.energy.entity.ItemData">
+        select
+        id,
+        item_id as itemId,
+        indication,
+        other_data as otherData,
+        updated_at as updatedAt
+        from a_item_data;
+    </select>
+
+    <update id="updateItemDatas">
+        update a_item_data set indication = indication + rand()*30, updated_at = NOW();
+    </update>
+
+    <select id="getEnergyDataLatest" resultType="com.energy.entity.EnergyData">
+        select
+        e.id,
+        e.item_id as itemId,
+        e.indication,
+        e.diff_indication as diffIndication,
+        e.other_data as otherData,
+        e.updated_at as updatedAt
+        from a_energy_data e
+        right join (
+        select max(id) as id
+        from a_energy_data
+        GROUP by item_id
+        ) tmp on tmp.id = e.id
+    </select>
+
+    <!-- 同步多条记录 -->
+    <insert id="recordEnergyDatas">
+        insert into a_energy_data (item_id, indication, diff_indication, other_data, recorded_at) VALUES
+        <foreach collection="energyDataList" item="item" index="index" separator=",">
+            (#{item.itemId}, #{item.indication}, #{item.diffIndication}, #{item.otherData}, #{item.recordedAt})
+        </foreach>
+    </insert>
+
+</mapper>

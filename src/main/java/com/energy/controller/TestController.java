@@ -1,6 +1,8 @@
 package com.energy.controller;
 
+import com.energy.entity.Item;
 import com.energy.service.BuildingService;
+import com.energy.service.ItemDataService;
 import com.energy.service.ItemService;
 import com.energy.utils.Response;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("api")
@@ -23,13 +24,15 @@ public class TestController {
     private BuildingService buildingService = null;
     @Resource
     private ItemService itemService = null;
+    @Resource
+    private ItemDataService itemDataService = null;
 
     @RequestMapping("/recordEnergyDatas")
     @ResponseBody
     public Object getEnergyTableDataByType(){
         Response res = new Response();
         try {
-            buildingService.recordEnergyDatas();
+            itemDataService.recordEnergyDatas();
             res.makeSuccess("");
         } catch (Exception ex) {
             res.makeFailed(ex);
@@ -43,7 +46,7 @@ public class TestController {
                                     HttpServletRequest request) {
         Response res = new Response();
         try {
-            List<Map> list = itemService.getItemsByGroupId(groupId);
+            List<Item> list = itemService.getItemsByGroupId(groupId);
             res.makeSuccess(list);
         } catch (Exception ex) {
             res.makeFailed(ex);
