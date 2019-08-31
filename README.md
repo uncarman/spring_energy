@@ -13,6 +13,9 @@ item 中有 item_type 对应表类型
 item_group_mapper 需要表类型 和 code 类型对应
 
 
+添加item时,需要和collector对应
+添加collector需要和建筑对应
+
 
 生产环境接口地址：http://open.snd02.com
 APP_KEY:O000002789
