@@ -1,0 +1,1810 @@
+{
+	"variables": [],
+	"info": {
+		"name": "energy",
+		"_postman_id": "ed36a468-bf2d-d4fe-0035-820792c944fd",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "000.  用户登录",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/login",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"login"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userName",
+							"value": "sam",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "111111",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "001.  用户登出",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/logout",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "token",
+							"value": "9lxpFE69CYUTfTRFf4eqwUB2naWoXKBfLDdC7b8HXAjde3rpVPCu6XiE8yQ0",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "111111",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "001. 建筑详情",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/building",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"building"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "56",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "002. 用户名下所有建筑列表",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/getBuildingsByUserId",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"getBuildingsByUserId"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "003. 某建筑下已安装的【能耗分项】【零级分类】对应的设备ids",
+			"request": {
+				"url": "http://{{host}}/api/getBuildingItemTypes",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "005. 能耗类型基础信息",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/getItemTypeBaseInfo",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"getItemTypeBaseInfo"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "56",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "010. 基础数据列表",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/getBasicDatas",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"getBasicDatas"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "011. 基础数据创建",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/createBasicData",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"createBasicData"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "type",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "测试",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "basicCode",
+							"value": "121",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "basicName",
+							"value": "测试",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "note",
+							"value": "",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "012. 基础数据更新",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/updateBasicData",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"updateBasicData"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "type",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "测试1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "basicCode",
+							"value": "1211",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "basicName",
+							"value": "测试1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "note",
+							"value": "",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "93",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "013. 基础数据删除",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/removeBasicData",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"removeBasicData"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "93",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "020. 用能计划列表",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/getEnergyPlans",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"getEnergyPlans"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "01",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": "type: 01/02...  对应用能类型"
+			},
+			"response": []
+		},
+		{
+			"name": "021. 用能计划创建",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/createEnergyPlan",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"createEnergyPlan"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planType",
+							"value": "普通",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planDate",
+							"value": "2019-10-02",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planVal",
+							"value": "8000",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planValAvg",
+							"value": "0.7318",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planMethod",
+							"value": "所有用电 * 4小时 + 部分用电 * 16小时",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "note",
+							"value": "十一长假",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": "type: 01/02...  对应用能类型"
+			},
+			"response": []
+		},
+		{
+			"name": "022. 用能计划更新",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/updateEnergyPlan",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"updateEnergyPlan"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planType",
+							"value": "普通",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planDate",
+							"value": "2019-10-02",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planVal",
+							"value": "8000",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planValAvg",
+							"value": "0.7318",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "planMethod",
+							"value": "所有用电 * 4小时 + 部分用电 * 16小时",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "note",
+							"value": "十一长假",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "7",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": "type: 01/02...  对应用能类型"
+			},
+			"response": []
+		},
+		{
+			"name": "023. 用能计划删除",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/removeEnergyPlan",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"removeEnergyPlan"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "8",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": "type: 01/02...  对应用能类型"
+			},
+			"response": []
+		},
+		{
+			"name": "031. 某建筑下所有设备列表",
+			"request": {
+				"url": "http://{{host}}/api/getBuildingItems",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "032. 某【设备分组】下的所有【设备】",
+			"request": {
+				"url": "http://{{host}}/api/getItemsByGroupId",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "groupId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "033. 设备创建",
+			"request": {
+				"url": "http://{{host}}/api/createItem",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "collectorId",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "itemType",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "1#进线",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "1#进线",
+							"type": "text"
+						},
+						{
+							"key": "dataType",
+							"value": "11",
+							"type": "text"
+						},
+						{
+							"key": "dataUnit",
+							"value": "kwh",
+							"type": "text"
+						},
+						{
+							"key": "coefficient",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "maxValue",
+							"value": "10000",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "034. 设备更新",
+			"request": {
+				"url": "http://{{host}}/api/updateItem",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "collectorId",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "itemType",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "1#进线",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "1#进线",
+							"type": "text"
+						},
+						{
+							"key": "dataType",
+							"value": "11",
+							"type": "text"
+						},
+						{
+							"key": "dataUnit",
+							"value": "kwh",
+							"type": "text"
+						},
+						{
+							"key": "coefficient",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "maxValue",
+							"value": "10000",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "290",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "035. 设备删除",
+			"request": {
+				"url": "http://{{host}}/api/removeItem",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "290",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "040. 某建筑下的所有【设备分组】",
+			"request": {
+				"url": "http://{{host}}/api/getItemGroups",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "041. 某建筑下条件筛选【设备分组】",
+			"request": {
+				"url": "http://{{host}}/api/getItemGroupByType",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "subType",
+							"value": "能耗分项",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "042. 设备分组的详细信息，包含子分组",
+			"request": {
+				"url": "http://{{host}}/api/getItemGroupById",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "groupId",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "043. 设备分组创建",
+			"request": {
+				"url": "http://{{host}}/api/createItemGroup",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "code",
+							"value": "050000",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "能耗分项",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "蒸汽（总）",
+							"type": "text"
+						},
+						{
+							"key": "parent",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "note",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "area",
+							"value": "109320",
+							"type": "text"
+						},
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "044. 设备分组更新",
+			"request": {
+				"url": "http://{{host}}/api/updateItemGroup",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "code",
+							"value": "050000",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "能耗分项",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "蒸汽（总）",
+							"type": "text"
+						},
+						{
+							"key": "parent",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "note",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "area",
+							"value": "109320",
+							"type": "text"
+						},
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "id",
+							"value": "128",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "045. 设备分组删除",
+			"request": {
+				"url": "http://{{host}}/api/removeItemGroup",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "128",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "051. 【多个设备】按【时/日/月/年】汇总数据",
+			"request": {
+				"url": {
+					"raw": "http://{{host}}/api/getItemDatasByDate",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"getItemDatasByDate"
+					],
+					"query": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"disabled": true
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1565936224225",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cHVibGlj",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "itemIds",
+							"value": "1,2,79",
+							"type": "text"
+						},
+						{
+							"key": "from",
+							"value": "2019-08-27",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "2019-08-31",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "day",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"description": "type 选填\nfrom / to 格式需要跟 type 对应"
+			},
+			"response": []
+		},
+		{
+			"name": "052. 某建筑汇总数据【四种表】",
+			"request": {
+				"url": "http://{{host}}/api/getBuildingSummaryTotalData",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "01",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "053. 某建筑汇总数据【四种表】按【时/日/月/年】图表",
+			"request": {
+				"url": "http://{{host}}/api/getBuildingChartDataByType",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "from",
+							"value": "2019-08-10",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "2019-08-31",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "day",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "054. 某建筑汇总数据【四种表】按【时/日/月/年】表格",
+			"request": {
+				"url": "http://{{host}}/api/getBuildingTableDataByType",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "from",
+							"value": "2019-08-10",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "2019-08-31",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "day",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "055. 某建筑【某种表】汇总数据",
+			"request": {
+				"url": "http://{{host}}/api/getEnergyTotalDataByType",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "01",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "056. 【某种表】汇总数据按【时/日/月/年】图表",
+			"request": {
+				"url": "http://{{host}}/api/getEnergyChartDataByType",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "from",
+							"value": "2019-08-28",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "2019-08-30",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "day",
+							"type": "text"
+						},
+						{
+							"key": "energyType",
+							"value": "01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "parent",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "057. 【某种表】汇总数据按【时/日/月/年】表格",
+			"request": {
+				"url": "http://{{host}}/api/getEnergyChartDataByType",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "from",
+							"value": "2019-08-28",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "2019-08-30",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "day",
+							"type": "text"
+						},
+						{
+							"key": "energyType",
+							"value": "01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "parent",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "053. 某建筑汇总数据【四种表】按【时/日/月/年】图表",
+			"request": {
+				"url": "http://{{host}}/api/getEnergyChartDataByType",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "buildingId",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "from",
+							"value": "2019-01-10",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "2019-01-20",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "day",
+							"type": "text"
+						},
+						{
+							"key": "energyType",
+							"value": "01",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "parent",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

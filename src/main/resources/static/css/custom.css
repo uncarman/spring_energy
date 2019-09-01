@@ -4662,7 +4662,7 @@ ul.notifications {
     overflow: auto!important
 }
 
-.top_nav .navbar-right { display: inline-block;}
+.top_nav .navbar-right { display: inline-block; width: auto; }
 .main_menu .fa { vertical-align: middle; }
 .chart { width: 100%; }
 .form-inline button { margin: 0px; }

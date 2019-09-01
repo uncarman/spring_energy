@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
     <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
-    <title>
-        能耗管理系统
-    </title>
+    <title th:text="${appName}"></title>
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
     <!-- daterange picker -->
@@ -18,11 +16,6 @@
     <link href="css/nprogress.css" rel="stylesheet">
     <link href="css/normalize.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
-
-    <style type="text/css">
-        .left_col { display: none1; }
-    </style>
-
 </head>
 <body class="nav-md" ng-app="app" ng-controller="index">
 <div class="container body">
@@ -32,9 +25,7 @@
                 <div class="navbar nav_title" style="border: 0;">
                     <a class="site_title" ng-click="gotoHome();">
                         <i class="fa fa-bar-chart-o"></i>
-                        <span>
-                            能耗管理系统
-                        </span>
+                        <span th:text="${appName}"></span>
                     </a>
                 </div>
                 <div class="clearfix"></div>
@@ -212,9 +203,7 @@
             <div ui-view></div>
         </div>
         <footer>
-            <div class="pull-right">
-                能耗管理系统
-            </div>
+            <div class="pull-right" th:text="${appName+' '+appVersion}"></div>
             <div class="clearfix"></div>
         </footer>
     </div>

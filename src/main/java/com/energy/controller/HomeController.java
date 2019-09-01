@@ -1,10 +1,7 @@
 package com.energy.controller;
 
-import com.energy.entity.Building;
+import com.energy.config.AppConfig;
 import com.energy.service.BuildingService;
-import com.energy.utils.Response;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,14 +18,32 @@ public class HomeController {
     @Resource
     private BuildingService buildingService = null;
 
+    @Resource
+    private AppConfig appConfig = null;
+
+    private void setEnv(Map<String,Object> map) {
+        map.put("appName", appConfig.getName());
+        map.put("appVersion", appConfig.getVersion());
+        map.put("appDescription", appConfig.getDescription());
+    }
+
     @RequestMapping("/")
-    public String home(){
+    public String home(Map<String,Object> map){
+        setEnv(map);
         return "index";
     }
 
     @RequestMapping("/login")
-    public String login(){
+    public String login(Map<String,Object> map){
+        setEnv(map);
         return "login";
+    }
+
+
+    @RequestMapping("/err")
+    @ResponseBody
+    public String error() {
+        return appConfig.getName() + appConfig.getVersion();
     }
 
     @RequestMapping("/api/lo")
