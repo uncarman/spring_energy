@@ -4,6 +4,11 @@ app.controller('dashboard',function ($scope) {
         global.on_loaded_func($scope);    // 显示页面内容
     });
 
+    // 最后执行
+    setTimeout(function(){
+        $scope.initPage();
+    }, 0);
+
     $scope.datas = {
         user: global.read_storage("session", "user"),
 
@@ -20,7 +25,7 @@ app.controller('dashboard',function ($scope) {
 
     }
 
-    $scope.init_page = function () {
+    $scope.initPage = function () {
         // 初始化地图
         initMap();
         $scope.getDatas();
@@ -149,15 +154,25 @@ app.controller('dashboard',function ($scope) {
         $scope.$apply(function () {
             $scope.datas.tableData = tableData;
             $scope.datas.cacheData = cacheData;
+        });
 
-            // 缓存用户建筑列表
+        // 缓存用户建筑列表
+        global.set_storage_key('session', [
+            {
+                key: 'buildingList',
+                val: $scope.datas.cacheData,
+            }
+        ]);
+        // 如果有建筑列表, 默认第一个选中
+        if(res.data.length > 0) {
             global.set_storage_key('session', [
                 {
-                    key: 'buildingList', 
-                    val: $scope.datas.cacheData,
+                    key: 'building',
+                    val: res.data[0],
                 }
             ]);
-        });
+            $scope.$emit('updateBuildings', res.data);
+        }
     };
 
     $scope.viewItem = function (id) {
@@ -179,5 +194,4 @@ app.controller('dashboard',function ($scope) {
         }
     }
 
-    $scope.init_page();
 });

@@ -17,6 +17,8 @@ app.directive('onFinishRender', function ($timeout) {
 
 app.controller('index',function ($scope) {
 
+    global.check_logined();
+
     $scope.$watch('$viewContentLoaded', function() {
         global.on_loaded_func($scope);    // 显示页面内容
     });
@@ -39,19 +41,27 @@ app.controller('index',function ($scope) {
     
     $scope.doLogout = function () {
         global.do_logout();
-    }
+        window.location.href = "/login";
+    };
 
     $scope.gotoHome = function () {
-        window.location.href = "#"+settings.default_page;
+        window.location.href = "#/"+settings.default_page;
     };
 
     $scope.gotoProfile = function () {
-        window.location.href = "#profile";
-    }
+        window.location.href = "#/profile";
+    };
 
     $scope.gotoHelp = function () {
-        window.location.href = "#help";
-    }
+        window.location.href = "#/help";
+    };
+
+    $scope.$on("updateBuildings", function(event, data) {
+        $scope.$apply(function () {
+            $scope.datas.buildingList = data;
+            $scope.datas.curBuilding = data[0];
+        });
+    });
 
 });
 app.config(function ($stateProvider, $urlRouterProvider) {

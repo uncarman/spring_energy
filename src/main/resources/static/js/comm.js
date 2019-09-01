@@ -1020,7 +1020,7 @@ var global = {
         $scope.settings = settings;
 
         // 检查是否登录
-        global.check_logined();
+        //global.check_logined();
 
         // 移除 loading 状态
         global.loading_num -= 1;
