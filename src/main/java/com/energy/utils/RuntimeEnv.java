@@ -11,6 +11,7 @@ public class RuntimeEnv implements EnvironmentAware {
 
     @Override
     public void setEnvironment(Environment environment) {
+        System.out.println("启动 env: " + environment.getProperty("spring.profiles.active") + " port: "+environment.getProperty("server.port"));
         env = environment;
     }
 

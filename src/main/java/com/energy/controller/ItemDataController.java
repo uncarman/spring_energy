@@ -305,7 +305,7 @@ public class ItemDataController {
             // ------------- 汇总数据 ---------------//
             ItemGroup curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
             Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
-            String curItemIds = groupItems.get(String.valueOf(curGroupId))+"";
+            String curItemIds = groupItems.get(curGroupId)+"";
             List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
             float sumItemTotal = itemDataService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
             float sumItemLastMonth = itemDataService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
