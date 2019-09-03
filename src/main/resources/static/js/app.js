@@ -500,6 +500,39 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             templateUrl:'pages/statistics_fee.html',
             controller: 'statistics_fee',
         })
+        // 能耗分析
+        .state('statistics_analysis',{
+            url:'/statistics_analysis',
+            templateUrl:'pages/statistics_analysis.html',
+            controller: 'statistics_analysis',
+        })
+
+
+        // 智能运维 - 物资
+        .state('maintenance_device',{
+            url:'/maintenance_device',
+            templateUrl:'pages/maintenance_device.html',
+            controller: 'maintenance_device',
+        })
+        // 智能运维 - 值班
+        .state('maintenance_duty',{
+            url:'/maintenance_duty',
+            templateUrl:'pages/maintenance_duty.html',
+            controller: 'maintenance_duty',
+        })
+        // 智能运维 - 巡检
+        .state('maintenance_inspection',{
+            url:'/maintenance_inspection',
+            templateUrl:'pages/maintenance_inspection.html',
+            controller: 'maintenance_inspection',
+        })
+        // 智能运维 - 工单
+        .state('maintenance_order',{
+            url:'/maintenance_order',
+            templateUrl:'pages/maintenance_order.html',
+            controller: 'maintenance_order',
+        })
+
 
         // 用能计划
         .state('plan_electricity',{
