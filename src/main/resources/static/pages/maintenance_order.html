@@ -9,22 +9,79 @@
     </div>
     <p class="clearfix"></p>
 
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>
-                        工单管理
-                    </h2>
-                    <div class="clearfix"></div>
+    <section>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>
+                            工单管理
+                        </h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <label for="deviceName">设备名称</label>
+                                        <input type="text" class="form-control" id="deviceName" placeholder="设备名称">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">报修人</label>
+                                        <input type="text" class="form-control" id="name" placeholder="报修人">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">报修人电话</label>
+                                        <input type="text" class="form-control" id="phone" placeholder="报修人电话">
+                                    </div>
+                                    <button type="button" class="btn btn-primary">查询</button>
+                                    <p></p>
+                                    <div class="form-group">
+                                        <label for="from">开始时间</label>
+                                        <input type="text" class="form-control" id="from" placeholder="开始时间">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="to">结束时间</label>
+                                        <input type="text" class="form-control" id="to" placeholder="结束时间">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="x_content">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <img src="images/chart_sg.png" style="text-align:center; height:500px;">
+
+                <div class="clearfix"></div>
+
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <table class="table table-hover" id="summaryTable">
+                                    <thead>
+                                    <tr>
+                                        <th ng-repeat="(k,n) in datas.result.tableData.title" ng-bind="n"></th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="v in datas.result.tableData.data">
+                                        <td ng-repeat="(k,n) in datas.result.tableData.title"
+                                            ng-bind="v[k]"></td>
+                                        <td>
+                                            <button class="btn btn-success btn-xs" ng-click="updateItem($index, v, 1);">处理</button>
+                                            <button class="btn btn-default btn-xs" ng-click="updateItem($index, v, 2);">忽略</button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+    </section>
+</div>

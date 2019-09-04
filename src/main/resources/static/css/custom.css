@@ -4695,3 +4695,6 @@ ul.bar_tabs>li.active {
 .flipInY h3 { cursor: pointer;}
 .flipInY .linked { color: #1ABB9C; font-weight: lighter;  }
 .flipInY hr { margin: 5px 0; }
+
+.panel_toolbox { min-width: auto; }
+

@@ -47,12 +47,29 @@ app.controller('maintenance_duty',function ($scope) {
             selectable: true,
             selectHelper: true,//在agenda视图下选择时会带上对应的时间
             dragOpacity: 0.5, //Event被拖动时的不透明度
-            events: {
-                //加载数据
-                url: '/Home/GetList',
-                error: function () {
-                    // pass
+            events: [
+                {
+                    title: '张三',
+                    start: '2019-09-06',
+                    //color:'green',
+                },
+                {
+                    title: '张三',
+                    start: '2019-09-07',
+                    //color:'green',
+                },
+                {
+                    title: '张三',
+                    start: '2019-09-08',
+                    //color:'green',
                 }
+            ],
+            events_bak: {
+                //加载数据
+                // url: '/Home/GetList',
+                // error: function () {
+                //     //
+                // }
             },
             select: function (start, end) {
                 console.log('选择日期触发');
@@ -75,11 +92,13 @@ app.controller('maintenance_duty',function ($scope) {
                 //点击事件触发
                 console.log("点击事件触发");
                 console.log(event);
+                $("#CalenderModalEdit").modal("show");
             },
             eventDrop: function (event, dayDelta, revertFunc) {
                 //移动事件时候触发
                 console.log("移动事件时候触发");
                 console.log(event);
+                $("#CalenderModalEdit").modal("show");
             }
         });
 
