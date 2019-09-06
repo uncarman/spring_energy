@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Babylon Template</title>
+
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+
+
+<!--    babylon.js：Babylon.js 的简化版本-->
+<!--    babylon.max.js：Babylon.js 的调试版本-->
+<!--    Oimo.js：Oimo JS 物理引擎，本教程的第二部分中将会用到-->
+<!--    poly2tri.js：可选的三边转换库 (github.com/r3mi/poly2tri.js)-->
+<!--    hand-minified.js：指针事件填充代码；在使用 npm 时缺失，因此使用下列命令进行安装：-->
+
+    <!-- Link to the last version of BabylonJS -->
+    <script src="js/babylon.js"></script>
+    <!-- Link to the last version of BabylonJS loaders to enable loading filetypes such as .gltf -->
+    <script src="js/babylonjs.loaders.min.js"></script>
+    <!-- Link to pep.js to ensure pointer events work consistently in all browsers -->
+    <script src="js/pep-0.4.3.js"></script>
+    <script src="js/objects.js"></script>
+</head>
+
+<body>
+
+<canvas id="renderCanvas" touch-action="none"></canvas> //touch-action="none" for best results from PEP
+
+<script>
+    var canvas = document.getElementById("renderCanvas"); // Get the canvas element
+    var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+
+    // 生成所有object
+    var sceneObjs = {
+        "materials": {},
+        "lights": {},
+        "objects": {},
+    };
+
+    /******* Add the create scene function ******/
+    var createScene = function (json) {
+
+        // Create the scene space
+        var scene = new BABYLON.Scene(engine);
+
+        // Add a camera to the scene and attach it to the canvas
+        camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0, -40, 20), scene);
+        camera.attachControl(canvas, true);
+        var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 100, 100), scene);
+        // Add lights to the scene
+        //var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+        //var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+
+        createMaterials(json);
+        createLights(json);
+        createObjects(json);
+
+        // Add and manipulate meshes in the scene
+        //var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:2}, scene);
+
+        //var floor = BABYLON.MeshBuilder.CreateBox("myBox", {height: 10, width: 10, depth: 0.1}, scene);
+        //floor.position = new BABYLON.Vector3(0, 0, -2);
+
+        // var sphereMaterial = new BABYLON.StandardMaterial("sphereMaterial", scene);
+        // sphereMaterial.diffuseColor = colors["c1"];
+        // sphere.material = sphereMaterial;
+        // floor.receiveShadows = true;
+        //
+        // var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+        // groundMaterial.diffuseColor = colors["c3"];
+        //
+        // floor.material = groundMaterial;
+        // floor.receiveShadows = true;
+
+        return scene;
+    };
+
+
+    function createMaterials(json) {
+        for(i in json.materials) {
+            var o = json.materials[i];
+            var obj = new BABYLON.StandardMaterial(o.id, scene);
+            obj.ambientTexture = new BABYLON.Texture(o.path, scene);
+            obj.ambientTexture.alpha = 0.1;
+            // 铺设偏移
+            if(o.hasOwnProperty("offset")) {
+                obj.ambientTexture.uOffset = o.offset[0];
+                obj.ambientTexture.uOffset = o.offset[1];
+            }
+            // 铺设重复
+            if(o.hasOwnProperty("scale")) {
+                obj.ambientTexture.uScale  = o.scale[0];
+                obj.ambientTexture.vScale  = o.scale[1];
+            }
+            sceneObjs["materials"][o.id] = [obj, o];
+        };
+    }
+    function createLights(json) {
+        for(i in json.lights) {
+            var o = json.lights[i];
+            var _position = o.hasOwnProperty("pos") ? new BABYLON.Vector3(o.pos[0], o.pos[1], o.pos[2]) : new BABYLON.Vector3(0, 0, 0);
+            var obj = new BABYLON[o.type](o.id, _position, scene);
+            if(o.hasOwnProperty("intensity")) {
+                obj.intensity = o.intensity;
+            }
+            sceneObjs["lights"][o.id] = [obj, o];
+        };
+    }
+    function createObjects(objs) {
+        for(i in objs.objects) {
+            var o = objs.objects[i];
+            if(o.type == "box") {
+                var obj = BABYLON.MeshBuilder.CreateBox(o.id,
+                    {
+                        height: o.height,
+                        width: o.width,
+                        depth: o.depth
+                    }, scene);
+                // 材质
+                if(o.hasOwnProperty("style")) {
+                    if(o.style.hasOwnProperty("texture")) {
+                        obj.material = sceneObjs["materials"][o.style.texture][0];
+                    }
+                }
+            }
+            // 位置
+            if(o.hasOwnProperty("pos")) {
+                obj.position = new BABYLON.Vector3(o.pos[0], o.pos[1], o.pos[2]);
+            }
+            // 旋转
+            if(o.hasOwnProperty("rot")) {
+                obj.rotation = new BABYLON.Vector3(o.rot[0], o.rot[1], o.rot[2]);
+            }
+            // 阴影
+            if(o.hasOwnProperty("shadow")) {
+                obj.receiveShadows = o.shadow;
+            }
+            sceneObjs["objects"][o.id] = [obj, o];
+        };
+    }
+
+    /******* End of the create scene function ******/
+
+    var scene = createScene(json); //Call the createScene function
+
+    // Register a render loop to repeatedly render the scene
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+
+    // Watch for browser/canvas resize events
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+
+</script>
+</body>
+
+</html>

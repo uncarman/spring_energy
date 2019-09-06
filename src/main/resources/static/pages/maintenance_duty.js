@@ -32,9 +32,31 @@ app.controller('maintenance_duty',function ($scope) {
     $scope.getDatas = function () {
 
         $('#calendar').fullCalendar({
+            buttonText: {
+                today: '今天',
+                month: '月视图',
+                week: '周视图',
+                day: '日视图',
+                prev: '上一月',
+                next: '下一月',
+            },
+            //today: ["今天"],
+            //allDayText: "全天",
+            // titleFormat: {
+            //     month: 'yyyy年 MMMM月',
+            //     week: "[yyyy年] MMMM月d日 { '&#8212;' [yyyy年] MMMM月d日}",
+            //     day: 'yyyy年 MMMM月d日 dddd'
+            // },
+            monthNames: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+            monthNamesShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], //月份缩略命名（英语比较实用：全称January可设置缩略为Jan）
+            dayNames: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],       //同理monthNames
+            dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],  //同理monthNamesShort
+            weekNumberTitle : "周",         //周的国际化,默认为"W"
+            eventLimitText  : "更多",       //当一块区域内容太多以"+2 more"格式显示时，这个more的名称自定义（应该与eventLimit: true一并用）
+            dayPopoverFormat : "YYYY年M月d日", //点开"+2 more"弹出的小窗口标题，与eventLimitClick可以结合用
             header: {
                 left: 'prev,next today',
-                center: 'title',
+                center: '值班管理',
                 right: 'month,agendaWeek,agendaDay,listWeek'
             },
             weekNumbers: true,

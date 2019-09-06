@@ -1,0 +1,121 @@
+var json={
+    materials : [
+        {
+            id: "floorMaterial",
+            name: "地板材质",
+            type: 'material',
+            path: "img/material/floor.jpg",
+            offset: [0,0],
+            scale: [16,6],
+            alpha: 0.2,
+        }
+    ],
+    lights: [
+        {
+            id: "light1",
+            name: "灯光1",
+            type: 'PointLight',
+            pos: [0,5,5],
+            intensity: 0.85,
+        },
+        {
+            id: "light2",
+            name: "灯光2",
+            type: 'HemisphericLight',
+            pos: [5,5,0],
+            intensity: 1,
+        }
+    ],
+    objects: [
+        {
+            id: "floor",
+            name: '地板',
+            type: 'box',
+            width: 26,
+            height: 14,
+            depth: 0.2,
+            op: "+",
+            pos: [0,0,0],
+            rot: [0, 0, 0],
+            style: {
+                'texture': 'floorMaterial',
+            },
+            shadow: true,
+        },
+        {
+            id: "wall-east",
+            name: '墙-东',
+            type: 'box',
+            width: 0.2,
+            height: 14,
+            depth: 5,
+            op: "+",
+            pos: [12, 0, 2.5],
+            rot: [0, 0, 0],
+            style: {
+                'texture': 'floorMaterial',
+            },
+            shadow: true,
+        },
+        {
+            id: "wall-west",
+            name: '墙-西',
+            type: 'box',
+            width: 0.2,
+            height: 14,
+            depth: 5,
+            op: "+",
+            pos: [-12, 0, 2.5],
+            rot: [0, 0, 0],
+            style: {
+                'texture': 'floorMaterial',
+            },
+            shadow: true,
+        },
+        {
+            id: "wall-south",
+            name: '墙-南',
+            type: 'box',
+            width: 0.2,
+            height: 24,
+            depth: 5,
+            op: "+",
+            pos: [0, 7, 2.5],
+            rot: [0, 0, Math.PI / 2],
+            style: {
+                'texture': 'floorMaterial',
+            },
+            shadow: true,
+        },
+        {
+            id: "wall-north",
+            name: '墙-北',
+            type: 'box',
+            width: 0.2,
+            height: 24,
+            depth: 5,
+            op: "+",
+            pos: [0, -7, 2.5],
+            rot: [0, 0, Math.PI / 2],
+            style: {
+                'texture': 'floorMaterial',
+            },
+            shadow: true,
+        },
+        {
+            id: "wall-north-window1",
+            name: '墙-北',
+            type: 'box',
+            width: 0.2,
+            height: 2,
+            depth: 5,
+            op: "-",
+            pos: [0, -7, 2.5],
+            rot: [0, 0, Math.PI / 2],
+            style: {
+                'texture': 'floorMaterial',
+            },
+            shadow: true,
+        }
+    ],
+}
