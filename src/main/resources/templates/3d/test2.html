@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Babylon Template</title>
+
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+
+
+<!--    babylon.js：Babylon.js 的简化版本-->
+<!--    babylon.max.js：Babylon.js 的调试版本-->
+<!--    Oimo.js：Oimo JS 物理引擎，本教程的第二部分中将会用到-->
+<!--    poly2tri.js：可选的三边转换库 (github.com/r3mi/poly2tri.js)-->
+<!--    hand-minified.js：指针事件填充代码；在使用 npm 时缺失，因此使用下列命令进行安装：-->
+
+    <!-- Link to the last version of BabylonJS -->
+    <script src="js/babylon.js"></script>
+    <!-- Link to the last version of BabylonJS loaders to enable loading filetypes such as .gltf -->
+    <script src="js/babylonjs.loaders.min.js"></script>
+    <!-- Link to pep.js to ensure pointer events work consistently in all browsers -->
+    <script src="js/pep-0.4.3.js"></script>
+    <script src="js/objects.js?v=9.118"></script>
+    <script src="js/meshCreate.js?v=9.118"></script>
+</head>
+
+<body>
+
+<canvas id="renderCanvas" touch-action="none"></canvas>
+
+<script>
+    var canvas = document.getElementById("renderCanvas"); // Get the canvas element
+    var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+    // 生成所有object
+    var sceneObjs = {
+        "materials": {},
+        "lights": {},
+        "objects": {},
+    };
+
+    var createScene = function() {
+        // Create scene
+        var scene = new BABYLON.Scene(engine);
+
+        // Create simple sphere
+        // sphere = BABYLON.Mesh.CreateIcoSphere("sphere", {radius:2, flat:true, subdivisions: 10}, this.scene);
+
+        // sphere.position.y = 2.5;
+        // sphere.material = new BABYLON.StandardMaterial("sphere material",scene)
+        // sphere.receiveShadows  = true;
+
+        // Lights and camera
+        // light = new BABYLON.DirectionalLight("light", new BABYLON.Vector3(0, -1, 0.5), scene);
+        // light.position = new BABYLON.Vector3(20, 20, 20);
+
+        // camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 4, 3, new BABYLON.Vector3(0, 1, 0), scene);
+        camera = new BABYLON.ArcRotateCamera("camera1", 0, 0, 20, new BABYLON.Vector3(0, 0, 0), scene);
+
+        // This targets the camera to scene origin
+        camera.setTarget(BABYLON.Vector3.Zero());
+        camera.attachControl(canvas, true);
+        scene.activeCamera.beta += 0.8;
+
+        // Default Environment
+        var environment = scene.createDefaultEnvironment({ 
+            createGround: true,
+            createSkybox: true,
+            groundSize: 1000,
+            skyboxSize: 1000,
+            sizeAuto: false,
+            enableGroundShadow: true, 
+            // groundTexture: false,
+            // skyboxTexture: false,
+            // environmentTexture: false,
+        });
+        environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"))
+        
+        // Shadows
+        // shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        // shadowGenerator.useBlurExponentialShadowMap = true;
+        // shadowGenerator.blurKernel = 5;
+        // shadowGenerator.addShadowCaster(sphere, true);
+
+        // // Enable VR
+        // var vrHelper = scene.createDefaultVRExperience({createDeviceOrientationCamera:false});
+        // vrHelper.enableTeleportation({floorMeshes: [environment.ground]});
+
+        // // Runs every frame to rotate the sphere
+        // scene.onBeforeRenderObservable.add(()=>{
+        //     sphere.rotation.y += 0.0001*scene.getEngine().getDeltaTime();
+        //     sphere.rotation.x += 0.0001*scene.getEngine().getDeltaTime();
+        // })
+
+        createMaterials (json, sceneObjs, scene);
+        createLights (json, sceneObjs, scene);
+        createObjects(json, sceneObjs, scene);
+        createShadows(json, sceneObjs, scene);
+
+        return scene;
+    };
+
+    var colors = {
+        seaFoam: BABYLON.Color3.FromHexString("#16a085"),    //BABYLON.Color3.FromHexString("#16a085"),
+        green: BABYLON.Color3.FromHexString("#27ae60"),
+        blue: BABYLON.Color3.FromHexString("#2980b9"),
+        purple: BABYLON.Color3.FromHexString("#8e44ad"),
+        navy: BABYLON.Color3.FromHexString("#2c3e50"),
+        yellow: BABYLON.Color3.FromHexString("#f39c12"),
+        orange: BABYLON.Color3.FromHexString("#d35400"),
+        red: BABYLON.Color3.FromHexString("#c0392b"),
+        white: BABYLON.Color3.FromHexString("#bdc3c7"),
+        gray: BABYLON.Color3.FromHexString("#7f8c8d")
+    }
+
+    /******* End of the create scene function ******/
+
+    var scene = createScene(); //Call the createScene function
+
+    // Register a render loop to repeatedly render the scene
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+
+    // Watch for browser/canvas resize events
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+
+</script>
+</body>
+
+</html>

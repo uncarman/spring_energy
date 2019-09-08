@@ -66,6 +66,26 @@
         //var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
         //var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
 
+
+        // Default Environment
+        var environment = scene.createDefaultEnvironment({ 
+            createGround: true,
+            createSkybox: true,
+            groundSize: 100,
+            skyboxSize: 100,
+            groundColor: BABYLON.Color3.FromHexString("#0033ff"),
+            sizeAuto: false,
+            enableGroundShadow: true, 
+            groundYBias: 3
+        });
+        environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"))
+        
+        // Shadows
+        var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+        shadowGenerator.useBlurExponentialShadowMap = true;
+        shadowGenerator.blurKernel = 32;
+        //shadowGenerator.addShadowCaster(sphere, true);
+
         createMaterials(json);
         createLights(json);
         createObjects(json);
@@ -91,68 +111,7 @@
     };
 
 
-    function createMaterials(json) {
-        for(i in json.materials) {
-            var o = json.materials[i];
-            var obj = new BABYLON.StandardMaterial(o.id, scene);
-            obj.ambientTexture = new BABYLON.Texture(o.path, scene);
-            obj.ambientTexture.alpha = 0.1;
-            // 铺设偏移
-            if(o.hasOwnProperty("offset")) {
-                obj.ambientTexture.uOffset = o.offset[0];
-                obj.ambientTexture.uOffset = o.offset[1];
-            }
-            // 铺设重复
-            if(o.hasOwnProperty("scale")) {
-                obj.ambientTexture.uScale  = o.scale[0];
-                obj.ambientTexture.vScale  = o.scale[1];
-            }
-            sceneObjs["materials"][o.id] = [obj, o];
-        };
-    }
-    function createLights(json) {
-        for(i in json.lights) {
-            var o = json.lights[i];
-            var _position = o.hasOwnProperty("pos") ? new BABYLON.Vector3(o.pos[0], o.pos[1], o.pos[2]) : new BABYLON.Vector3(0, 0, 0);
-            var obj = new BABYLON[o.type](o.id, _position, scene);
-            if(o.hasOwnProperty("intensity")) {
-                obj.intensity = o.intensity;
-            }
-            sceneObjs["lights"][o.id] = [obj, o];
-        };
-    }
-    function createObjects(objs) {
-        for(i in objs.objects) {
-            var o = objs.objects[i];
-            if(o.type == "box") {
-                var obj = BABYLON.MeshBuilder.CreateBox(o.id,
-                    {
-                        height: o.height,
-                        width: o.width,
-                        depth: o.depth
-                    }, scene);
-                // 材质
-                if(o.hasOwnProperty("style")) {
-                    if(o.style.hasOwnProperty("texture")) {
-                        obj.material = sceneObjs["materials"][o.style.texture][0];
-                    }
-                }
-            }
-            // 位置
-            if(o.hasOwnProperty("pos")) {
-                obj.position = new BABYLON.Vector3(o.pos[0], o.pos[1], o.pos[2]);
-            }
-            // 旋转
-            if(o.hasOwnProperty("rot")) {
-                obj.rotation = new BABYLON.Vector3(o.rot[0], o.rot[1], o.rot[2]);
-            }
-            // 阴影
-            if(o.hasOwnProperty("shadow")) {
-                obj.receiveShadows = o.shadow;
-            }
-            sceneObjs["objects"][o.id] = [obj, o];
-        };
-    }
+    
 
     /******* End of the create scene function ******/
 
