@@ -34,8 +34,12 @@
     <script src="js/babylonjs.loaders.min.js"></script>
     <!-- Link to pep.js to ensure pointer events work consistently in all browsers -->
     <script src="js/pep-0.4.3.js"></script>
-    <script src="js/objects.js?v=9.118"></script>
-    <script src="js/meshCreate.js?v=9.118"></script>
+    <script type="text/javascript">
+        document.write('<script src="js/objects.js?v='+new Date().getTime()+'"><\/script>');
+        document.write('<script src="js/meshCreate.js?v='+new Date().getTime()+'"><\/script>');
+    </script>
+<!--    <script src="js/objects.js"></script>-->
+<!--    <script src="js/meshCreate.js"></script>-->
 </head>
 
 <body>
@@ -54,7 +58,90 @@
 
     var createScene = function() {
         // Create scene
-        var scene = new BABYLON.Scene(engine);
+        scene = new BABYLON.Scene(engine);
+
+        hdrTexture = new BABYLON.CubeTexture("img/textures/environment.dds", scene);
+
+        animationBox = new BABYLON.Animation("tutoAnimation", "position.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        // Animation keys
+        var keys = [
+            {
+                frame: 0,
+                value: 0
+            },
+            {
+                frame: 50,
+                value: 50
+            },
+        ];
+        animationBox.setKeys(keys);
+
+        // box1.animations.push(animationBox);
+
+        // scene.beginAnimation(box1, 20, 40, false);
+
+
+
+        // box = BABYLON.MeshBuilder.CreateBox("box", {
+        //     height: 2,
+        //     width: 2,
+        //     depth: 2
+        // }, this.scene);
+
+        // var innerGlass = BABYLON.Mesh.CreateSphere("innerTintedGlass", 5, 5.0, scene);
+        // var outerGlass = BABYLON.Mesh.CreateSphere("outerGlass", 10, 10.0, scene);
+        // outerGlass.position.y = 5;
+        //
+        // innerGlass.position.x = 2;
+        // innerGlass.position.y = 2.5;
+        // innerGlass.position.z = 1.5;
+        //
+        // box.position.z = 1;
+
+        // // Create materials
+        // var redglass = new BABYLON.PBRMaterial("redglass", scene);
+        // redglass.alphaMode = BABYLON.Engine.ALPHA_MULTIPLY;
+        // redglass.reflectionTexture = hdrTexture;
+        // // redglass.refractionTexture = hdrTexture;
+        // // redglass.linkRefractionWithTransparency = true;
+        // // redglass.indexOfRefraction = 0.52;
+        // redglass.alpha = 0;
+        // redglass.directIntensity = 1.0;
+        // redglass.environmentIntensity = 1.0;
+        // redglass.microSurface = 0.0;
+        // redglass.reflectivityColor = new BABYLON.Color3(0, 0, 0);
+        // redglass.albedoColor = new BABYLON.Color3(1, 0.0, 0.0);
+        // innerGlass.material = redglass;
+
+        // glass = new BABYLON.PBRMaterial("glass", scene);
+        // // glass.alphaMode = BABYLON.Engine.ALPHA_ADD;
+        // //glass.reflectionTexture = hdrTexture;
+        // // glass.refractionTexture = hdrTexture;
+        // //glass.linkRefractionWithTransparency = true;
+        // glass.indexOfRefraction = 0.52;
+        // glass.alpha = 0.7;
+        // glass.glossiness = 0.7
+        // glass.directIntensity = 1.0;
+        // glass.environmentIntensity = 1.0;
+        // glass.microSurface = 1;
+        // glass.useRadianceOverAlpha = true;
+        // glass.useSpecularOverAlpha = true;
+        // // glass.reflectivityColor = new BABYLON.Color3(0, 0, 0);
+        // glass.albedoColor = new BABYLON.Color3(1, 1, 1);
+        // outerGlass.material = glass;
+
+        // var pbr = new BABYLON.PBRSpecularGlossinessMaterial("pbr", scene);
+        // sphere.material = pbr;
+        // pbr.diffuseColor = new BABYLON.Color3(1.0, 0.766, 0.336);
+        // pbr.specularColor = new BABYLON.Color3(1.0, 0.766, 0.336);
+        // pbr.glossiness = 0.9; // Let the texture controls the value
+        // pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("/textures/environment.dds", scene);
+        //pbr.specularGlossinessTexture = new BABYLON.Texture("/textures/sg.png", scene);
+
+
+
+        // box.material = glass;
 
         // Create simple sphere
         // sphere = BABYLON.Mesh.CreateIcoSphere("sphere", {radius:2, flat:true, subdivisions: 10}, this.scene);
@@ -68,27 +155,31 @@
         // light.position = new BABYLON.Vector3(20, 20, 20);
 
         // camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 4, 3, new BABYLON.Vector3(0, 1, 0), scene);
-        camera = new BABYLON.ArcRotateCamera("camera1", 0, 0, 20, new BABYLON.Vector3(0, 0, 0), scene);
-
+        camera = new BABYLON.ArcRotateCamera("camera1", 0, 0, 60, new BABYLON.Vector3(0, 0, 0), scene);
         // This targets the camera to scene origin
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
         scene.activeCamera.beta += 0.8;
 
+        // 设置到合适位置
+        camera.position = new BABYLON.Vector3(43, 20.5, -10);
+        camera.radius = 68;
+        camera.setTarget(new BABYLON.Vector3(-13.5, 11.5, 26));
+
         // Default Environment
         var environment = scene.createDefaultEnvironment({ 
-            createGround: true,
+            createGround: false,
             createSkybox: true,
             groundSize: 1000,
             skyboxSize: 1000,
             sizeAuto: false,
-            enableGroundShadow: true, 
+            enableGroundShadow: true,
             // groundTexture: false,
-            // skyboxTexture: false,
+            //skyboxTexture: new BABYLON.CubeTexture("img/textures/skybox", scene),
             // environmentTexture: false,
         });
         environment.setMainColor(BABYLON.Color3.FromHexString("#74b9ff"))
-        
+
         // Shadows
         // shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
         // shadowGenerator.useBlurExponentialShadowMap = true;
@@ -109,6 +200,10 @@
         createLights (json, sceneObjs, scene);
         createObjects(json, sceneObjs, scene);
         createShadows(json, sceneObjs, scene);
+
+        scene.onKeyboardObservable.add((kbInfo) => {
+            moveSelected(kbInfo);
+        });
 
         return scene;
     };
@@ -139,6 +234,74 @@
     window.addEventListener("resize", function () {
         engine.resize();
     });
+
+    function getSelectedObj() {
+        if(lastSelected) {
+            return sceneObjs["objects"][lastSelected][0];
+        }
+    }
+
+    function getSelectedPos() {
+        if(lastSelected) {
+            return sceneObjs["objects"][lastSelected][0].position;
+        }
+    }
+
+    //绑定点击事件
+    var lastSelected = null;
+    function moveSelected(kbInfo) {
+        if(lastSelected) {
+            // 锁定摄像头
+            scene._activeCamera.detachControl(canvas, true);
+            // 移动物体
+            if(kbInfo.event.code == "ArrowDown") {
+                sceneObjs["objects"][lastSelected][0].position.x += 0.1;
+            } else if(kbInfo.event.code == "ArrowUp") {
+                sceneObjs["objects"][lastSelected][0].position.x -= 0.1;
+            } else if(kbInfo.event.code == "ArrowLeft") {
+                sceneObjs["objects"][lastSelected][0].position.z -= 0.1;
+            } else if(kbInfo.event.code == "ArrowRight") {
+                sceneObjs["objects"][lastSelected][0].position.z += 0.1;
+            }
+            setTimeout(function(){
+                // 解锁摄像头
+                scene._activeCamera.attachControl(canvas, true);
+            }, 200);
+        } else {
+            // 解锁摄像头
+            scene._activeCamera.attachControl(canvas, true);
+        }
+    }
+    function resetMaterial(ls) {
+        if(ls) {
+            if(sceneObjs["objects"][ls][1].hasOwnProperty("style")) {
+                sceneObjs["objects"][ls][0].material = sceneObjs["materials"][sceneObjs["objects"][ls][1]["style"]][0];
+            } else {
+                sceneObjs["objects"][ls][0].material = sceneObjs["materials"]["default"][0];
+            }
+        }
+        lastSelected = null;
+    }
+    window.addEventListener("click", function () {
+        // 尝试拾取对象
+        var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+        // if the click hits the wall object, we change the impact picture position
+        // 尝试恢复原材质
+        resetMaterial(lastSelected);
+        if (pickResult.hit && pickResult.pickedMesh) {
+            var curName = pickResult.pickedMesh.name;
+            // 是否可选
+            var objs = Object.keys(sceneObjs["objects"]);
+            if(objs.indexOf(curName) >= 0 && !sceneObjs["objects"][curName][1].disable) {
+                // 换成旧材质
+                lastSelected = pickResult.pickedMesh.name;
+                pickResult.pickedMesh.material = sceneObjs["materials"]["hightLight"][0];
+            }
+        } else {
+            lastSelected = null;
+        }
+    });
+    
 
 </script>
 </body>
