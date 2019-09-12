@@ -40,13 +40,141 @@
     </script>
 <!--    <script src="js/objects.js"></script>-->
 <!--    <script src="js/meshCreate.js"></script>-->
+
+    <style>
+        #renderCanvas { width: 640px; height: 480px; }
+        .pull-left { float:left; }
+        .pull-right { float: right; }
+    </style>
 </head>
 
 <body>
 
-<canvas id="renderCanvas" touch-action="none"></canvas>
+<div>
+    <canvas id="renderCanvas" class="pull-left" touch-action="none"></canvas>
+    <div class="pull-left">
+        <button onclick="unfolderFloors()">全部展开</button>
+        <button onclick="viewFloor(1)">第一层</button>
+        <button onclick="viewFloor(2)">第二层</button>
+        <button onclick="viewFloor(3)">第三层</button>
+        <button onclick="viewFloor(4)">第四层</button>
+        <button onclick="viewFloor(5)">第五层</button>
+        <button onclick="viewFloor(6)">第六层</button>
+    </div>
+</div>
+
 
 <script>
+    var floorNum = 6;
+    var isOpen = false;
+    var openSize = 20;
+    var cameraMoveSize = 6;
+    function getObjById(id) {
+        for(var types in sceneObjs) {
+            for(var obj in sceneObjs[types]) {
+                if (obj == id) {
+                    return sceneObjs[types][obj];
+                }
+            }
+        }
+        return null;
+    }
+
+    function playAnim(obj, prop, frame, from, to) {
+        var animPos = new BABYLON.Animation("tutoAnimation", prop, frame, BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        var keyPos = [
+            {
+                frame: 0,
+                value: from
+            },
+            {
+                frame: frame,
+                value: to,
+            }
+        ];
+        animPos.setKeys(keyPos);
+        obj.animations.push(animPos);
+
+        setTimeout(async () => {
+            var anim = scene.beginAnimation(obj, 0, frame, false);
+            await anim.waitAsync();
+            obj.animations = [];
+        });
+    }
+
+    function unfolderFloors() {
+        if(!isOpen) {
+            isOpen = true;
+            for(var i = 1; i <= floorNum; i++) {
+                var curFloor = getObjById("f"+i);
+                var curFloorFrom = curFloor[0].position;
+                var curFloorTo = new BABYLON.Vector3(curFloor[1]["pos"][0], curFloor[1]["pos"][1] + (i-1)*openSize, curFloor[1]["pos"][2]);
+                playAnim(curFloor[0], "position", 30, curFloorFrom, curFloorTo);
+            }
+        } else {
+            isOpen = false;
+            for(var i = 1; i <= floorNum; i++) {
+                var curFloor = getObjById("f"+i);
+                var curFloorFrom = curFloor[0].position;
+                var curFloorTo = new BABYLON.Vector3(curFloor[1]["pos"][0], curFloor[1]["pos"][1], curFloor[1]["pos"][2]);
+                playAnim(curFloor[0], "position", 30, curFloorFrom, curFloorTo);
+            }
+            // 重置摄像机
+            viewFloor(3);
+        }
+    }
+    function viewFloor(n) {
+        var camera = scene.activeCamera;
+        var cPosFrom = camera.position;
+        var cTarFrom = camera.target;
+        var cPosTo = new BABYLON.Vector3(43, (13.5+(n-1)*6+(n-1)*(isOpen?openSize:0)), -10);
+        var cTarTo = new BABYLON.Vector3(-13.5, (-3.5+(n-1)*6+(n-1)*(isOpen?openSize:0)), 26);
+
+        playAnim(camera, "position", 30, cPosFrom, cPosTo);
+        playAnim(camera, "target", 30, cTarFrom, cTarTo);
+
+        // var animPos = new BABYLON.Animation("tutoAnimation", "position", 30, BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+        //     BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        // var animTar = new BABYLON.Animation("tutoAnimation", "target", 30, BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+        //     BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        // var keyPos = [
+        //     {
+        //         frame: 0,
+        //         value: cPosFrom
+        //     },
+        //     {
+        //         frame: 30,
+        //         value: cPosTo,
+        //     }
+        // ];
+        // var keyTar = [
+        //     {
+        //         frame: 0,
+        //         value: cTarFrom
+        //     },
+        //     {
+        //         frame: 30,
+        //         value: cTarTo,
+        //     }
+        // ];
+        //
+        // animPos.setKeys(keyPos);
+        // animTar.setKeys(keyTar);
+        //
+        // camera.animations = [];
+        // camera.animations.push(animPos);
+        // camera.animations.push(animTar);
+        // scene.beginAnimation(camera, 0, 30, false);
+
+        // var animGroup = new BABYLON.AnimationGroup("cameraMove");
+        // animGroup.addTargetedAnimation(animPos, camera);
+        // animGroup.addTargetedAnimation(animTar, camera);
+        // animGroup.normalize(0, 30);
+
+        // animGroup.play(false);
+    }
+
     var canvas = document.getElementById("renderCanvas"); // Get the canvas element
     var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     // 生成所有object
@@ -62,26 +190,13 @@
 
         hdrTexture = new BABYLON.CubeTexture("img/textures/environment.dds", scene);
 
-        animationBox = new BABYLON.Animation("tutoAnimation", "position.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-        // Animation keys
-        var keys = [
-            {
-                frame: 0,
-                value: 0
-            },
-            {
-                frame: 50,
-                value: 50
-            },
-        ];
-        animationBox.setKeys(keys);
-
+        // animationBox = new BABYLON.Animation("tutoAnimation", "position", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+        //     BABYLON.Animation.ANIMATIONTYPE_VECTOR3);
+        // // Animation keys
+        //
+        // animationBox.setKeys(keys);
         // box1.animations.push(animationBox);
-
         // scene.beginAnimation(box1, 20, 40, false);
-
-
 
         // box = BABYLON.MeshBuilder.CreateBox("box", {
         //     height: 2,
@@ -138,7 +253,6 @@
         // pbr.glossiness = 0.9; // Let the texture controls the value
         // pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("/textures/environment.dds", scene);
         //pbr.specularGlossinessTexture = new BABYLON.Texture("/textures/sg.png", scene);
-
 
 
         // box.material = glass;
