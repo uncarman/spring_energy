@@ -15,6 +15,26 @@ var _colors = ["#ff7f50", "#87cefa", "#da70d6", "#32cd32", "#6495ed", "#ff69b4",
     "#00fa9a", "#ffd700", "#6699FF", "#ff6666", "#3cb371", "#b8860b", "#30e0e0"];
 
 var settings = {
+    weathers: {
+        '获取异常': 'default',
+        '晴': 'sunny' ,
+        '雪': 'snow' ,
+        '雨': 'rainy' ,
+        '雾霾': 'smog' ,
+        '雨夹雪': 'sleet' ,
+        '多云': 'cloudy' ,
+        '阴': 'overcast' ,
+        '沙尘暴': 'sandstorm' ,
+        '雷阵雨': 'thunderstorm' ,
+        '获取异常': 'new_default' ,
+        '晴': 'new_sunny' ,
+        '阴': 'new_overcast' ,
+        '雨': 'new_rainy' ,
+        '雪': 'new_snow' ,
+        '风': 'new_cloud' ,
+        '雾': 'new_smog' ,
+        '夜': 'new_night'
+    },
     default_datas :{
         ajax_loading: false,  // 是否正在执行ajax
 
@@ -164,7 +184,7 @@ var settings = {
     ],
 
     defaultLineOpt: {
-        color: _colors,
+        //color: _colors,
         tooltip : {
             trigger: 'axis'
         },
@@ -1018,9 +1038,6 @@ var global = {
     // 页面载入完成后调用函数
     on_loaded_func: function($scope){
         $scope.settings = settings;
-
-        // 检查是否登录
-        //global.check_logined();
 
         // 移除 loading 状态
         global.loading_num -= 1;

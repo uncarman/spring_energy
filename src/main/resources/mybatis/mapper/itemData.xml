@@ -83,7 +83,7 @@
         <![CDATA[
         select
             IFNULL(sum(val),0) as totalVal
-        from v_item_val_by_year
+        from v_item_val_by_day
         where recorded_at >= #{from} and recorded_at <= #{to}
           and item_id in
         ]]>

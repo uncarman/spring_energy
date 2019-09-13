@@ -4698,3 +4698,91 @@ ul.bar_tabs>li.active {
 
 .panel_toolbox { min-width: auto; }
 
+
+/** 天气图标 **/
+.weather { background-repeat: no-repeat; background-position: 30px center; }
+.default {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_default_weather.png');
+}
+.sunny {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_sunny_weather.png');
+}
+.snow {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_snow_weather.png');
+}
+.smog {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_smog_weather.png');
+}
+.sleet {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_sleet_weather.png');
+}
+.rainy {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_rainy_weather.png');
+}
+.cloudy {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_cloudy_weather.png');
+}
+.overcast {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_overcast_weather.png');
+}
+.sandstorm {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_sandstorm_weather.png');
+}
+.thunderstorm {
+    background-image: url('http://diandian.cloud/img/7niu/pvm_thunderstorm_weather.png');
+}
+.new_default {
+    background-image:url("http://diandian.cloud/img/7niu/no_data_default.png");
+}
+.new_sunny {
+    background-image:url("http://diandian.cloud/img/7niu/sun_white.png");
+}
+.new_overcast {
+    background-image:url("http://diandian.cloud/img/7niu/partly_cloudy_white.png");
+}
+.new_rainy {
+    background-image:url("http://diandian.cloud/img/7niu/rain_white.png");
+}
+.new_snow {
+    background-image:url("http://diandian.cloud/img/7niu/snow_white.png");
+}
+.new_cloud {
+    background-image:url("http://diandian.cloud/img/7niu/wind_white.png");
+}
+.new_smog {
+    background-image:url("http://diandian.cloud/img/7niu/Foggy_day_white.png");
+}
+.new_night {
+    background-image:url("http://diandian.cloud/img/7niu/night_white.png");
+}
+
+.mb20 { margin-bottom: 20px; }
+
+.live { background: #2A3F54; color: #fff; }
+.live header { border-bottom: 1px solid #aaa; }
+.live header .site_title { width: auto; display: inline-block; }
+.live .nav.navbar-nav>li>a { color: #ECF0F1!important; }
+.live .nav .open>a, .live .nav .open>a:focus, .live .nav .open>a:hover { background: transparent; }
+
+.live section { margin: 20px 10px; }
+.live section .block { min-height:200px; color: #eee; background: #2A3F54; }
+.live section .x_panel { background-color: rgba(180,180,180,0.1); border-color:rgba(200,200,200,0.25); }
+.live section .x_panel .x_title { border-bottom:0.5px solid rgba(200,200,200,0.25); }
+.live section .x_panel .title_right { line-height: 2; }
+
+.live .x_panel h1 { font-size: 36px; line-height: 1; text-align: center; }
+.live .x_panel hr { opacity:0.35; }
+.live .chart-sm { width: 100%; height: 100px; }
+
+.live .list-group-item { background-color: transparent; border-color:rgba(200,200,200,0.25);  }
+.live .list-group-item.active, .live .list-group-item.active:focus, .live .list-group-item.active:hover {
+    background-color: #346C85;
+}
+
+.live .nav.top_menu>li>a, .live .nav>li>a  { background-color: transparent; }
+
+.live .line_1 >.col-xs-3 .x_panel { height:200px; }
+.live .line_2 >.col-xs-3 .x_panel, .live .line_2 >.col-xs-9 .x_panel { height:650px; }
+
+.live footer { margin-left: 0px; background: #2A3F54; color:#ddd; }
+

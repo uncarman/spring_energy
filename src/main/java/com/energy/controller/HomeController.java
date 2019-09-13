@@ -39,6 +39,12 @@ public class HomeController {
         return "login";
     }
 
+    @RequestMapping("/live")
+    public String live(Map<String,Object> map){
+        setEnv(map);
+        return "live";
+    }
+
 
     @RequestMapping("/err")
     @ResponseBody

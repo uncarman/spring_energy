@@ -14,56 +14,6 @@ app.directive('onFinishRender', function ($timeout) {
     }
 });
 
-
-app.controller('index',function ($scope) {
-
-    global.check_logined();
-
-    $scope.$watch('$viewContentLoaded', function() {
-        global.on_loaded_func($scope);    // 显示页面内容
-    });
-
-    $scope.datas = {
-        user: global.read_storage("session", "user"),
-        curBuilding: global.read_storage("session", "building"),
-        buildingList: global.read_storage("session", "buildingList"),
-    };
-
-    $scope.changeBuilding = function(building) {
-        $scope.datas.curBuilding = building;
-        global.set_storage_key('session', [
-            {
-                key: 'building',
-                val: building,
-            }
-        ]);
-    };
-    
-    $scope.doLogout = function () {
-        global.do_logout();
-        window.location.href = "/login";
-    };
-
-    $scope.gotoHome = function () {
-        window.location.href = "#/"+settings.default_page;
-    };
-
-    $scope.gotoProfile = function () {
-        window.location.href = "#/profile";
-    };
-
-    $scope.gotoHelp = function () {
-        window.location.href = "#/help";
-    };
-
-    $scope.$on("updateBuildings", function(event, data) {
-        $scope.$apply(function () {
-            $scope.datas.buildingList = data;
-            $scope.datas.curBuilding = data[0];
-        });
-    });
-
-});
 app.config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('dashboard',{
@@ -583,6 +533,18 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'remould',
         })
 
+        // 管网安全
+        .state('pipe_security',{
+            url:'/pipe_security',
+            templateUrl:'pages/pipe_security.html',
+            controller: 'pipe_security',
+        })
+        // 管网安全配置, 链接为设置菜单子项
+        .state('settings_pipe_security',{
+            url:'/settings_pipe_security',
+            templateUrl:'pages/settings_pipe_security.html',
+            controller: 'settings_pipe_security',
+        })
 
         // 报警管理
         .state('warning',{
