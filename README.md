@@ -6,11 +6,13 @@
 	第三个 XX 二级分组编号 : 01 ~ 99
 
 
-building_id 关联 collector
-collector 关联 item
-item 中有 item_type 对应表类型
 
-item_group_mapper 需要表类型 和 code 类型对应
+2. building_id 关联 collector
+collector 关联 item
+item 中 item_type 对应设备类型
+
+
+3. item_group_mapper 需要表类型 和 code 类型对应
 
 
 添加item时,需要和collector对应
