@@ -1,0 +1,110 @@
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                用能统计 &nbsp;
+                <small ng-bind="datas.todayStr"></small>
+            </h3>
+        </div>
+    </div>
+    <p class="clearfix"></p>
+
+    <div class="row">
+        <div class="animated flipInY col-xs-3" ng-repeat="i in datas.result.summaryDatas">
+            <div class="tile-stats">
+                <div class="icon"><i class="fa fa-bar-chart"></i></div>
+                <div class="count" ng-bind="i.name"></div>
+                <h3>
+                    <span ng-bind="i.total | number:2"></span> <span ng-bind="i.unit"></span>
+                    <!--<i class="pull-right linked fa fa-chevron-right"></i>-->
+                </h3>
+                <hr />
+                <div style="clear:both; margin: 0 10px;">
+                    <span class="progress-description pull-left">
+                      本月: <span ng-bind="i.curMonth | number:2"></span>
+                    </span>
+                    <span class="progress-description pull-right">
+                      上月: <span ng-bind="i.lastMonth | number:2"></span>
+                    </span>
+                    <div class="clearfix"></div>
+                </div>
+                <hr />
+                <div style="clear:both; margin: 0 10px;">
+                    <span class="progress-description pull-left">
+                      今年: <span ng-bind="i.curYear | number:2"></span>
+                    </span>
+                    <span class="progress-description pull-right">
+                      去年: <span ng-bind="i.lastYear | number:2"></span>
+                    </span>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>
+                        图表展示
+                    </h2>
+                    <!--<div class="pull-right form-inline">-->
+                        <!--查询条件:-->
+                        <!--&lt;!&ndash;<input type="text" class="form-control mr10" id="reservation">&ndash;&gt;-->
+                        <!--<input type="text" class="form-control datePicker" ng-model="datas.fromDate">-->
+                        <!--~-->
+                        <!--<input type="text" class="form-control mr10 datePicker" ng-model="datas.toDate">-->
+
+                        <!--<button ng-click="refreshDatas();" class="btn btn-primary"><spam class="glyphicon glyphicon-refresh"></spam> 更新</button>-->
+                    <!--</div>-->
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="chart">
+                                <div id="summaryChart" style="height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>
+                        详细数据
+                    </h2>
+                    <div class="pull-right form-inline">
+                        <!--<button ng-click="exportData();" class="btn btn-primary"><spam class="fa fa-download"></spam> 导出报表</button>-->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table class="table table-hover" id="summaryTable">
+                                <thead>
+                                <tr>
+                                    <th ng-repeat="(k,n) in datas.result.tableData.title" ng-bind="n"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="v in datas.result.tableData.data">
+                                    <td ng-repeat="(k,n) in datas.result.tableData.title"
+                                        ng-bind="v[k]"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -53,14 +53,9 @@
                 </ul>
             </li>
 
-            <li class="">
-                <a href="/" class="user-profile">
-                    返回首页
-                </a>
-            </li>
         </ul>
 
-        <ul class="nav navbar-nav navbar-center text-center">
+        <ul class="nav navbar-nav navbar-right">
             <li>
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
                    aria-expanded="false">
@@ -69,7 +64,7 @@
                         <i class="fa fa-chevron-down"></i>
                     </h1>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu dropdown-usermenu pull-left">
                     <li ng-repeat="b in datas.buildingList">
                         <a href="javascript:;" ng-bind="b.name" ng-click="changeBuilding(b);"></a>
                     </li>
@@ -81,7 +76,7 @@
     </header>
 
     <section>
-        <div class="row line_1">
+        <div class="row">
             <div class="col-xs-3 block">
                 <div class="x_panel">
                     <div class="x_title">
@@ -106,7 +101,7 @@
                                     <div class="col-xs-12">
                                         <div>
                                             <span class="pull-left">
-                                                <!--风力: <i ng-bind="datas.curCityWeather.windPower"></i> &nbsp; &nbsp;-->
+                                                风力: <i ng-bind="datas.curCityWeather.windPower"></i> &nbsp; &nbsp;
                                                 风向: <i ng-bind="datas.curCityWeather.windDirection"></i>
                                             </span>
                                             <span class="pull-right">
@@ -127,23 +122,24 @@
                             当月费用
                         </h2>
                         <div class="pull-right title_right">
+                            <i class="glyphicon glyphicon-usd"></i>
                         </div>
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h1 ng-bind="datas.result.summaryTotalData.curMonth|number:2">--</h1>
+                                <h1>12345.00</h1>
                             </div>
                         </div>
                         <hr />
                         <div class="row">
                             <div class="col-xs-12">
                                 <span class="pull-left">
-                                    上个月: <i ng-bind="datas.result.summaryTotalData.lastMonth|number:2"></i>
+                                    上个月: <i ng-bind="datas.curCityWeather.windPower"></i>
                                 </span>
                                 <span class="pull-right">
-                                    环比: <i ng-bind="datas.result.summaryTotalData.compMonth"></i>
+                                    环比: <i ng-bind="datas.curCityWeather.humidity"></i>
                                 </span>
                             </div>
                         </div>
@@ -154,26 +150,27 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2>
-                            当年费用
+                             当年费用
                         </h2>
                         <div class="pull-right title_right">
+                            <i class="glyphicon glyphicon-usd"></i>
                         </div>
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h1 ng-bind="datas.result.summaryTotalData.curYear|number:2">--</h1>
+                                <h1>12345.00</h1>
                             </div>
                         </div>
                         <hr />
                         <div class="row">
                             <div class="col-xs-12">
                                 <span class="pull-left">
-                                    去年: <i ng-bind="datas.result.summaryTotalData.lastYear|number:2"></i>
+                                    去月: <i ng-bind="datas.curCityWeather.windPower"></i>
                                 </span>
                                 <span class="pull-right">
-                                    环比: <i ng-bind="datas.result.summaryTotalData.compYear"></i>
+                                    环比: <i ng-bind="datas.curCityWeather.humidity"></i>
                                 </span>
                             </div>
                         </div>
@@ -187,20 +184,21 @@
                             累计费用
                         </h2>
                         <div class="pull-right title_right">
+                            <i class="glyphicon glyphicon-usd"></i>
                         </div>
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h1 ng-bind="datas.result.summaryTotalData.total|number:2">--</h1>
+                                <h1>12345.00</h1>
                             </div>
                         </div>
                         <hr />
                         <div class="row">
                             <div class="col-xs-12">
                                 <span class="pull-left">
-                                    平均费用密度: <i ng-bind="datas.result.summaryTotalData.avgFee|number:2"></i>
+                                    平均费用密度: <i ng-bind="datas.curCityWeather.humidity"></i>
                                 </span>
                             </div>
                         </div>
@@ -209,60 +207,43 @@
             </div>
         </div>
 
-        <p class="clearfix"></p>
+        <div class="clearfix"></div>
 
-        <div class="row line_2">
+        <div class="row">
             <div class="col-xs-3">
                 <div class="x_panel">
                     <div class="x_title">
                         <h2>
-                            今日用能
+                            实时用能
                         </h2>
+                        <div class="pull-right title_right">
+                            <i class="glyphicon glyphicon-usd"></i>
+                        </div>
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-                        <ul class="list-group mb20">
-                            <li class="list-group-item"
-                                ng-class="datas.selectedEnergy.subType == v.subType ? 'active' : ''"
-                                ng-repeat="(k,v) in datas.result.chartSumData"
-                                ng-click="displayDetail(v);">
-                                <span class="pull-left" ng-bind="k"></span>: <span class="pull-right" ng-bind="v.value | number:2"></span>
-                            </li>
-                        </ul>
                         <div class="row">
                             <div class="col-xs-12">
-                                <div id="summaryChart" style="height:350px;"></div>
+                                <div id="summaryChart" style="height:200px;"></div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="pull-left">
+                                    上个月: <i ng-bind="datas.curCityWeather.windPower"></i>
+                                </span>
+                                <span class="pull-right">
+                                    环比: <i ng-bind="datas.curCityWeather.humidity"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xs-9">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>
-                            按能耗分项
-                        </h2>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_content">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        <div id="summaryPieChart" style="height:570px;"></div>
-                                    </div>
-                                    <div class="col-xs-6">
-                                        <div id="dailyChart" style="height:540px;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
+
 
     </section>
 
@@ -274,21 +255,17 @@
 </div>
 <!--地图api-->
 <script src="https://webapi.amap.com/maps?v=1.4.10&key=9ab87268e7b0963b097a9c6c7ddd06d9"></script>
-<script src="./js/echarts.min.js"></script>
-<script src="./js/echart_theme_dark.js"></script>
-<script src="./js/moment.min.js"></script>
-<script src="./js/moment-with-locales.min.js"></script>
 <!-- jQuery 3 -->
 <script src="./js/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="./js/bootstrap.min.js"></script>
 <script src="./js/angular.min.js"></script>
 <script src="./js/angular_ui_router.min.js"></script>
+<script src="./js/moment-with-locales.min.js"></script>
 <script src="./js/fake_datas.js?v4"></script>
 <!-- <script src="./js/sweetalert.min.js?v4"></script> -->
 <script src="./js/comm.js?v4"></script>
 
 <script src="./pages/live.js?v4"></script>
-
 </body>
 </html>
