@@ -55,7 +55,11 @@ app.controller('maintenance_device',function ($scope) {
         };
         var cacheData = {};
         res.data.map(function (cur) {
-			if($scope.datas.query != "" && cur.name.indexOf($scope.datas.query) >= 0) {
+			if($scope.datas.query != "") {
+				if(cur.name.indexOf($scope.datas.query) >= 0) {
+					tableData.data.push([cur.id, "电表", cur.code, cur.name, "科达瑞", "1楼仓库", "1", "2019-03-12", "是"]);
+				}
+			} else {
 				tableData.data.push([cur.id, "电表", cur.code, cur.name, "科达瑞", "1楼仓库", "1", "2019-03-12", "是"]);
 			}
             cacheData[cur.id] = cur;
@@ -66,7 +70,7 @@ app.controller('maintenance_device',function ($scope) {
         });
     }
 
-	$scope.getDatas = function() {
+	$scope.searchItem = function() {
 		$scope.getDatas();
 	};
 	
