@@ -23,10 +23,21 @@
                     <div class="x_content">
                         <div class="row">
                             <div class="col-xs-12">
-                                <button class="btn btn-success" ng-click="createItem();">
+                                <button class="btn btn-success" ng-click="createItem();" style="margin-right:50px; float:left;">
                                     <i class="fa fa-plus"></i>
                                     添加设备
                                 </button>
+
+								<span class="form-inline">
+									<span class="form-group">
+										<input type="text" ng-mode="" class="form-control">
+										<button class="btn btn-info" ng-click="searchItem();" style="margin-bottom:0px;">
+											<i class="fa fa-search"></i>
+											搜索设备
+										</button>
+									</span>
+								</span>
+								
                                 <table class="table table-hover table-bordered" id="summaryTable">
                                     <thead>
                                     <tr>
