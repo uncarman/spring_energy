@@ -18,9 +18,7 @@ app.controller('maintenance_device',function ($scope) {
         toDate: moment().format("YYYY-MM"),
         todayStr: moment().format("YYYY-MM-DD"),
         type: "month", // 默认按月显示
-		
-		query: "",
-		
+
         result: {
             summaryDatas: {},
             chartDatas: {},
@@ -50,14 +48,12 @@ app.controller('maintenance_device',function ($scope) {
 
     $scope.buildItemTable = function(res) {
         var tableData = {
-            "title": ["id", "设备型号", "设备编码", "设备名称", "提供商", "所在位置", "数量", "投运时间", "正常"],
+            "title": ["id", "设备型号", "设备编码", "设备名称", "提供商", "投运时间"],
             "data": [],
         };
         var cacheData = {};
         res.data.map(function (cur) {
-			if($scope.datas.query != "" && cur.name.indexOf($scope.datas.query) >= 0) {
-				tableData.data.push([cur.id, "电表", cur.code, cur.name, "科达瑞", "1楼仓库", "1", "2019-03-12", "是"]);
-			}
+            tableData.data.push([cur.id, "电表", cur.code, cur.name, "科达瑞", "2019-03-12"]);
             cacheData[cur.id] = cur;
         });
         $scope.$apply(function () {
@@ -66,10 +62,7 @@ app.controller('maintenance_device',function ($scope) {
         });
     }
 
-	$scope.getDatas = function() {
-		$scope.getDatas();
-	};
-	
+
     $scope.viewItem = function (ig) {
         $scope.datas.curMethod = "view";
         $scope.datas.curMethodReadOnly = true;

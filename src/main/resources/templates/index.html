@@ -122,15 +122,15 @@
                                     <span class="fa fa-chevron-down"></span>
                                 </a>
                                 <ul class="nav child_menu">
-                                    <li class="maintenance_device"><a href="#maintenance_device">资料管理</a></li>
+                                    <li class="maintenance_device"><a href="#maintenance_device">物资管理</a></li>
                                     <li class="maintenance_duty"><a href="#maintenance_duty">值班管理</a></li>
                                     <li class="maintenance_inspection"><a href="#maintenance_inspection">巡检管理</a></li>
                                     <li class="maintenance_order"><a href="#maintenance_order">工单管理</a></li>
                                 </ul>
                             </li>
-                            <li class="remould">
+                            <li class="pipe_security">
                                 <a href="#pipe_security">
-                                    <i class="fa fa-sort-amount-desc"></i>
+                                    <i class="fa fa-umbrella"></i>
                                     管网安全
                                 </a>
                             </li>
@@ -224,7 +224,14 @@
 
                         <li class="">
                             <a href="/live" class="user-profile">
+                                <span class="fa fa-globe"></span>
                                 切换大屏
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="user-profile" onclick='$(".bimDisplay").modal("show");'>
+                                <span class="fa fa-database"></span>
+                                BIM展示
                             </a>
                         </li>
                     </ul>
@@ -234,6 +241,23 @@
         <div class="right_col" role="main">
             <div ui-view></div>
         </div>
+
+        <div class="modal fade bimDisplay" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg" style="max-width:90%; width:90%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">BIM展示</h4>
+                    </div>
+                    <div class="modal-body">
+                        <iframe src="http://120.52.22.142:8100/rongtong/1?toolbar=1&model=1"
+                                style="border:none; width: 100%; height: 640px;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer>
             <div class="pull-right" th:text="${appName+' '+appVersion}"></div>
             <div class="clearfix"></div>

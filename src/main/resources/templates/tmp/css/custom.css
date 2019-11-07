@@ -4756,17 +4756,12 @@ ul.bar_tabs>li.active {
     background-image:url("http://diandian.cloud/img/7niu/night_white.png");
 }
 
-.mb20 { margin-bottom: 20px; }
 
 .live { background: #2A3F54; color: #fff; }
 .live header { border-bottom: 1px solid #aaa; }
-.live header .site_title { width: auto; display: inline-block; float: left; }
+.live header .site_title { width: auto; display: inline-block; }
 .live .nav.navbar-nav>li>a { color: #ECF0F1!important; }
-.live .nav .open>a, .live .nav .open>a:focus, .live .nav .open>a:hover { background: transparent; }
-
-.live header .navbar-center { float: none; margin: 0 auto; }
-.live header .navbar-center > li { float: none; display: inline-block; }
-.live header .navbar-center .dropdown-menu { width: 100%; }
+.live .nav .open>a, .live .nav .open>a:focus, .live .nav .open>a:hover { background: #2A3F54; }
 
 .live section { margin: 20px 10px; }
 .live section .block { min-height:200px; color: #eee; background: #2A3F54; }
@@ -4778,15 +4773,6 @@ ul.bar_tabs>li.active {
 .live .x_panel hr { opacity:0.35; }
 .live .chart-sm { width: 100%; height: 100px; }
 
-.live .list-group-item { background-color: transparent; border-color:rgba(200,200,200,0.25);  }
-.live .list-group-item.active, .live .list-group-item.active:focus, .live .list-group-item.active:hover {
-    background-color: #346C85;
-}
-
-.live .nav.top_menu>li>a, .live .nav>li>a  { background-color: transparent; }
-
-.live .line_1 >.col-xs-3 .x_panel { height:200px; }
-.live .line_2 >.col-xs-3 .x_panel, .live .line_2 >.col-xs-9 .x_panel { height:650px; }
 
 .live footer { margin-left: 0px; background: #2A3F54; color:#ddd; }
 

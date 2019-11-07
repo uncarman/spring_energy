@@ -16,28 +16,17 @@
                 <div class="x_panel">
                     <div class="x_title">
                         <h2>
-                            物资台账
+                            设备台账
                         </h2>
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
                         <div class="row">
                             <div class="col-xs-12">
-                                <button class="btn btn-success" ng-click="createItem();" style="margin-right:50px; float:left;">
+                                <button class="btn btn-success" ng-click="createItem();">
                                     <i class="fa fa-plus"></i>
-                                    添加物资
+                                    添加设备
                                 </button>
-
-								<span class="form-inline">
-									<span class="form-group">
-										<input type="text" ng-mode="" class="form-control">
-										<button class="btn btn-info" ng-click="searchItem();" style="margin-bottom:0px;">
-											<i class="fa fa-search"></i>
-											搜索设备
-										</button>
-									</span>
-								</span>
-								
                                 <table class="table table-hover table-bordered" id="summaryTable">
                                     <thead>
                                     <tr>
@@ -50,7 +39,7 @@
                                         <td ng-repeat="(k,n) in datas.tableData.title"
                                             ng-bind="v[k]"></td>
                                         <td>
-                                            <button class="btn btn-info btn-xs" data-toggle="modal" data-target=".bimDisplay">
+                                            <button class="btn btn-info btn-xs" ng-click="viewItem(v);">
                                                 <i class="fa fa-folder"></i> 查看
                                             </button>
                                             <button class="btn btn-info btn-xs" ng-click="editItem(v);">

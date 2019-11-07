@@ -132,6 +132,8 @@ app.controller('live',function ($scope) {
                 }
                 $scope.datas.result.summaryTotalData = totalFee;
                 $scope.datas.result.summaryTotalData.avgFee = totalFee.total/$scope.datas.curBuilding.area;
+                $scope.datas.result.summaryTotalData.compMonth = totalFee.lastMonth == 0 ? 'N/A' : (totalFee.curMonth-totalFee.lastMonth>=0?'+':'-')+(100*(totalFee.curMonth-totalFee.lastMonth)/totalFee.lastMonth).toFixed(2)+"%";
+                $scope.datas.result.summaryTotalData.compYear = totalFee.lastYear == 0 ? 'N/A' : (totalFee.curYear-totalFee.lastYear>=0?'+':'-')+(100*(totalFee.curYear-totalFee.lastYear)/totalFee.lastYear).toFixed(2)+"%";
             });
         });
     };
@@ -233,7 +235,7 @@ app.controller('live',function ($scope) {
         setInterval(function () {
             i = i+1 < keys.length ? i+1 : 0;
             $scope.displayDetail(sumData[keys[i]]);
-        }, 15000);
+        }, 1*60*1000);
     };
 
     $scope.displayDetail = function(energy) {
