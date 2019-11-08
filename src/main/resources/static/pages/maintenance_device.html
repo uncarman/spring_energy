@@ -50,7 +50,7 @@
                                         <td ng-repeat="(k,n) in datas.tableData.title"
                                             ng-bind="v[k]"></td>
                                         <td>
-                                            <button class="btn btn-info btn-xs" data-toggle="modal" data-target=".bimDisplay">
+                                            <button class="btn btn-info btn-xs" ng-click="viewItem(v);">
                                                 <i class="fa fa-folder"></i> 查看
                                             </button>
                                             <button class="btn btn-info btn-xs" ng-click="editItem(v);">
@@ -66,6 +66,18 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade imgDisplay in">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">设备位置</h4>
+                </div>
+                <div class="modal-content">
+                    <img ng-src="{{datas.curItem.img}}" style="width: 100%;">
                 </div>
             </div>
         </div>

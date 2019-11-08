@@ -49,18 +49,132 @@ app.controller('maintenance_device',function ($scope) {
     };
 
     $scope.buildItemTable = function(res) {
+
         var tableData = {
             "title": ["id", "设备型号", "设备编码", "设备名称", "提供商", "所在位置", "数量", "投运时间", "正常"],
             "data": [],
         };
         var cacheData = {};
+
+        // 假数据
+        res.data = [
+            {
+                id: 1,
+                code: "1000101",
+                type: "冷冻水泵",
+                name: "楼顶水泵001",
+                brand: "科达瑞",
+                pos: "楼顶",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_01.png"
+            },
+            {
+                id: 2,
+                code: "1000102",
+                type: "冷冻水泵",
+                name: "楼顶水泵002",
+                brand: "科达瑞",
+                pos: "楼顶",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_01.png"
+            },
+            {
+                id: 3,
+                code: "1000201",
+                type: "空调机组",
+                name: "楼顶空调001",
+                brand: "海尔",
+                pos: "楼顶",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_02.png"
+            },
+            {
+                id: 4,
+                code: "1000202",
+                type: "空调机组",
+                name: "楼顶空调002",
+                brand: "海尔",
+                pos: "楼顶",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_02.png"
+            },
+            {
+                id: 5,
+                code: "1000501",
+                type: "打印机",
+                name: "1F大厅打印机",
+                brand: "Hp惠普",
+                pos: "1楼",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_03.png"
+            },
+            {
+                id: 6,
+                code: "1000502",
+                type: "打印机",
+                name: "2F203打印机",
+                brand: "Hp惠普",
+                pos: "2楼",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_03.png"
+            },
+            {
+                id: 7,
+                code: "1000503",
+                type: "打印机",
+                name: "2F206打印机",
+                brand: "Hp惠普",
+                pos: "2楼",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_03.png"
+            },
+            {
+                id: 8,
+                code: "1000504",
+                type: "打印机",
+                name: "2F212打印机",
+                brand: "Hp惠普",
+                pos: "2楼",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_03.png"
+            },
+            {
+                id: 9,
+                code: "1000801",
+                type: "UPS",
+                name: "地下UPS001",
+                brand: "华为",
+                pos: "地下室仓库",
+                num: "1",
+                date: "2019-03-12",
+                status: "是",
+                img: "./images/device_02.png"
+            },
+        ];
+
         res.data.map(function (cur) {
 			if($scope.datas.query != "") {
 				if(cur.name.indexOf($scope.datas.query) >= 0) {
-					tableData.data.push([cur.id, "电表", cur.code, cur.name, "科达瑞", "1楼仓库", "1", "2019-03-12", "是"]);
+					tableData.data.push([cur.id, cur.type, cur.code, cur.name, cur.brand, cur.pos, cur.num, cur.date, cur.status]);
 				}
 			} else {
-				tableData.data.push([cur.id, "电表", cur.code, cur.name, "科达瑞", "1楼仓库", "1", "2019-03-12", "是"]);
+				tableData.data.push([cur.id, cur.type, cur.code, cur.name, cur.brand, cur.pos, cur.num, cur.date, cur.status]);
 			}
             cacheData[cur.id] = cur;
         });
@@ -79,7 +193,7 @@ app.controller('maintenance_device',function ($scope) {
         $scope.datas.curMethodReadOnly = true;
         $scope.datas.curItem = angular.copy($scope.datas.cacheData[ig[0]]);
         $scope.datas.curItemCache = angular.copy($scope.datas.cacheData[ig[0]]);
-        $(".itemEdit").modal("show");
+        $(".imgDisplay").modal("show");
     };
 
     $scope.editItem = $scope.viewItem;

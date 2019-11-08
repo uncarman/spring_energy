@@ -25,7 +25,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('dashboard',{
             url:'/dashboard',
-            templateUrl:'pages/dashboard.html',
+            templateUrl:'pages/buildingList.html',
             controller: 'dashboard',
         })
         .state('monitor',{
