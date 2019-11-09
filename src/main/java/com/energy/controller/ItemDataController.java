@@ -1,16 +1,14 @@
 package com.energy.controller;
 
-import com.energy.entity.BasicData;
 import com.energy.entity.Building;
 import com.energy.entity.Item;
 import com.energy.entity.ItemGroup;
 import com.energy.service.BuildingService;
 import com.energy.service.ItemDataService;
 import com.energy.service.ItemService;
-import com.energy.utils.BaseUtil;
-import com.energy.utils.Constant;
-import com.energy.utils.DateUtil;
-import com.energy.utils.Response;
+import com.energy.utils.*;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,6 +33,10 @@ public class ItemDataController {
     private ItemService itemService = null;
     @Resource
     private ItemDataService itemDataService = null;
+
+    private static int ExpireTime = 60*10;   // 单位s
+    @Resource
+    private RedisUtil redisUtil;
 
     // 【多个设备】按【时/日/月/年】汇总数据
     // type: 选填: 时/日/月/年
@@ -63,71 +65,78 @@ public class ItemDataController {
     public Object getBuildingSummaryTotalData(@RequestParam("buildingId") Integer buildingId) {
         Response res = new Response();
         try {
-            // 默认按天汇总
-            SimpleDateFormat formatter = DateUtil.typeToFormatter(Constant.BY_DAY);
-            Calendar time = Calendar.getInstance();
+            String key = "_getBuildingSummaryTotalData_" + buildingId;
+            Object redVal = redisUtil.get(key);
+            if (null != redVal) {
+                res.makeSuccess(redVal);
+            } else {
+                // 默认按天汇总
+                SimpleDateFormat formatter = DateUtil.typeToFormatter(Constant.BY_DAY);
+                Calendar time = Calendar.getInstance();
 
-            // 总量第一天和最后一天
-            String dateStart = DateUtil.MIN_DATE;
-            String dateEnd = DateUtil.MAX_DATE;
-            // 拿到本月的第一天和最后一天
-            String curMonthStart = formatter.format(DateUtil.monthFirstDay(time.getTime()));
-            String curMonthEnd = formatter.format(DateUtil.monthLastDay(time.getTime()));
-            // 拿到本年的第一天和最后一天
-            String curYearStart = formatter.format(DateUtil.yearFirstDay(time.getTime()));
-            String curYearEnd = formatter.format(DateUtil.yearLastDay(time.getTime()));
-            // 拿到前一个月的第一天和最后一天
-            String lastMonthStart = formatter.format(DateUtil.monthFirstDay(DateUtil.monthAdd(time.getTime(), -1)));
-            String lastMonthEnd = formatter.format(DateUtil.monthLastDay(DateUtil.monthAdd(time.getTime(), -1)));
-            // 拿到前一年的第一天和最后一天
-            String lastYearStart = formatter.format(DateUtil.yearFirstDay(DateUtil.yearAdd(time.getTime(), -1)));
-            String lastYearEnd = formatter.format(DateUtil.yearLastDay(DateUtil.yearAdd(time.getTime(), -1)));
+                // 总量第一天和最后一天
+                String dateStart = DateUtil.MIN_DATE;
+                String dateEnd = DateUtil.MAX_DATE;
+                // 拿到本月的第一天和最后一天
+                String curMonthStart = formatter.format(DateUtil.monthFirstDay(time.getTime()));
+                String curMonthEnd = formatter.format(DateUtil.monthLastDay(time.getTime()));
+                // 拿到本年的第一天和最后一天
+                String curYearStart = formatter.format(DateUtil.yearFirstDay(time.getTime()));
+                String curYearEnd = formatter.format(DateUtil.yearLastDay(time.getTime()));
+                // 拿到前一个月的第一天和最后一天
+                String lastMonthStart = formatter.format(DateUtil.monthFirstDay(DateUtil.monthAdd(time.getTime(), -1)));
+                String lastMonthEnd = formatter.format(DateUtil.monthLastDay(DateUtil.monthAdd(time.getTime(), -1)));
+                // 拿到前一年的第一天和最后一天
+                String lastYearStart = formatter.format(DateUtil.yearFirstDay(DateUtil.yearAdd(time.getTime(), -1)));
+                String lastYearEnd = formatter.format(DateUtil.yearLastDay(DateUtil.yearAdd(time.getTime(), -1)));
 
-            // 返回结果集
-            Map<String, Object> dataMap;
-            List<Map> summaryMap = new ArrayList<>();
-            Map<String, Object> chartMap;
+                // 返回结果集
+                Map<String, Object> dataMap;
+                Map<String, Object> chartMap;
 
-            // 拿到各种类型基础数据
-            Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
+                // 拿到各种类型基础数据
+                Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
 
-            // 可以计算总量的分组类型
-            String sumType = Constant.SUM_TYPE;
-            Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
+                // 可以计算总量的分组类型
+                String sumType = Constant.SUM_TYPE;
+                Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
 
-            // ------------- 汇总数据 ---------------//
-            // 默认四种表： 电，水，燃气，蒸汽
-            List<String> energyTypes = BaseUtil.energyTypes();
-            for(String curType : energyTypes) {
-                ItemGroup curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // [能耗分项]的总类
-                Integer curGroupId = null != curTypeGroup ? curTypeGroup.getId() : -1;
-                String curItemIds = groupItems.get(curGroupId)+"";
-                List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
-                float sumItemTotal = itemDataService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
-                float sumItemCurMonth = itemDataService.getItemsSummaryVal(curItemIdList, curMonthStart, curMonthEnd);
-                float sumItemCurYear = itemDataService.getItemsSummaryVal(curItemIdList, curYearStart, curYearEnd);
-                float sumItemLastMonth = itemDataService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
-                float sumItemLastYear = itemDataService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
-                ItemGroup group = itemService.getItemGroupById(curGroupId);
-                Map baseInfo = baseMap.get(curType);
+                List<Map> summaryMap = new ArrayList<>();
+                // ------------- 汇总数据 ---------------//
+                // 默认四种表： 电，水，燃气，蒸汽
+                List<String> energyTypes = BaseUtil.energyTypes();
+                for (String curType : energyTypes) {
+                    ItemGroup curTypeGroup = itemService.getItemGroupIdByEnergyType(buildingId, curType, sumType); // [能耗分项]的总类
+                    Integer curGroupId = null != curTypeGroup ? curTypeGroup.getId() : -1;
+                    String curItemIds = groupItems.get(curGroupId) + "";
+                    List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+                    float sumItemTotal = itemDataService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
+                    float sumItemCurMonth = itemDataService.getItemsSummaryVal(curItemIdList, curMonthStart, curMonthEnd);
+                    float sumItemCurYear = itemDataService.getItemsSummaryVal(curItemIdList, curYearStart, curYearEnd);
+                    float sumItemLastMonth = itemDataService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
+                    float sumItemLastYear = itemDataService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
+                    ItemGroup group = itemService.getItemGroupById(curGroupId);
+                    Map baseInfo = baseMap.get(curType);
 
-                Map itemMap = new HashMap();
-                itemMap.put("type" , curType);
-                itemMap.put("typeName" , (String)baseInfo.get("name"));
-                itemMap.put("name" , "总"+(String)baseInfo.get("name"));
-                itemMap.put("unit" , baseInfo.get("unit"));
-                itemMap.put("rate" , baseInfo.get("rate"));
-                itemMap.put("area", group.getArea());
-                itemMap.put("total", sumItemTotal);
-                itemMap.put("curMonth" , sumItemCurMonth);
-                itemMap.put("curYear" , sumItemCurYear);
-                itemMap.put("lastMonth" , sumItemLastMonth);
-                itemMap.put("lastYear" , sumItemLastYear);
+                    Map itemMap = new HashMap();
+                    itemMap.put("type", curType);
+                    itemMap.put("typeName", (String) baseInfo.get("name"));
+                    itemMap.put("name", "总" + (String) baseInfo.get("name"));
+                    itemMap.put("unit", baseInfo.get("unit"));
+                    itemMap.put("rate", baseInfo.get("rate"));
+                    itemMap.put("area", group.getArea());
+                    itemMap.put("total", sumItemTotal);
+                    itemMap.put("curMonth", sumItemCurMonth);
+                    itemMap.put("curYear", sumItemCurYear);
+                    itemMap.put("lastMonth", sumItemLastMonth);
+                    itemMap.put("lastYear", sumItemLastYear);
 
-                summaryMap.add(itemMap);
+                    summaryMap.add(itemMap);
+                }
+                // 缓存
+                redisUtil.set(key, summaryMap, ExpireTime);
+                res.makeSuccess(summaryMap);
             }
-
-            res.makeSuccess(summaryMap);
         } catch (Exception ex) {
             res.makeFailed(ex);
         }
@@ -278,105 +287,114 @@ public class ItemDataController {
                                            HttpServletRequest request) {
         Response res = new Response();
         try {
-            // 默认按天汇总
-            SimpleDateFormat formatter = DateUtil.typeToFormatter(Constant.BY_DAY);
-            Calendar time = Calendar.getInstance();
+            String key = "_getEnergyTotalDataByType_"+buildingId+"_"+type;
 
-            // 总量第一天和最后一天
-            String dateStart = DateUtil.MIN_DATE;
-            String dateEnd = DateUtil.MAX_DATE;
-            // 拿到前一个月的第一天和最后一天
-            String lastMonthStart = formatter.format(DateUtil.monthFirstDay(DateUtil.monthAdd(time.getTime(), -1)));
-            String lastMonthEnd = formatter.format(DateUtil.monthLastDay(DateUtil.monthAdd(time.getTime(), -1)));
-            // 拿到前一年的第一天和最后一天
-            String lastYearStart = formatter.format(DateUtil.yearFirstDay(DateUtil.yearAdd(time.getTime(), -1)));
-            String lastYearEnd = formatter.format(DateUtil.yearLastDay(DateUtil.yearAdd(time.getTime(), -1)));
+            Object redVal = redisUtil.get(key);
+            if(null != redVal) {
+                res.makeSuccess(redVal);
+            } else {
+                // 默认按天汇总
+                SimpleDateFormat formatter = DateUtil.typeToFormatter(Constant.BY_DAY);
+                Calendar time = Calendar.getInstance();
 
-            // 返回结果集
-            List<Map> summaryMap = new ArrayList<>();
+                // 总量第一天和最后一天
+                String dateStart = DateUtil.MIN_DATE;
+                String dateEnd = DateUtil.MAX_DATE;
+                // 拿到前一个月的第一天和最后一天
+                String lastMonthStart = formatter.format(DateUtil.monthFirstDay(DateUtil.monthAdd(time.getTime(), -1)));
+                String lastMonthEnd = formatter.format(DateUtil.monthLastDay(DateUtil.monthAdd(time.getTime(), -1)));
+                // 拿到前一年的第一天和最后一天
+                String lastYearStart = formatter.format(DateUtil.yearFirstDay(DateUtil.yearAdd(time.getTime(), -1)));
+                String lastYearEnd = formatter.format(DateUtil.yearLastDay(DateUtil.yearAdd(time.getTime(), -1)));
 
-            // 拿到各种类型基础数据
-            Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
+                // 返回结果集
+                List<Map> summaryMap = new ArrayList<>();
 
-            // 可以计算总量的分组类型
-            String sumType = Constant.SUM_TYPE;
-            Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
+                // 拿到各种类型基础数据
+                Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
 
-            // ------------- 汇总数据 ---------------//
-            ItemGroup curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
-            Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
-            String curItemIds = groupItems.get(curGroupId)+"";
-            List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
-            float sumItemTotal = itemDataService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
-            float sumItemLastMonth = itemDataService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
-            float sumItemLastYear = itemDataService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
-            ItemGroup group = itemService.getItemGroupById(curGroupId);
-            Map map = baseMap.get(type);
-            String rate = map.get("rate").toString();
+                // 可以计算总量的分组类型
+                String sumType = Constant.SUM_TYPE;
+                Map groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
 
-            Map itemMap = new HashMap();
-            Map itemMap2 = new HashMap();
-            Map itemMap3 = new HashMap();
-            Map itemMap4 = new HashMap();
+                // ------------- 汇总数据 ---------------//
+                ItemGroup curTypeGroupParent = itemService.getItemGroupIdByEnergyType(buildingId, type, Constant.SUM_TYPE); // Integer.valueOf(curType).toString();
+                Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
+                String curItemIds = groupItems.get(curGroupId)+"";
+                List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+                float sumItemTotal = itemDataService.getItemsSummaryVal(curItemIdList, dateStart, dateEnd);
+                float sumItemLastMonth = itemDataService.getItemsSummaryVal(curItemIdList, lastMonthStart, lastMonthEnd);
+                float sumItemLastYear = itemDataService.getItemsSummaryVal(curItemIdList, lastYearStart, lastYearEnd);
+                ItemGroup group = itemService.getItemGroupById(curGroupId);
+                Map map = baseMap.get(type);
+                String rate = map.get("rate").toString();
 
-            itemMap.put("name" , "总"+(String)map.get("name"));
-            itemMap.put("unit" , map.get("unit"));
-            itemMap.put("rate" , map.get("rate"));
-            itemMap.put("total", sumItemTotal);
-            itemMap.put("lastMonth", sumItemLastMonth);
-            itemMap.put("lastYear", sumItemLastYear);
+                Map itemMap = new HashMap();
+                Map itemMap2 = new HashMap();
+                Map itemMap3 = new HashMap();
+                Map itemMap4 = new HashMap();
 
-            // 根据传入类型显示对应内容
-            if(type.equals(Constant.ITEM_TYPE_ELE)) {
-                itemMap2.put("name" , "当量标煤");
-                itemMap2.put("unit" , "吨");
-                itemMap2.put("rate" , Constant.COAL_ELECTRICITY);
-                itemMap2.put("total", sumItemTotal*Constant.COAL_ELECTRICITY);
-                itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_ELECTRICITY);
-                itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_ELECTRICITY);
-            } else if (type.equals(Constant.ITEM_TYPE_WATER)) {
-                itemMap2.put("name" , "当量标煤");
-                itemMap2.put("unit" , "Kg");
-                itemMap2.put("rate" , Constant.COAL_WATER);
-                itemMap2.put("total", sumItemTotal*Constant.COAL_WATER);
-                itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_WATER);
-                itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_WATER);
-            } else if (type.equals(Constant.ITEM_TYPE_GAS)) {
-                itemMap2.put("name" , "当量标煤");
-                itemMap2.put("unit" , "Kg");
-                itemMap2.put("rate" , Constant.COAL_GAS);
-                itemMap2.put("total", sumItemTotal*Constant.COAL_GAS);
-                itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_GAS);
-                itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_GAS);
-            } else if (type.equals(Constant.ITEM_TYPE_STEAM)) {
-                itemMap2.put("name" , "当量标煤");
-                itemMap2.put("unit" , "Kg");
-                itemMap2.put("rate" , Constant.COAL_STEAM);
-                itemMap2.put("total", sumItemTotal*Constant.COAL_STEAM);
-                itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_STEAM);
-                itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_STEAM);
+                itemMap.put("name" , "总"+(String)map.get("name"));
+                itemMap.put("unit" , map.get("unit"));
+                itemMap.put("rate" , map.get("rate"));
+                itemMap.put("total", sumItemTotal);
+                itemMap.put("lastMonth", sumItemLastMonth);
+                itemMap.put("lastYear", sumItemLastYear);
+
+                // 根据传入类型显示对应内容
+                if(type.equals(Constant.ITEM_TYPE_ELE)) {
+                    itemMap2.put("name" , "当量标煤");
+                    itemMap2.put("unit" , "吨");
+                    itemMap2.put("rate" , Constant.COAL_ELECTRICITY);
+                    itemMap2.put("total", sumItemTotal*Constant.COAL_ELECTRICITY);
+                    itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_ELECTRICITY);
+                    itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_ELECTRICITY);
+                } else if (type.equals(Constant.ITEM_TYPE_WATER)) {
+                    itemMap2.put("name" , "当量标煤");
+                    itemMap2.put("unit" , "Kg");
+                    itemMap2.put("rate" , Constant.COAL_WATER);
+                    itemMap2.put("total", sumItemTotal*Constant.COAL_WATER);
+                    itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_WATER);
+                    itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_WATER);
+                } else if (type.equals(Constant.ITEM_TYPE_GAS)) {
+                    itemMap2.put("name" , "当量标煤");
+                    itemMap2.put("unit" , "Kg");
+                    itemMap2.put("rate" , Constant.COAL_GAS);
+                    itemMap2.put("total", sumItemTotal*Constant.COAL_GAS);
+                    itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_GAS);
+                    itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_GAS);
+                } else if (type.equals(Constant.ITEM_TYPE_STEAM)) {
+                    itemMap2.put("name" , "当量标煤");
+                    itemMap2.put("unit" , "Kg");
+                    itemMap2.put("rate" , Constant.COAL_STEAM);
+                    itemMap2.put("total", sumItemTotal*Constant.COAL_STEAM);
+                    itemMap2.put("lastMonth", sumItemLastMonth*Constant.COAL_STEAM);
+                    itemMap2.put("lastYear", sumItemLastYear*Constant.COAL_STEAM);
+                }
+
+                itemMap3.put("name" , "能耗密度");
+                itemMap3.put("unit" , map.get("unit")+"/M2");
+                itemMap3.put("rate" , map.get("rate"));
+                itemMap3.put("total", sumItemTotal/group.getArea());
+                itemMap3.put("lastMonth", sumItemLastMonth/group.getArea());
+                itemMap3.put("lastYear", sumItemLastYear/group.getArea());
+
+                itemMap4.put("name" , "费用");
+                itemMap4.put("unit" , "元");
+                itemMap4.put("rate" , map.get("rate"));
+                itemMap4.put("total", sumItemTotal*Float.valueOf(rate));
+                itemMap4.put("lastMonth", sumItemLastMonth*Float.valueOf(rate));
+                itemMap4.put("lastYear", sumItemLastYear*Float.valueOf(rate));
+
+                summaryMap.add(itemMap);
+                summaryMap.add(itemMap2);
+                summaryMap.add(itemMap3);
+                summaryMap.add(itemMap4);
+
+                // 缓存
+                redisUtil.set(key, summaryMap, ExpireTime);
+                res.makeSuccess(summaryMap);
             }
-
-            itemMap3.put("name" , "能耗密度");
-            itemMap3.put("unit" , map.get("unit")+"/M2");
-            itemMap3.put("rate" , map.get("rate"));
-            itemMap3.put("total", sumItemTotal/group.getArea());
-            itemMap3.put("lastMonth", sumItemLastMonth/group.getArea());
-            itemMap3.put("lastYear", sumItemLastYear/group.getArea());
-
-            itemMap4.put("name" , "费用");
-            itemMap4.put("unit" , "元");
-            itemMap4.put("rate" , map.get("rate"));
-            itemMap4.put("total", sumItemTotal*Float.valueOf(rate));
-            itemMap4.put("lastMonth", sumItemLastMonth*Float.valueOf(rate));
-            itemMap4.put("lastYear", sumItemLastYear*Float.valueOf(rate));
-
-            summaryMap.add(itemMap);
-            summaryMap.add(itemMap2);
-            summaryMap.add(itemMap3);
-            summaryMap.add(itemMap4);
-
-            res.makeSuccess(summaryMap);
         } catch (Exception ex) {
             res.makeFailed(ex);
         }
