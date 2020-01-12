@@ -38,8 +38,8 @@ app.controller('warning_settings',function ($scope) {
                 });
             }
 
-
             var tableData = fake_data["/undefined/warning/ajaxAlertList"]["result"]["warningList"];
+            tableData.data = [];
             $scope.datas.result.tableData = tableData;
         });
     }

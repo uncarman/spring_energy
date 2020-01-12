@@ -153,8 +153,9 @@ public class ItemDataController {
                                              HttpServletRequest request) {
         Response res = new Response();
         try {
-            Map chartMap = new HashMap();
+            Building building = buildingService.getBuildingById(buildingId);
 
+            Map chartMap = new HashMap();
             // 拿到各种类型基础数据
             Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
 
@@ -174,6 +175,7 @@ public class ItemDataController {
                 List<Map> curList = itemDataService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map baseInfo = baseMap.get(curType);
                 ItemGroup group = itemService.getItemGroupById(curGroupId);
+                float area = null != group && group.getArea() > 0 ? group.getArea() : building.getArea();
                 float rate = null != baseInfo.get("rate") ? Float.valueOf(baseInfo.get("rate").toString()) : 1;
 
                 Map curMap = new HashMap();
@@ -181,7 +183,7 @@ public class ItemDataController {
                 curMap.put("key", "recordedAt");
                 curMap.put("val", "totalVal");
                 curMap.put("name", baseInfo.get("name"));
-                curMap.put("area", group.getArea());
+                curMap.put("area", area);
                 curMap.put("rate", rate);
 
                 chartMap.put(curType, curMap);
@@ -239,7 +241,7 @@ public class ItemDataController {
                 titleList.add((String)curBaseMap.get("name"));
                 titleList.add(curBaseMap.get("name")+"密度");
                 titleList.add(curBaseMap.get("name")+"费用");
-                float area = group.getArea() > 0 ? group.getArea() : building.getArea();
+                float area = null != group && group.getArea() > 0 ? group.getArea() : building.getArea();
                 String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : "1" ;
                 for(List line : dataList) {
                     Boolean hasInsert = false;

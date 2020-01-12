@@ -93,8 +93,6 @@
     </select>
 
 
-
-
     <select id="getItemData" resultType="com.energy.entity.ItemData">
         select
         id,

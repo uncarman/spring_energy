@@ -15,25 +15,26 @@ var _colors = ["#ff7f50", "#87cefa", "#da70d6", "#32cd32", "#6495ed", "#ff69b4",
     "#00fa9a", "#ffd700", "#6699FF", "#ff6666", "#3cb371", "#b8860b", "#30e0e0"];
 
 var settings = {
-    weathers: {
-        '获取异常': 'default',
-        '晴': 'sunny' ,
-        '雪': 'snow' ,
-        '雨': 'rainy' ,
-        '雾霾': 'smog' ,
-        '雨夹雪': 'sleet' ,
-        '多云': 'cloudy' ,
-        '阴': 'overcast' ,
-        '沙尘暴': 'sandstorm' ,
-        '雷阵雨': 'thunderstorm' ,
-        '获取异常': 'new_default' ,
-        '晴': 'new_sunny' ,
-        '阴': 'new_overcast' ,
-        '雨': 'new_rainy' ,
-        '雪': 'new_snow' ,
-        '风': 'new_cloud' ,
-        '雾': 'new_smog' ,
-        '夜': 'new_night'
+    WEATHER : {
+        UNSET: { text: 'unset', class: 'default' },
+        UNKNOWN: { text: '获取异常', class: 'default' },
+        SUNNY: { text: '晴', class: 'sunny' },
+        SNOW: { text: '雪', class: 'snow' },
+        SNOW1: { text: '雨夹雪', class: 'snow' },
+        RAIN: { text: '雨', class: 'rainy' },
+        RAIN1: { text: '中雨', class: 'rainy' },
+        RAIN2: { text: '小雨', class: 'rainy' },
+        SMOG: { text: '雾霾', class: 'smog' },
+        SMOG1: { text: '雾', class: 'smog' },
+        SMOG1: { text: '霾', class: 'smog' },
+        SLEET: { text: '雨夹雪', class: 'sleet' },
+        CLOUDY: { text: '多云', class: 'cloudy' },
+        OVERCAST: { text: '阴', class: 'overcast' },
+        OVERCAST1: { text: '浮尘', class: 'overcast' },
+        SAND_STORM: { text: '沙尘暴', class: 'sandstorm' },
+        SAND_STORM1: { text: '扬沙', class: 'sandstorm' },
+        THUNDER_SHOWER: { text: '雷阵雨', class: 'thunderstorm' },
+        THUNDER_SHOWER1: { text: '阵雨', class: 'thunderstorm' },
     },
     default_datas :{
         ajax_loading: false,  // 是否正在执行ajax
@@ -1312,6 +1313,41 @@ var global = {
         var new_page = settings.root + "#/"+page;
         // 计入history的页面跳转
         window.location.href = new_page;
+    },
+
+    // 过期可选，毫秒数
+    "setLocalObject": function(key, value, exp) {
+        if(exp) {
+            value = {
+                val: value,
+                _exp: new Date().getTime() + exp,
+            }
+        }
+        window.localStorage[key] = JSON.stringify(value);
+    },
+
+    "getLocalObject": function(key) {
+        var vals = window.localStorage.getItem(key) || false;
+        try{
+            vals = JSON.parse(vals);
+        } catch(e) {
+            //
+        }
+        if(vals.hasOwnProperty("_exp")) {
+            if(new Date().getTime() > vals._exp) {
+                return false;
+            } else {
+                if(typeof vals.val == "string") {
+                    return JSON.parse(vals.val);
+                }
+                return vals.val;
+            }
+        } else {
+            if(typeof vals == "string") {
+                return JSON.parse(vals);
+            }
+            return vals;
+        }
     },
 
     topMenuClick : function (o) {

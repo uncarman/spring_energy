@@ -43,7 +43,7 @@ app.controller('settings_item',function ($scope, $stateParams) {
         };
         var cacheData = {};
         res.data.map(function (cur) {
-            tableData.data.push([cur.id, cur.collector_id, cur.code, cur.name, cur.description, cur.data_type, cur.data_unit, cur.coefficient, cur.max_value]);
+            tableData.data.push([cur.id, cur.collectorId, cur.itemType, cur.code, cur.name, cur.description, cur.dataType, cur.dataUnit, cur.coefficient, cur.maxValue]);
             cacheData[cur.id] = cur;
         });
         $scope.$apply(function () {

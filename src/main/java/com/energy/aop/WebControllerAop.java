@@ -42,7 +42,7 @@ public class WebControllerAop {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest req = attributes.getRequest();
         // 记录下请求内容
-        logger.warn("request: " + req.getRemoteAddr() + " " + req.getRequestURL().toString());
+        logger.info("request: " + req.getRemoteAddr() + " " + req.getRequestURL().toString());
 
         //获取目标方法的参数信息
         Signature signature = joinPoint.getSignature();
@@ -55,7 +55,7 @@ public class WebControllerAop {
             }
         }
         String argStr = JSON.toJSONString(args);
-        logger.warn("params: " + argStr);
+        logger.info("params: " + argStr);
     }
 
     /**
@@ -66,7 +66,7 @@ public class WebControllerAop {
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) throws Throwable {
         // 处理完请求，返回内容
-        logger.warn("response: " + JSON.toJSONString(ret));
+        logger.info("response: " + JSON.toJSONString(ret));
     }
 
 }

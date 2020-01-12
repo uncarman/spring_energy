@@ -51,7 +51,7 @@ app.controller('warning',function ($scope) {
                     "status": "是否处理",
                 },
                 "data": [
-                    {
+                    /*{
                         "id":"1",
                         "baseType": "安全用电",
                         "type": "电流超标",
@@ -170,7 +170,7 @@ app.controller('warning',function ($scope) {
                         "unit": "摄氏度",
                         "note": "因为使用会议室,人数较多,不用处理",
                         "status": "是",
-                    },
+                    },*/
                 ],
             };
         });
