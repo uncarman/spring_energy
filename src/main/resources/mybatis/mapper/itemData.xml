@@ -107,6 +107,10 @@
         update a_item_data set indication = indication + rand()*30, updated_at = NOW();
     </update>
 
+    <update id="updateItemData">
+        update a_item_data set other_data = #{otherData}, updated_at = NOW() where id = #{id};
+    </update>
+
     <select id="getEnergyDataLatest" resultType="com.energy.entity.EnergyData">
         select
         e.id,

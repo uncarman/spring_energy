@@ -20,6 +20,7 @@ public interface ItemDataMapper {
 
     public List<ItemData> getItemData();
     public void updateItemDatas(); // 模拟随机增加所有数据
+    public void updateItemData(@Param("id")Integer id, @Param("otherData")String otherData); // 更新单条数据
 
     public void recordEnergyDatas(@Param("energyDataList")List<EnergyData> energyDataList);
 

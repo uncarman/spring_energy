@@ -2,6 +2,10 @@ package com.energy.controller;
 
 import com.energy.config.AppConfig;
 import com.energy.service.BuildingService;
+import com.energy.service.ItemDataService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +21,9 @@ public class HomeController {
 
     @Resource
     private BuildingService buildingService = null;
+
+    @Resource
+    private ItemDataService itemDataService = null;
 
     @Resource
     private AppConfig appConfig = null;
@@ -45,8 +52,7 @@ public class HomeController {
         return "live";
     }
 
-
-    @RequestMapping("/err")
+    @RequestMapping("/test")
     @ResponseBody
     public String error() {
         return appConfig.getName() + appConfig.getVersion();
@@ -58,4 +64,10 @@ public class HomeController {
         return new Date();
     }
 
+    @RequestMapping("/updata")
+    @ResponseBody
+    public String updata() {
+        itemDataService.updateItemDatas();
+        return "success";
+    }
 }

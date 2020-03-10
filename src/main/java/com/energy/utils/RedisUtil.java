@@ -16,7 +16,8 @@ import java.util.concurrent.TimeUnit;
  *
  *  @author yinxp@dist.com.cn
  */
-@Component
+
+//@Component
 public class RedisUtil {
 
     @Autowired

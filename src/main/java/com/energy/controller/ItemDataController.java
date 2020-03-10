@@ -35,8 +35,9 @@ public class ItemDataController {
     private ItemDataService itemDataService = null;
 
     private static int ExpireTime = 60*10;   // 单位s
-    @Resource
-    private RedisUtil redisUtil;
+
+//    @Resource
+//    private RedisUtil redisUtil;
 
     // 【多个设备】按【时/日/月/年】汇总数据
     // type: 选填: 时/日/月/年
@@ -66,7 +67,7 @@ public class ItemDataController {
         Response res = new Response();
         try {
             String key = "_getBuildingSummaryTotalData_" + buildingId;
-            Object redVal = redisUtil.get(key);
+            Object redVal = null; //redisUtil.get(key);
             if (null != redVal) {
                 res.makeSuccess(redVal);
             } else {
@@ -134,7 +135,7 @@ public class ItemDataController {
                     summaryMap.add(itemMap);
                 }
                 // 缓存
-                redisUtil.set(key, summaryMap, ExpireTime);
+                //redisUtil.set(key, summaryMap, ExpireTime);
                 res.makeSuccess(summaryMap);
             }
         } catch (Exception ex) {
@@ -291,7 +292,7 @@ public class ItemDataController {
         try {
             String key = "_getEnergyTotalDataByType_"+buildingId+"_"+type;
 
-            Object redVal = redisUtil.get(key);
+            Object redVal = null; //redisUtil.get(key);
             if(null != redVal) {
                 res.makeSuccess(redVal);
             } else {
@@ -394,7 +395,7 @@ public class ItemDataController {
                 summaryMap.add(itemMap4);
 
                 // 缓存
-                redisUtil.set(key, summaryMap, ExpireTime);
+                //redisUtil.set(key, summaryMap, ExpireTime);
                 res.makeSuccess(summaryMap);
             }
         } catch (Exception ex) {

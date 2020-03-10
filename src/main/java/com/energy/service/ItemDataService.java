@@ -1,5 +1,6 @@
 package com.energy.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.energy.entity.EnergyData;
 import com.energy.entity.ItemData;
 import com.energy.mapper.ItemDataMapper;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -57,6 +59,40 @@ public class ItemDataService {
     // 模拟随机增加数据
     @Transactional(rollbackFor = Exception.class)
     public void updateItemDatas() {
+        String [] moreKeys = {"pa", "pj", "pf", "pp", "pg"};    // 正向，尖峰平谷
+        String [] randKeys = {"a"};                             // 功率，电压，电流等
+        int randomRate = 3;
+        DecimalFormat df = new DecimalFormat("###.00");
+        List<ItemData> itemDatas = getItemData();
+        if(null != itemDatas) {
+            for(int i = 0; i < itemDatas.size(); i++) {
+                try {
+                    ItemData itemData = itemDatas.get(i);
+                    int id = itemData.getId();
+                    String otherData = itemData.getOtherData();
+                    String otherDataNew = "";
+                    JSONObject jsonObject = JSONObject.parseObject(otherData);
+                    for (Map.Entry entry : jsonObject.entrySet()) {
+                        // 累计增加数据
+                        if (Arrays.asList(moreKeys).contains(entry.getKey())) {
+                            Double v = Double.sum(Double.valueOf(entry.getValue().toString()), Math.random()*randomRate);
+                            jsonObject.put(entry.getKey().toString(), df.format(v));
+                            otherDataNew = jsonObject.toJSONString();
+                        } else if(Arrays.asList(randKeys).contains(entry.getKey())) {
+                            Double v = Math.random()*randomRate*10;
+                            jsonObject.put(entry.getKey().toString(), df.format(v));
+                            otherDataNew = jsonObject.toJSONString();
+                        }
+                    }
+                    if(!"".equals(otherDataNew)) {
+                        itemDataMapper.updateItemData(id, otherDataNew);
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+            }
+        }
+        // 顺便更新一下 indication 的值（后期会作废）
         itemDataMapper.updateItemDatas();
     }
 
