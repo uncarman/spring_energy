@@ -1,0 +1,51 @@
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                所有提醒 &nbsp;
+                <small ng-bind="datas.todayStr"></small>
+            </h3>
+        </div>
+    </div>
+    <p class="clearfix"></p>
+
+    <div class="x_content">
+
+        <ul class="nav nav-tabs bar_tabs">
+            <li class="active"><a href="javascript:;" data-toggle="tab1">全部类型</a></li>
+            <li><a href="javascript:;" data-toggle="tab1">安全用电</a></li>
+            <li><a href="javascript:;" data-toggle="tab2">水流平衡</a></li>
+            <li><a href="javascript:;" data-toggle="tab3">环境板块</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="x_panel">
+                            <div class="x_content">
+                                <table class="table table-hover" id="summaryTable">
+                                    <thead>
+                                    <tr>
+                                        <th ng-repeat="(k,n) in datas.result.tableData.title" ng-bind="n"></th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="v in datas.result.tableData.data">
+                                        <td ng-repeat="(k,n) in datas.result.tableData.title"
+                                            ng-bind="v[k]"></td>
+                                        <td>
+                                            <button class="btn btn-success btn-xs" ng-click="updateItem($index, v, 1);">处理</button>
+                                            <button class="btn btn-default btn-xs" ng-click="updateItem($index, v, 2);">忽略</button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

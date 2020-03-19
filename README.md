@@ -1,7 +1,18 @@
+## 能耗项目
+提供表监测分析，统计数据，前后端分离<br>
+前端项目: uiServer<br>
+后端项目：当前目录
 
-##启动
-copy energy-1.0.jar 到目录
+
+##启动后端服务
+copy energy-1.0.jar 到当前目录<br>
 执行 ./start.sh
+
+## 启动UI服务
+cd uiServer<br>
+npm run prod
+
+------------
 
 ##注意事项
 1. item_group code 起名规则: XX XX XX
