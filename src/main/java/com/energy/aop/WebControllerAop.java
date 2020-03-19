@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -66,6 +67,9 @@ public class WebControllerAop {
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) throws Throwable {
         // 处理完请求，返回内容
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletResponse resp = attributes.getResponse();
+        resp.setHeader("Access-Control-Allow-Origin", "*");
         logger.info("response: " + JSON.toJSONString(ret));
     }
 
