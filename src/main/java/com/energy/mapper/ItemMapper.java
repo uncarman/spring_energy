@@ -23,10 +23,11 @@ public interface ItemMapper {
     public void insertItemGroupMapper(@Param("groupId")Integer groupId, @Param("itemIds")List<String> itemIds);
 
     public List<Item> getItemsByGroupId(@Param("groupId")Integer groupId);
-    public Item getItemById(@Param("id")Integer id);
     public void createItem(Item item);
     public void updateItem(Item item);
     public void deleteItem(@Param("id")Integer id);
+    public Item getItemById(@Param("id")Integer id);
+    public Map getItemCurrentData(@Param("id")Integer id);
 
     public List<Map> getItemTypeBaseInfo();
 

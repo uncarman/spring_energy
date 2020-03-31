@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.CashFlowMapper">
+
+    <select id="getCashFlowList" resultType="com.energy.entity.CashFlow">
+        select
+            id,
+            operator_id  as operatorId,
+            `item_id`    as `itemId`,
+            fee,
+            event ,
+            `source`,
+            order_id      as orderId,
+            notes,
+            created_at    as createdAt,
+            updated_at    as updatedAt
+        from a_cash_flow where 1=1
+        <if test="itemId != null">
+            <![CDATA[
+            and item_id = #{itemId}
+            ]]>
+        </if>
+        <if test="event != null">
+            <![CDATA[
+            and `event` = #{event}
+            ]]>
+        </if>
+        <if test="source != null">
+            <![CDATA[
+            and `source` = #{source}
+            ]]>
+        </if>
+        <if test="from != null">
+            <![CDATA[
+            and `created_at` >= #{from}
+            ]]>
+        </if>
+        <if test="to != null">
+            <![CDATA[
+            and `created_at` <= #{to}
+            ]]>
+        </if>
+        order by created_at desc;
+    </select>
+
+    <insert id="insertCashFlow">
+        insert into a_cash_flow (
+            operator_id, `item_id`, fee, event, source, order_id, notes
+        ) VALUES
+        <foreach collection="itemList" item="item" index="index" separator=",">
+            (
+            #{item.operatorId}, #{item.itemId}, #{item.fee}, #{item.event}, #{item.source}, #{item.orderId}, #{item.notes}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateCashFlow">
+        update a_cash_flow set
+            operator_id=#{item.operatorId},
+            `item_id` = #{item.itemId},
+            fee = #{item.fee},
+            event = #{item.event},
+            source = #{item.source},
+            order_id = #{item.orderId},
+            notes = #{item.notes},
+            updated_at = #{item.updatedAt}
+        where id = #{item.id};
+    </update>
+</mapper>

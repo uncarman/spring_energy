@@ -1,4 +1,4 @@
-app.controller('dashboard',function ($scope) {
+app.controller('buildingList',function ($scope) {
 
     $scope.$watch('$viewContentLoaded', function() {
         global.on_loaded_func($scope);    // 显示页面内容

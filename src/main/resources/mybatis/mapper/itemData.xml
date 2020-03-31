@@ -135,4 +135,27 @@
         </foreach>
     </insert>
 
+    <select id="getItemDataByItemType" resultType="java.util.LinkedHashMap">
+        select
+            d.id,
+            d.item_id as itemId,
+            d.indication,
+            d.other_data as otherData,
+            d.updated_at as updatedAt,
+            i.coefficient,
+            i.state,
+            f.charge_type as chargeType,
+            f.rate,
+            f.rate_floating as rateFloating
+        from a_item_data d
+        left join a_item i on d.item_id = i.id
+        left join a_fee_policy f on f.item_type = i.item_type
+        where 1 = 1
+        <if test="itemType != null">
+            <![CDATA[
+            and i.item_type = #{itemType};
+            ]]>
+        </if>
+    </select>
+
 </mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.HouseHoldMapper">
+
+    <select id="getHouseHoldList" resultType="java.util.LinkedHashMap">
+        select
+            h.id,
+            h.building_id  as buildingId,
+            h.`name`       as `name`,
+            h.alias        as alias,
+            h.notes        as notes,
+            h.photo        as photo,
+            h.item_ids     as itemIds,
+            i.code         as itemCode,
+            i.name         as itemName,
+            h.created_at   as createdAt,
+            h.updated_at   as updatedAt
+        from a_household h
+        left join a_item i on i.id = h.item_ids
+        where 1
+        <if test="buildingId != null">
+            <![CDATA[
+            and h.building_id = #{buildingId}
+            ]]>
+        </if>
+        order by h.created_at asc;
+    </select>
+
+    <insert id="insertHouseHold">
+        insert into a_household (
+            building_id, `name`, alias, notes, photo, item_ids
+        ) VALUES
+        <foreach collection="itemList" item="item" index="index" separator=",">
+            (
+                #{item.buildingId}, #{item.name}, #{item.alias}, #{item.notes}, #{item.photo}, #{item.itemIds}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateHouseHold">
+        update a_household set
+            building_id=#{item.buildingId},
+            `name` = #{item.name},
+            alias = #{item.alias},
+            notes = #{item.notes},
+            photo = #{item.photo},
+            item_ids = #{item.itemIds},
+            updated_at = #{item.updatedAt}
+        where id = #{item.id};
+    </update>
+
+    <select id="getHouseHoldByItemId" resultType="com.energy.entity.HouseHold">
+        select
+            id,
+            building_id  as buildingId,
+            `name`       as `name`,
+            alias        as alias,
+            notes        as notes,
+            photo        as photo,
+            item_ids     as itemIds,
+            created_at   as createdAt,
+            updated_at   as updatedAt
+        from a_household where item_ids = #{itemId}
+    </select>
+</mapper>

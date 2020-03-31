@@ -92,6 +92,10 @@ public class ItemService {
         return itemMapper.getItemById(id);
     }
 
+    public Map getItemCurrentData(Integer id) {
+        return itemMapper.getItemCurrentData(id);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void createItem(Item item) {
         itemMapper.createItem(item);

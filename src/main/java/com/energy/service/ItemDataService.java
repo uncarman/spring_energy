@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -61,6 +62,7 @@ public class ItemDataService {
     public void updateItemDatas() {
         String [] moreKeys = {"pa", "pj", "pf", "pp", "pg"};    // 正向，尖峰平谷
         String [] randKeys = {"a"};                             // 功率，电压，电流等
+        String [] lessKeys = {"rm"};    // 剩余费用
         int randomRate = 3;
         DecimalFormat df = new DecimalFormat("###.00");
         List<ItemData> itemDatas = getItemData();
@@ -81,6 +83,11 @@ public class ItemDataService {
                         } else if(Arrays.asList(randKeys).contains(entry.getKey())) {
                             Double v = Math.random()*randomRate*10;
                             jsonObject.put(entry.getKey().toString(), df.format(v));
+                            otherDataNew = jsonObject.toJSONString();
+                        } else if(Arrays.asList(lessKeys).contains(entry.getKey())) {
+                            BigDecimal bd1 = new BigDecimal(entry.getValue().toString());
+                            BigDecimal bd2 = new BigDecimal(Double.toString(Math.random()*randomRate/30));
+                            jsonObject.put(entry.getKey().toString(), df.format(bd1.subtract(bd2).doubleValue()));
                             otherDataNew = jsonObject.toJSONString();
                         }
                     }

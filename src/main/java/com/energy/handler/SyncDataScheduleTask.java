@@ -1,8 +1,7 @@
 package com.energy.handler;
 
-import com.energy.entity.EnergyData;
-import com.energy.entity.ItemData;
-import com.energy.service.BuildingService;
+
+import com.energy.service.AmmeterDataService;
 import com.energy.service.ItemDataService;
 import com.energy.utils.RuntimeEnv;
 import org.springframework.context.EnvironmentAware;
@@ -15,17 +14,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.awt.geom.Line2D;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Administrator on 2019/8/25.
+ * 定时获取最新数据，生成报表，
+ * a_ammeter_data -- 电表数据
+ * a_energy_data -- 旧能耗数据
  */
-
 @Component
 @Configuration
 @EnableScheduling   // 1.开启定时任务
@@ -33,21 +28,24 @@ import java.util.Map;
 public class SyncDataScheduleTask {
 
     @Resource
+    private AmmeterDataService ammeterDataService = null;
+
+    @Resource
     private ItemDataService itemDataService = null;
 
     @Resource
     private RuntimeEnv env = null;
 
-    //1. 同步采集器设备数据到实时表
-    @Scheduled(cron = "1 0/10 * * * ?")
-    private void syncItemRealTimeData() {
-        System.err.println("syncItemRealTimeData: " + LocalDateTime.now());
-        // TODO 更新 a_item_data 记录
+    // 更新电表数据
+    @Scheduled(cron = "1 0/20 * * * ?")
+    private void recordAmmeterDatas() {
+        System.err.println("recordAmmeterDatas: " + LocalDateTime.now());
         System.out.println("当前环境: " + env.getEnv().getProperty("spring.profiles.active"));
         if("prod".equals(env.getEnv().getProperty("spring.profiles.active"))) {
-            itemDataService.updateItemDatas();
+            ammeterDataService.recordAmmeterDatas();
         }
     }
+
 
     //2. 同步设备实时数据到记录
     @Scheduled(cron = "1 0/30 * * * ?")
@@ -61,5 +59,4 @@ public class SyncDataScheduleTask {
             itemDataService.recordEnergyDatas();
         }
     }
-
 }

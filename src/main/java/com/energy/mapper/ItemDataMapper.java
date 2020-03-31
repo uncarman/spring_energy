@@ -24,6 +24,6 @@ public interface ItemDataMapper {
 
     public void recordEnergyDatas(@Param("energyDataList")List<EnergyData> energyDataList);
 
-
+    public List<Map> getItemDataByItemType(@Param("itemType") String itemType);
 
 }

@@ -1,11 +1,16 @@
 package com.energy.controller;
 
 import com.energy.config.AppConfig;
+import com.energy.entity.AmmeterData;
+import com.energy.service.AmmeterDataService;
 import com.energy.service.BuildingService;
 import com.energy.service.ItemDataService;
+import com.energy.utils.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +32,9 @@ public class HomeController {
 
     @Resource
     private AppConfig appConfig = null;
+
+    @Resource
+    private AmmeterDataService ammeterDataService = null;
 
     private void setEnv(Map<String,Object> map) {
         map.put("appName", appConfig.getName());
@@ -64,10 +72,6 @@ public class HomeController {
         return new Date();
     }
 
-    @RequestMapping("/updata")
-    @ResponseBody
-    public String updata() {
-        itemDataService.updateItemDatas();
-        return "success";
-    }
+
+
 }

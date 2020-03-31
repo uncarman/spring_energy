@@ -3,7 +3,7 @@
     <div class="page-title">
         <div class="title_left">
             <h3>
-                基础数据管理
+                电/水表管理
             </h3>
         </div>
     </div>
@@ -15,10 +15,6 @@
                 <div class="x_content">
                     <div class="row">
                         <div class="col-xs-12">
-                            <button class="btn btn-success" ng-click="createItem();">
-                                <i class="fa fa-plus"></i>
-                                创建基础数据
-                            </button>
                             <table class="table table-hover table-bordered" id="summaryTable">
                                 <thead>
                                 <tr>
@@ -27,9 +23,11 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="v in datas.tableData.data">
-                                    <td ng-repeat="(k,n) in datas.tableData.title"
-                                        ng-bind="v[k]"></td>
+                                <tr ng-repeat="v in datas.tableData.data | filter:nameFilt">
+                                    <td ng-repeat="(k,n) in datas.tableData.title">
+                                        <span ng-bind="v[k]" ng-if="k!='1'"></span>
+                                        <img ng-src="{{v[k]}}" ng-if="k=='1'" width="100">
+                                    </td>
                                     <td>
                                         <button class="btn btn-info btn-xs" ng-click="viewItem(v);">
                                             <i class="fa fa-folder"></i> 查看
@@ -37,8 +35,8 @@
                                         <button class="btn btn-primary btn-xs" ng-click="editItem(v);">
                                             <i class="fa fa-pencil"></i> 编辑
                                         </button>
-                                        <button class="btn btn-danger btn-xs" ng-click="removeItem(v, $index);">
-                                            <i class="fa fa-trash-o"></i> 删除
+                                        <button class="btn btn-danger btn-xs" ng-click="cashFlow(v, $index);">
+                                            <i class="fa fa-trash-o"></i> 充值记录
                                         </button>
                                     </td>
                                 </tr>
@@ -51,13 +49,14 @@
             <div class="clearfix"></div>
         </div>
 
+
         <div class="modal fade itemEdit in">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
                         <h4 class="modal-title" ng-show="datas.curMethod=='edit'" ng-bind="datas.curItemCache.name"></h4>
-                        <h4 class="modal-title" ng-show="datas.curMethod=='create'">创建分组</h4>
+                        <h4 class="modal-title" ng-show="datas.curMethod=='create'">创建商户</h4>
                     </div>
                     <div class="modal-body">
                         <form id="curItem" class="form-horizontal form-label-left">
@@ -71,15 +70,15 @@
                                     </div>
                                 </div>
                                 <div class="item form-group">
-                                    <label class="control-label col-xs-4">类型ID:</label>
+                                    <label class="control-label col-xs-4">建筑ID:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
-                                               id="type" ng-model="datas.curItem.type" />
+                                               id="buildingId" ng-model="datas.curItem.buildingId" />
                                     </div>
                                 </div>
                                 <div class="item form-group">
-                                    <label class="control-label col-xs-4">类型名称:</label>
+                                    <label class="control-label col-xs-4">商户名称:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
@@ -87,27 +86,35 @@
                                     </div>
                                 </div>
                                 <div class="item form-group">
-                                    <label class="control-label col-xs-4">数据编码:</label>
+                                    <label class="control-label col-xs-4">商户别名:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
-                                               id="basic_code" ng-model="datas.curItem.basic_code" />
+                                               id="alias" ng-model="datas.curItem.alias" />
                                     </div>
                                 </div>
                                 <div class="item form-group">
-                                    <label class="control-label col-xs-4">数据名称:</label>
+                                    <label class="control-label col-xs-4">电表ID:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
-                                               id="basic_name" ng-model="datas.curItem.basic_name" />
+                                               id="itemIds" ng-model="datas.curItem.itemIds" />
                                     </div>
                                 </div>
                                 <div class="item form-group">
-                                    <label class="control-label col-xs-4">备注:</label>
+                                    <label class="control-label col-xs-4">照片地址:</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="form-control col-xs-12"
                                                ng-readonly="datas.curMethodReadOnly"
-                                               id="note" ng-model="datas.curItem.note" />
+                                               id="photo" ng-model="datas.curItem.photo" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">备注信息:</label>
+                                    <div class="col-xs-8">
+                                        <textarea class="form-control col-xs-12"
+                                                  ng-readonly="datas.curMethodReadOnly"
+                                                  id="notes" ng-model="datas.curItem.notes" />
                                     </div>
                                 </div>
                             </div>

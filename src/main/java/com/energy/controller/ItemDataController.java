@@ -738,4 +738,19 @@ public class ItemDataController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    // 拿到设备当前数据
+    @RequestMapping("/getItemCurrentData")
+    @ResponseBody
+    public Object getItemCurrentData(@RequestParam("id") Integer id,
+                          HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            Map it = itemService.getItemCurrentData(id);
+            res.makeSuccess(it);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }

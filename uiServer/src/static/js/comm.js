@@ -94,6 +94,7 @@ var settings = {
         "getItemGroupByType": "api/getItemGroupByType",
         "getEnergyTableDataByType": "api/getEnergyTableDataByType",
 
+        "ajaxGetItemById": "api/getItem", // 获取单个设备
         "ajaxGetItemGroups": "api/getItemGroups", // 获取所有分组列表
         "ajaxGetItemsByGroupId": "api/getItemsByGroupId",  // 获取某个分组下的所有设备
         "ajaxRemoveItemGroup": "api/removeItemGroup",  // 删除
@@ -105,6 +106,7 @@ var settings = {
         "ajaxUpdateItem": "api/updateItem",  // 更新
         "ajaxCreateItem": "api/createItem",  // 创建
         "ajaxUpdateGroupItem": "api/updateGroupItem",  // 更新设备编组下绑定的设备
+        "ajaxGetItemCurrentData": "api/getItemCurrentData",  // 获取设备相关数据
 
         "ajaxGetBasicDatas": "api/getBasicDatas", // 基础数据
         "ajaxRemoveBasicData": "api/removeBasicData",  // 删除
@@ -115,6 +117,17 @@ var settings = {
         "removeEnergyPlan": "api/removeEnergyPlan",  // 删除
         "updateEnergyPlan": "api/updateEnergyPlan",  // 更新
         "createEnergyPlan": "api/createEnergyPlan",  // 创建
+
+        // 商户，电表充值相关
+        "ajaxGetHouseholdList": "api/householdList",  // 商户列表
+        //"ajaxRemoveHouseHold": "api/householdRemove",  // 删除
+        "ajaxUpdateHouseHold": "api/householdUpdate",  // 更新
+        "ajaxCreateHouseHold": "api/householdAdd",  // 创建
+        "ajaxGetHouseholdByItemId": "api/householdByItemId", // 根据设备号，查询对应商户
+
+        "ajaxGetCashflow": "api/cashFlowList", // 充值记录
+        "ajaxCreateCashflow": "api/cashFlowAdd", // 充值添加
+
     },
 
     // 分页参数
@@ -1043,6 +1056,10 @@ var global = {
         // 移除 loading 状态
         global.loading_num -= 1;
         global.loading_hide();
+
+        $scope.goBack = function() {
+            window.history.back();
+        }
 
         //gtm使用的scope对象
         window._scope = $scope;  // 标记局部变量，提供给外部访问

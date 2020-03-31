@@ -20,7 +20,12 @@
             i.`state`
         FROM a_item i
             LEFT JOIN a_collector c on c.id = i.collector_id
-        where c.building_id = #{buildingId}
+        where 1 = 1
+        <if test="buildingId != null">
+            <![CDATA[
+            and c.building_id = #{buildingId}
+            ]]>
+        </if>
     </select>
 
     <!-- 某个分组下的所有设备 -->
@@ -77,6 +82,30 @@
             i.`state`
         FROM a_item i
         WHERE id = #{id}
+    </select>
+
+    <select id="getItemCurrentData" resultType="java.util.LinkedHashMap">
+        SELECT
+            i.`id`,
+            i.collector_id as collectorId,
+            i.item_type as itemType,
+            i.`code`,
+            i.`name`,
+            i.`description`,
+            i.data_type as dataType,
+            i.data_unit as dataUnit,
+            i.coefficient,
+            i.max_value as `maxValue`,
+            i.`state`,
+            h.name as householdName,
+            h.alias as householdAlias,
+            d.other_data as otherData,
+            d.indication as indication,
+            d.updated_at as updateTime
+        FROM a_item i
+        left join a_household h on i.id = h.item_ids
+        left join a_item_data d on i.id = d.item_id
+        WHERE i.id = #{id}
     </select>
 
     <insert id="createItem" parameterType="com.energy.entity.Item">

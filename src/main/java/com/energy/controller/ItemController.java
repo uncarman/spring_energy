@@ -174,4 +174,18 @@ public class ItemController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @RequestMapping("/getItem")
+    @ResponseBody
+    public Object getItem(@RequestParam("id") Integer id,
+                             HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            Item it = itemService.getItemById(id);
+            res.makeSuccess(it);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }

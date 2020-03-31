@@ -18,6 +18,11 @@ app.directive('onFinishRender', function ($timeout) {
 
 app.config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
+        .state('building_list',{
+            url:'/building_list',
+            templateUrl:'pages/buildingList.html',
+            controller: 'buildingList',
+        })
         .state('dashboard',{
             url:'/dashboard',
             templateUrl:'pages/dashboard.html',
@@ -577,6 +582,25 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/settings_base',
             templateUrl:'pages/settings_base.html',
             controller: 'settings_base',
+        })
+
+        // 商户管理
+        .state('house_hold',{
+            url:'/house_hold',
+            templateUrl:'pages/house_hold.html',
+            controller: 'house_hold',
+        })
+        // 电表管理
+        .state('cash_flow',{
+            url:'/cash_flow',
+            templateUrl:'pages/cash_flow.html',
+            controller: 'cash_flow',
+        })
+        // 电表充值流水
+        .state('cash_flow/:itemId',{
+            url:'/cash_flow/:itemId',
+            templateUrl:'pages/cash_flow.html',
+            controller: 'cash_flow',
         })
 
         // 个人中心

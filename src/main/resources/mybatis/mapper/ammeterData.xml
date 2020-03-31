@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.AmmeterDataMapper">
+
+    <select id="getAmmeterData" resultType="com.energy.entity.AmmeterData">
+        select
+            id,
+            item_id            as itemId,
+            active_energy      as activeEnergy,
+            jian_energy        as jianEnergy,
+            feng_energy        as fengEnergy,
+            ping_energy        as pingEnergy,
+            gu_energy          as guEnergy,
+            remaind_fee        as remaindFee,
+            active_fee         as activeFee,
+            jian_fee           as jianFee,
+            feng_fee           as fengFee,
+            ping_fee           as pingFee,
+            gu_fee             as guFee,
+            diff_active_energy as diffActiveEnergy,
+            diff_Jian_energy   as diffJianEnergy,
+            diff_feng_energy   as diffFengEnergy,
+            diff_ping_energy   as diffPingEnergy,
+            diff_gu_energy     as diffGuEnergy,
+            recorded_at        as recordedAt,
+            created_at         as createdAt
+        from a_ammeter_data;
+    </select>
+
+    <select id="getAmmeterLastData" resultType="com.energy.entity.AmmeterData">
+        select
+            id,
+            item_id            as itemId,
+            active_energy      as activeEnergy,
+            jian_energy        as jianEnergy,
+            feng_energy        as fengEnergy,
+            ping_energy        as pingEnergy,
+            gu_energy          as guEnergy,
+            remaind_fee        as remaindFee,
+            active_fee         as activeFee,
+            jian_fee           as jianFee,
+            feng_fee           as fengFee,
+            ping_fee           as pingFee,
+            gu_fee             as guFee,
+            diff_active_energy as diffActiveEnergy,
+            diff_Jian_energy   as diffJianEnergy,
+            diff_feng_energy   as diffFengEnergy,
+            diff_ping_energy   as diffPingEnergy,
+            diff_gu_energy     as diffGuEnergy,
+            recorded_at        as recordedAt,
+            created_at         as createdAt
+        from a_ammeter_data d
+        where id in (
+            select max(id) from a_ammeter_data group by item_id
+        );
+    </select>
+
+    <insert id="saveAmmeterDatas">
+        insert into a_ammeter_data (
+            item_id, recorded_at,
+            active_energy, jian_energy, feng_energy, ping_energy, gu_energy,
+            diff_active_energy, diff_jian_energy, diff_feng_energy, diff_ping_energy, diff_gu_energy,
+            remaind_fee, active_fee, jian_fee, feng_fee, ping_fee, gu_fee
+        ) VALUES
+        <foreach collection="ammeterDataList" item="item" index="index" separator=",">
+            (
+                #{item.itemId}, #{item.recordedAt},
+                #{item.activeEnergy}, #{item.jianEnergy}, #{item.fengEnergy}, #{item.pingEnergy}, #{item.guEnergy},
+                #{item.diffActiveEnergy}, #{item.diffJianEnergy}, #{item.diffFengEnergy}, #{item.diffPingEnergy}, #{item.diffGuEnergy},
+                #{item.remaindFee}, #{item.activeFee}, #{item.jianFee}, #{item.fengFee}, #{item.pingFee}, #{item.guFee}
+            )
+        </foreach>
+    </insert>
+</mapper>
