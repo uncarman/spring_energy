@@ -72,6 +72,13 @@ public class ItemService {
         return list;
     }
 
+    // 分组下的所有设备
+    public List<Item> getItemsByGroupIds(List<String> groupIds) {
+        List<Item> list = itemMapper.getItemsByGroupIds(groupIds);
+        list.removeIf(Objects::isNull);
+        return list;
+    }
+    
     @Transactional(rollbackFor = Exception.class)
     public Integer createItemGroup(ItemGroup itemGroup) {
         return itemMapper.createItemGroup(itemGroup);

@@ -421,6 +421,11 @@ public class ItemDataController {
 
             String parent = request.getParameter("parent");
             String viewType = request.getParameter("viewType");
+            String itemIds = request.getParameter("itemIds");
+            if(null == itemIds) {
+                itemIds = "";
+            }
+            List<String> itemIdList = Arrays.asList(itemIds.split(","));
 
             // 最终返回结果集
             Map chartMap = new HashMap();
@@ -431,7 +436,7 @@ public class ItemDataController {
             // 拿到各种类型基础数据
             Map<String, Map> baseMap = buildingService.getItemTypeBaseInfoToMap();
 
-            if(null == parent) {
+            if(null == parent || "".equals(parent)) {
                 // 当前时间区间数据
                 Map<Integer, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
                 String curType = energyType;
@@ -439,6 +444,10 @@ public class ItemDataController {
                 Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
                 String curItemIds = groupItems.get(curGroupId)+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+                // 如果有设备筛选, 使用筛选条件
+                if(null != itemIds && !itemIds.isEmpty()) {
+                    curItemIdList.retainAll(itemIdList);
+                }
                 List<Map> curList = itemDataService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
                 ItemGroup group = itemService.getItemGroupById(curGroupId);
@@ -479,6 +488,10 @@ public class ItemDataController {
                     }
 
                     List<Map> curList = new ArrayList<>();
+                    // 如果有设备筛选, 使用筛选条件
+                    if(null != itemIds && !itemIds.isEmpty()) {
+                        curItemIdList.retainAll(itemIdList);
+                    }
                     if(curItemIdList.size() > 0) {
                         curList = itemDataService.getItemDatasByDate(curItemIdList, from, to, type);
                     }
@@ -504,6 +517,10 @@ public class ItemDataController {
                             }
                         }
                         List<Map> curList = new ArrayList<>();
+                        // 如果有设备筛选, 使用筛选条件
+                        if(null != itemIds && !itemIds.isEmpty()) {
+                            curItemIdList.retainAll(itemIdList);
+                        }
                         if(curItemIdList.size() > 0) {
                             curList = itemDataService.getItemDatasByDate(curItemIdList, from, to, type);
                         }
@@ -546,6 +563,11 @@ public class ItemDataController {
             Building building = buildingService.getBuildingById(buildingId);
 
             String parent = request.getParameter("parent");
+            String itemIds = request.getParameter("itemIds");
+            if(null == itemIds) {
+                itemIds = "";
+            }
+            List<String> itemIdList = Arrays.asList(itemIds.split(","));
 
             // 可以计算总量的分组类型
             String sumType = Constant.SUM_TYPE;
@@ -555,7 +577,7 @@ public class ItemDataController {
             // 输出结果
             List<List> dataList = null;
 
-            if(null == parent) {
+            if(null == parent || "".equals(parent)) {
                 // 当前时间区间数据
                 Map<Integer, String> groupItems = buildingService.getBuildingItemTypes(buildingId, sumType);
                 String curType = energyType;
@@ -563,6 +585,10 @@ public class ItemDataController {
                 Integer curGroupId = null != curTypeGroupParent ? curTypeGroupParent.getId() : -1;
                 String curItemIds = groupItems.get(curGroupId)+"";
                 List<String> curItemIdList = Arrays.asList(curItemIds.split(","));
+                // 如果有设备筛选, 使用筛选条件
+                if(null != itemIds && !itemIds.isEmpty()) {
+                    curItemIdList.retainAll(itemIdList);
+                }
                 List<Map> curList = itemDataService.getItemDatasByDate(curItemIdList, from, to, type);
                 Map curBaseMap = baseMap.get(curType);
                 ItemGroup group = itemService.getItemGroupById(curGroupId);
@@ -577,9 +603,11 @@ public class ItemDataController {
                 Date toDate = formatter.parse(to);
                 dataList = DateUtil.dateList(fromDate, toDate, type);
 
-                titleList.add(curBaseMap.get("name")+"");
-                titleList.add(curBaseMap.get("name")+"密度");
-                titleList.add(curBaseMap.get("name")+"费用");
+                titleList.add(curBaseMap.get("name").toString()+"("+curBaseMap.get("unit").toString()+")");
+                titleList.add(curBaseMap.get("name")+"当量标煤(Kg)");
+                titleList.add(curBaseMap.get("name")+"碳排放(Kg)");
+                titleList.add(curBaseMap.get("name")+"密度("+curBaseMap.get("unit").toString()+"/平米)");
+                titleList.add(curBaseMap.get("name")+"费用(元)");
                 String rate = null != curBaseMap.get("rate") ? curBaseMap.get("rate").toString() : null ;
 
                 for(int k = 0; k < dataList.size(); k++) {
@@ -589,6 +617,22 @@ public class ItemDataController {
                         Map row = curList.get(j);
                         if(line.get(0).toString().equals(row.get("recordedAt"))) {
                             line.add(row.get("totalVal"));
+                            // 当量标煤
+                            float totalVal = Float.valueOf(row.get("totalVal").toString());
+                            if("01".equals(curType)) {
+                                line.add(totalVal*Constant.COAL_ELECTRICITY);
+                                line.add(totalVal*Constant.C_ELECTRICITY);
+                            } else if("02".equals(curType)) {
+                                line.add(totalVal*Constant.COAL_WATER);
+                                line.add(totalVal*Constant.C_WATER);
+                            } else if("03".equals(curType)) {
+                                line.add(totalVal*Constant.COAL_GAS);
+                                line.add(totalVal*Constant.C_GAS);
+                            } else if("04".equals(curType)) {
+                                line.add(totalVal*Constant.COAL_STEAM);
+                                line.add(totalVal*Constant.C_STEAM);
+                            }
+                            // 按面积密度
                             float totalValAvg = Float.valueOf(row.get("totalVal").toString()) / group.getArea();
                             line.add(totalValAvg);
                             if(null != rate) {
@@ -602,6 +646,8 @@ public class ItemDataController {
                         };
                     }
                     if(!hasInsert) {
+                        line.add("0");
+                        line.add("0");
                         line.add("0");
                         line.add("0");
                         line.add("0");
@@ -636,7 +682,10 @@ public class ItemDataController {
                             curItemIdList.add(item.getId().toString());
                         }
                     }
-
+                    // 如果有设备筛选, 使用筛选条件
+                    if(null != itemIds && !itemIds.isEmpty()) {
+                        curItemIdList.retainAll(itemIdList);
+                    }
                     List<Map> curList = new ArrayList<>();
                     if(!curItemIdList.isEmpty()) {
                         curList = itemDataService.getItemDatasByDate(curItemIdList, from, to, type);
@@ -689,6 +738,10 @@ public class ItemDataController {
                             for(Item item : items) {
                                 curItemIdList.add(item.getId().toString());
                             }
+                        }
+                        // 如果有设备筛选, 使用筛选条件
+                        if(null != itemIds && !itemIds.isEmpty()) {
+                            curItemIdList.retainAll(itemIdList);
                         }
                         List<Map> curList = new ArrayList<>();
                         if (curItemIdList.size() > 0) {

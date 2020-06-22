@@ -57,7 +57,11 @@ var settings = {
     msg_duration: 12, //弹出提示框持续时间, 单位:秒
     root: "",
 
-    domain: "http://localhost:8095/",  // 接口地址
+    wsServer: "localhost",
+    wsPort: 8002,
+
+    //domain: "http://localhost:8095/",  // 接口地址
+    domain: "http://47.100.196.152:8095/",
     cross_domain: true,
     ajax_timeout: 30*1000, //ajax超时时间 (单位:毫秒)
 
@@ -1066,6 +1070,7 @@ var global = {
     },
 
     check_logined: function () {
+        return true;
         var user = global.read_storage("session", "user");
         try {
             if(typeof user != "undefined" && typeof user["id"] != "undefined" && user["id"] > 0) {
@@ -1747,6 +1752,71 @@ var global = {
             }
         }
         return null;
+    },
+
+    // 同方控制器
+    // 直接使用同方的ws api对设备数据进行读写操作
+    // 创建一个ws连接
+    tfSocket: function($scope) {
+        if(!$scope.tfSocket) {
+            $scope.tfSocket = new TFWebSocket(settings.wsServer, settings.port);
+        }
+    },
+    // 同方通讯消息格式：
+    // 发送： 字符串格式
+    //     a)发送查询命令：SELECT|参数编码1|参数编码2|…|END （参数编码支持中文）
+    //     b)发送配置命令：CONFIG|参数编码|值|END
+    //     c)发送刷新模式缓存命令：REFRESH|MODULE|END
+    //     d)发送控制与反馈值比对命令： COMPARE|区域id|设备名称|反馈参数编码|控制参数编码|控制参数编码值|比对时间间隔（分）|END
+    //     参数编码1 = ibs_item_parameter.code
+    //     eg:
+    // 接收： json数据格式
+    // eg:
+    //   SELECT|1#电梯楼层|1#电梯上下行|1#电梯故障|END
+    //   {
+    //       "command": "SELECT",
+    //       "dataList": [
+    //           {
+    //               "command": "UPDATE",
+    //               "dateTime": "2020-04-02 01:43:41",
+    //               "serverCode": "DT&DT&1#电梯楼层",
+    //               "state": "Good",
+    //               "sysCode": "elevator",
+    //               "tagCode": "1#电梯楼层",
+    //               "tagNumber": "1#电梯楼层",
+    //               "value": "19",
+    //               "valueType": "Short"
+    //           },
+    //           {
+    //               "command": "UPDATE"
+    //               "dateTime": "2020-04-02 02:24:35"
+    //               "serverCode": "DT&DT&1#电梯上下行"
+    //               "state": "Good"
+    //               "sysCode": "elevator"
+    //               "tagCode": "1#电梯上下行"
+    //               "tagNumber": "1#电梯上下行"
+    //               "value": "0"
+    //               "valueType": "Short"
+    //           },
+    //           {
+    //               "command": "UPDATE"
+    //               "dateTime": "2020-04-02 00:41:07"
+    //               "serverCode": "DT&DT&1#电梯故障"
+    //               "state": "Good"
+    //               "sysCode": "elevator"
+    //               "tagCode": "1#电梯故障"
+    //               "tagNumber": "1#电梯故障"
+    //               "value": "0"
+    //               "valueType": "Short"
+    //           }
+    //       ]
+    //   }
+    tfSocketSendMsg: function($scope, msg, callback) {
+        if($scope.tfSocket) {
+            $scope.tfSocket.send(msg, callback);
+        } else {
+            alert("The socket 未链接.");
+        }
     },
 
 };

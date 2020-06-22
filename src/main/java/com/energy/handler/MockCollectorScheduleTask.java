@@ -26,13 +26,13 @@ public class MockCollectorScheduleTask {
     @Resource
     private RuntimeEnv env = null;
 
-    // 10 分钟采集(更新)一次
-    @Scheduled(cron = "1 0/10 * * * ?")
+    // 模拟器 1分钟采集(更新)一次
+    @Scheduled(cron = "1 0/1 * * * ?")
     private void syncItemRealTimeData() {
         System.err.println("syncItemRealTimeData: " + LocalDateTime.now());
         // TODO 更新 a_item_data 记录
-        System.out.println("当前环境: " + env.getEnv().getProperty("spring.profiles.active"));
-        if("prod".equals(env.getEnv().getProperty("spring.profiles.active"))) {
+        System.out.println("当前环境: " + env.getEnv().getProperty("MockCollectorScheduleTask"));
+        if("true".equals(env.getEnv().getProperty("MockCollectorScheduleTask"))) {
             itemDataService.updateItemDatas();
         }
     }

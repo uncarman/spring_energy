@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <title th:text="${appName}"></title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="css/daterangepicker.css">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
+    <link href="css/sweetalert.css" rel="stylesheet">
+    <link href="css/nprogress.css" rel="stylesheet">
+    <link href="css/normalize.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+</head>
+<body class="nav-md" ng-app="app" ng-controller="index">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a class="site_title" ng-click="gotoHome();">
+                        <i class="fa fa-bar-chart-o"></i>
+                        <span th:text="${appName}"></span>
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="profile clearfix" ng-click="gotoProfile();">
+                    <div class="profile_pic">
+                        <img ng-src="{{datas.user.photo_url}}" ng-alt="datas.user.name" class="img-circle profile_img">
+                    </div>
+                    <div class="profile_info">
+                        <span>欢迎回来</span>
+                        <h2 ng-bind="datas.user.name"></h2>
+                    </div>
+                </div>
+                <p class="clearfix"></p>
+
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <!--<h3>-->
+                        <!--General-->
+                        <!--</h3>-->
+                        <ul class="nav side-menu">
+                            <li class="dashboard">
+                                <a href="#/dashboard">
+                                    <i class="fa fa-th"></i>
+                                    首页
+                                </a>
+                            </li>
+                            <li class="monitor">
+                                <a>
+                                    <i class="fa fa-edit"></i>
+                                    监测分析
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+
+                                <ul class="nav child_menu">
+                                    <li class="monitor"><a href="#/monitor">总体用能概述</a></li>
+                                    <li class="monitor_electricity monitor_electricity_by_subentry
+                                        monitor_electricity_by_area monitor_electricity_by_org
+                                        monitor_electricity_by_custom"><a href="#/monitor_electricity">电能监测</a></li>
+                                    <li class="monitor_water monitor_water_by_subentry
+                                        monitor_water_by_area monitor_water_by_org
+                                        monitor_water_by_custom"><a href="#/monitor_water">水量监测</a></li>
+<!--                                    <li class="monitor_gas monitor_gas_by_subentry-->
+<!--                                        monitor_gas_by_area monitor_gas_by_org-->
+<!--                                        monitor_gas_by_custom"><a href="#/monitor_gas">燃气监测</a></li>-->
+<!--                                    <li class="monitor_cah monitor_cah_by_subentry-->
+<!--                                        monitor_cah_by_area monitor_cah_by_org-->
+<!--                                        monitor_cah_by_custom"><a href="#/monitor_cah">冷热量监测</a></li>-->
+<!--                                    <li class="monitor_steam monitor_steam_by_subentry-->
+<!--                                        monitor_steam_by_area monitor_steam_by_org-->
+<!--                                        monitor_steam_by_custom"><a href="#/monitor_steam">蒸汽量监测</a></li>-->
+                                    <!--<li class="monitor_env monitor_env_by_subentry-->
+                                        <!--monitor_env_by_area monitor_env_by_org-->
+                                        <!--monitor_env_by_custom"><a href="#/monitor_env">室内环境监测</a></li>-->
+                                </ul>
+                            </li>
+                            <li class="statistics">
+                                <a>
+                                    <i class="fa fa-th"></i>
+                                    数据统计
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul class="nav child_menu">
+<!--                                    <li class="statistics_analysis"><a href="#statistics_analysis">能耗分析</a></li>-->
+                                    <li class="statistics"><a href="#statistics">能耗统计</a></li>
+                                    <li class="statistics_fee"><a href="#statistics_fee">费用分析</a></li>
+                                    <!--<li><a href="###">评价能耗</a></li>-->
+                                </ul>
+                            </li>
+                            <li class="plan">
+                                <a>
+                                    <i class="fa fa-laptop"></i>
+                                    用能计划
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul class="nav child_menu">
+                                    <li class="plan_electricity"><a href="#plan_electricity">电能计划</a></li>
+                                    <li class="plan_water"><a href="#plan_water">水能计划</a></li>
+<!--                                    <li class="plan_gas"><a href="#plan_gas">燃气能计划</a></li>-->
+<!--                                    <li class="plan_cah"><a href="#plan_cah">冷热能计划</a></li>-->
+<!--                                    <li class="plan_steam"><a href="#plan_steam">蒸汽能计划</a></li>-->
+                                </ul>
+                            </li>
+<!--                            <li class="remould">-->
+<!--                                <a>-->
+<!--                                    <i class="fa fa-sort-amount-desc"></i>-->
+<!--                                    节能改造-->
+<!--                                    <span class="fa fa-chevron-down"></span>-->
+<!--                                </a>-->
+<!--                                <ul class="nav child_menu">-->
+<!--                                    <li class="remould_plan"><a href="#remould">改造方案</a></li>-->
+<!--                                    <li class="remould_result"><a href="#remould">改造成果</a></li>-->
+<!--                                </ul>-->
+<!--                            </li>-->
+<!--                            <li class="maintenance">-->
+<!--                                <a>-->
+<!--                                    <i class="fa fa-envelope"></i>-->
+<!--                                    智能运维-->
+<!--                                    <span class="fa fa-chevron-down"></span>-->
+<!--                                </a>-->
+<!--                                <ul class="nav child_menu">-->
+<!--                                    <li class="maintenance_device"><a href="#maintenance_device">物资管理</a></li>-->
+<!--                                    <li class="maintenance_duty"><a href="#maintenance_duty">值班管理</a></li>-->
+<!--                                    <li class="maintenance_inspection"><a href="#maintenance_inspection">巡检管理</a></li>-->
+<!--                                    <li class="maintenance_order"><a href="#maintenance_order">工单管理</a></li>-->
+<!--                                </ul>-->
+<!--                            </li>-->
+<!--                            <li class="pipe_security">-->
+<!--                                <a href="#pipe_security">-->
+<!--                                    <i class="fa fa-umbrella"></i>-->
+<!--                                    管网安全-->
+<!--                                </a>-->
+<!--                            </li>-->
+                            <li class="warning">
+                                <a>
+                                    <i class="fa fa-envelope"></i>
+                                    报警处理
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul class="nav child_menu">
+                                    <li class="warning"><a href="#warning">所有报警</a></li>
+<!--                                    <li class="warning_settings"><a href="#warning_settings">报警设置</a></li>-->
+                                </ul>
+                            </li>
+                            <li>
+                                <a>
+                                    <i class="fa fa-edit"></i>
+                                    系统配置
+                                    <span class="fa fa-chevron-down"></span>
+                                </a>
+                                <ul class="nav child_menu">
+                                    <li class="settings_group"><a href="#settings_group">监测配置</a></li>
+                                    <li class="settings_item"><a href="#settings_item">设备管理</a></li>
+                                    <li class="settings_base"><a href="#settings_base">基本配置</a></li>
+                                    <li class="house_hold cash_flow"><a href="#house_hold">商户管理</a></li>
+<!--                                    <li class="cash_flow"><a href="#cash_flow">充值流水</a></li>-->
+<!--                                    <li class="settings_pipe_security"><a href="#settings_pipe_security">管网安全设置</a></li>-->
+<!--                                    <li class="settings_profile"><a href="javascript:;">账号管理</a></li>-->
+<!--                                    <li class="settings_roles"><a href="javascript:;">权限和角色</a></li>-->
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top_nav">
+            <div class="nav_menu">
+                <nav>
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>
+                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown"
+                               aria-expanded="false">
+                                <h1 class="nav-title">
+                                    <span ng-bind="datas.curBuilding.name"></span>
+                                    <i class="fa fa-chevron-down"></i>
+                                </h1>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-left">
+                                <li ng-repeat="b in datas.buildingList">
+                                    <a href="javascript:;" ng-bind="b.name" ng-click="changeBuilding(b);"></a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                               aria-expanded="false">
+                                <img ng-src="{{datas.user.photo_url}}" ng-alt="datas.user.name">
+                                <span ng-bind="datas.user.name" class="ng-binding"></span>
+                                <span class=" fa fa-angle-down"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                <li>
+                                    <a ng-click="gotoProfile();">
+                                        个人中心
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-click="gotoHelp();">
+                                        帮助中心
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-click="doLogout();">
+                                        <i class="fa fa-sign-out pull-right">
+                                        </i>
+                                        退出登录
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="">
+                            <a href="/live" class="user-profile">
+                                <span class="fa fa-globe"></span>
+                                切换大屏
+                            </a>
+                        </li>
+<!--                        <li class="">-->
+<!--                            <a class="user-profile" onclick='$(".bimDisplay").modal("show");'>-->
+<!--                                <span class="fa fa-database"></span>-->
+<!--                                BIM展示-->
+<!--                            </a>-->
+<!--                        </li>-->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="right_col" role="main">
+            <div ui-view></div>
+        </div>
+
+        <footer>
+            <div class="pull-right" th:text="${appName+' '+appVersion}"></div>
+            <div class="clearfix"></div>
+        </footer>
+    </div>
+</div>
+
+<!-- jQuery 3 -->
+<script src="./js/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="./js/bootstrap.min.js"></script>
+<!-- date-range-picker -->
+<script src="./js/moment.min.js"></script>
+<script src="./js/moment-with-locales.min.js"></script>
+<script src="./js/daterangepicker.js"></script>
+<!-- bootstrap datepicker -->
+<script src="./js/bootstrap-datepicker.min.js"></script>
+<script src="./js/bootstrap-datepicker.zh-CN.min.js"></script>
+
+<script src="https://webapi.amap.com/maps?v=1.4.10&key=9ab87268e7b0963b097a9c6c7ddd06d9"></script>
+
+<script src="./js/echarts.js"></script>
+
+<script src="./js/angular.min.js"></script>
+<script src="./js/angular_ui_router.min.js"></script>
+<script src="./js/sider.js"></script>
+<script src="./js/fake_datas.js?v9"></script>
+<!-- <script src="./js/sweetalert.min.js?v9"></script> -->
+<script src="./js/comm.js?v9"></script>
+<script src="./js/web_socket.js?v9"></script>
+
+<script src="./js/app_pc.js?v9"></script>
+
+<script src="pages/index.js?v9"></script>
+<script src="pages/buildingList.js?v9"></script>
+<script src="pages/dashboard.js?v9"></script>
+
+<script src="pages/monitor.js?v9"></script>
+<script src="pages/monitor_energy.js?v9"></script>
+<script src="pages/monitor_energy_by_group.js?v9"></script>
+
+<script src="pages/statistics.js?v9"></script>
+<script src="pages/statistics_fee.js?v9"></script>
+<script src="pages/statistics_analysis.js?v9"></script>
+
+<script src="pages/maintenance_device.js?v9"></script>
+<script src="pages/maintenance_duty.js?v9"></script>
+<script src="pages/maintenance_inspection.js?v9"></script>
+<script src="pages/maintenance_order.js?v9"></script>
+
+<script src="pages/plan_energy.js?v9"></script>
+
+<script src="pages/remould.js?v9"></script>
+
+<script src="pages/pipe_security.js?v9"></script>
+<script src="pages/settings_pipe_security.js?v9"></script>
+
+<script src="pages/warning.js?v9"></script>
+<script src="pages/warning_settings.js?v9"></script>
+
+<!-- <script src="js/LuTree.js"></script> -->
+<script src="pages/settings_group.js?v9"></script>
+<script src="pages/settings_item.js?v9"></script>
+<script src="pages/settings_base.js?v9"></script>
+
+<script src="pages/house_hold.js?v9"></script>
+<script src="pages/cash_flow.js?v9"></script>
+
+<script src="pages/profile.js?v9"></script>
+<script src="pages/help.js?v9"></script>
+</body>
+</html>

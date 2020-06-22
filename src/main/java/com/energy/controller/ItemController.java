@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +67,28 @@ public class ItemController {
         try {
             List<Item> list = itemService.getItemsByGroupId(groupId);
             res.makeSuccess(list);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // 【设备分组】下的所有【设备】
+    @RequestMapping("/getItemsByGroupIds")
+    @ResponseBody
+    public Object getItemsByGroupId(@RequestParam("groupIds") String groupIds,
+                                    HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            List<String> groupIdList = Arrays.asList(groupIds.split(","));
+            if(null != groupIdList && !groupIdList.isEmpty()) {
+                List<Item> list = itemService.getItemsByGroupIds(groupIdList);
+                res.makeSuccess(list);
+            } else {
+                // 如果输入为空, 直接返回空
+                List list= new ArrayList();
+                res.makeSuccess(list);
+            }
         } catch (Exception ex) {
             res.makeFailed(ex);
         }

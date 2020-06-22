@@ -36,26 +36,25 @@ public class SyncDataScheduleTask {
     @Resource
     private RuntimeEnv env = null;
 
-    // 更新电表数据
-    @Scheduled(cron = "1 0/20 * * * ?")
+    // 同步电表数据到记录(通过尖峰平谷计算费用) a_ammeter_data
+    @Scheduled(cron = "1 1/30 * * * ?")
     private void recordAmmeterDatas() {
         System.err.println("recordAmmeterDatas: " + LocalDateTime.now());
-        System.out.println("当前环境: " + env.getEnv().getProperty("spring.profiles.active"));
-        if("prod".equals(env.getEnv().getProperty("spring.profiles.active"))) {
+        System.out.println("当前环境: " + env.getEnv().getProperty("MockCollectorScheduleTask"));
+        if("true".equals(env.getEnv().getProperty("MockCollectorScheduleTask"))) {
             ammeterDataService.recordAmmeterDatas();
         }
     }
 
 
-    //2. 同步设备实时数据到记录
+    // 同步设备实时数据到记录 a_energy_data
     @Scheduled(cron = "1 0/30 * * * ?")
     //@Scheduled(fixedDelay = 30*60*1000)
     private void recordEnergyDatas() {
         System.err.println("recordEnergyDatas: " + LocalDateTime.now());
-
         // 同步 a_energy_data 记录
-        System.out.println("当前环境: " + env.getEnv().getProperty("spring.profiles.active"));
-        if("prod".equals(env.getEnv().getProperty("spring.profiles.active"))) {
+        System.out.println("当前环境: " + env.getEnv().getProperty("MockCollectorScheduleTask"));
+        if("true".equals(env.getEnv().getProperty("MockCollectorScheduleTask"))) {
             itemDataService.recordEnergyDatas();
         }
     }

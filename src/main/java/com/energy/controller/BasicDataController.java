@@ -2,7 +2,6 @@ package com.energy.controller;
 
 import com.energy.entity.BasicData;
 import com.energy.service.BasicDataService;
-import com.energy.service.BuildingService;
 import com.energy.utils.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("api")

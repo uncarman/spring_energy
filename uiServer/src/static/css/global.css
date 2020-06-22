@@ -1,0 +1,16 @@
+
+audio,
+canvas,
+progress,
+video {
+    display: inline-block;
+}
+
+canvas { width: 100%; }
+.chart { width: 100%; }
+
+.card-body { font-size: 0.875rem; }
+
+/*阻止表头换行*/
+.table-inline thead th { word-break: keep-all; }
+

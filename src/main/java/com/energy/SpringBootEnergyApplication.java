@@ -6,8 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.PropertySource;
 
-import java.util.Arrays;
-
 /**
  * Created by Administrator on 2019/8/17.
  */

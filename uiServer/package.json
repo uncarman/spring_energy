@@ -16,5 +16,7 @@
     "oracledb": "^4.2.0",
     "request": "^2.88.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "nodejs-websocket": "^1.7.2"
+  }
 }

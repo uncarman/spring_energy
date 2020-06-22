@@ -4,7 +4,9 @@
 *.jar
 *.war
 *.ear
+*.iml
 .idea/
 /.idea/
+.idea/*.xml
 /**/target/
 /**/logs/

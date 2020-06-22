@@ -11,10 +11,17 @@ public class Constant {
     public static final Integer RES_FAIL_CODE = 500;
     public static final String RES_FAIL_MESSAGE = "FAIL";
 
+    // 当量标煤
     public static final float COAL_ELECTRICITY = 0.4040f;
     public static final float COAL_WATER= 0.2429f;
     public static final float COAL_GAS= 0.2429f;
     public static final float COAL_STEAM= 0.2429f;
+
+    // 当量炭排放
+    public static final float C_ELECTRICITY = 0.5f;
+    public static final float C_WATER = 0.5f;
+    public static final float C_GAS = 0.5f;
+    public static final float C_STEAM = 0.5f;
 
     public static final String SUM_TYPE = "能耗分项";  // 可以计算总量的分组类型
 
