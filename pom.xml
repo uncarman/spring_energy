@@ -14,6 +14,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <skipTests>true</skipTests>
+
+        <java.version>8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <proguard.version>6.2.0</proguard.version>
+        <proguard.maven.plugin.version>2.2.0</proguard.maven.plugin.version>
+<!--        <lombok.version>1.18.10</lombok.version>-->
     </properties>
 
     <parent>
@@ -123,16 +130,150 @@
         </dependency>
     </dependencies>
 
+<!--    普通编译, 不包含混淆-->
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <classifier>exec</classifier>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
+
+    <!--加载proguard的混淆插件，通过mvn package 打包即可-->
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <version>${proguard.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>proguard</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <proguardVersion>${proguard.version}</proguardVersion>
+                    <injar>${project.build.finalName}.jar</injar>
+                    <outjar>${project.build.finalName}.jar</outjar>
+                    <obfuscate>true</obfuscate>
+                    <options>
+                        <option>-dontshrink</option>
+                        <option>-dontoptimize</option>
+                        <!-- This option will replace all strings in reflections method invocations with new class names.
+                             For example, invokes Class.forName('className')-->
+                        <option>-adaptclassstrings</option>
+                        <!-- This option will save all original annotations and etc. Otherwise all we be removed from files.-->
+                        <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option>
+                        <!-- This option will save all original names in interfaces (without obfuscate).-->
+                        <option>-keepnames interface **</option>
+                        <!-- This option will save all original methods parameters in files defined in -keep sections,
+                             otherwise all parameter names will be obfuscate.-->
+                        <option>-keepparameternames</option>
+                        <!-- This option will save all original class files (without obfuscate) but obfuscate all
+                             in domain and service packages.-->
+                        <option>-keep class com.energy.aop.**</option>
+                        <option>-keep class com.energy.aop.** { *; }</option>
+                        <option>-keep class com.energy.config.**</option>
+                        <option>-keep class com.energy.config.** { *; }</option>
+                        <option>-keep class com.energy.controller.**</option>
+                        <option>-keep class com.energy.controller.** { *; }</option>
+                        <option>-keep class com.energy.entity.**</option>
+                        <option>-keep class com.energy.entity.** { *; }</option>
+                        <option>-keep class com.energy.handler.**</option>
+                        <option>-keep class com.energy.handler.** { *; }</option>
+                        <option>-keep class com.energy.mapper.**</option>Autowired
+                        <option>-keep class com.energy.mapper.** { *; }</option>
+                        <option>-keep class com.energy.utils.**</option>
+                        <option>-keep class com.energy.utils.** { *; }</option>
+                        <option>-keep class com.energy.SpringBootEnergyApplication</option>
+                        <option>-keepclassmembers class com.energy.SpringBootEnergyApplication{ *;}</option>
+
+                        <!-- This option ignore warnings such as duplicate class definitions and classes in incorrectly
+                            named files-->
+                        <option>-ignorewarnings</option>
+                        <!-- This option will save all original class files (without obfuscate) in service package-->
+                        <!--<option>-keep class com.slm.proguard.example.spring.boot.service { *; }</option>-->
+                        <!-- This option will save all original interfaces files (without obfuscate) in all packages.-->
+                        <option>-keep interface * extends * { *; }</option>
+                        <!-- This option will save all original defined annotations in all class in all packages.-->
+                        <option>-keepclassmembers class * {
+                                @org.springframework.beans.factory.annotation.Autowired *;
+                                @javax.annotation.Resource *;
+                                @org.springframework.beans.factory.annotation.Value *;
+                            }
+                        </option>
+                        <!--# 保留注解不被混淆-->
+                        <option>-keep public @interface * {
+                            ** default (*);
+                            }
+                        </option>
+                        <!--# 保留public、protected方法不被混淆-->
+                        <option>-keep public class * {
+                            public protected *;
+                            }
+                        </option>
+                    </options>
+                    <injarNotExistsSkip>true</injarNotExistsSkip>
+                    <libs>
+                        <!--Put here your libraries if required-->
+                        <!--<lib>${java.home}/lib/rt.jar</lib>-->
+                    </libs>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.proguard</groupId>
+                        <artifactId>proguard-base</artifactId>
+                        <version>${proguard.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Maven assembly must be run after proguard obfuscation so it take already obfuscated files.-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <classifier>exec</classifier>
-                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.energy.SpringBootEnergyApplication</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
+
+        <!--排除resources/static 和大部分配置文件-->
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>app*.properties</exclude>
+                    <exclude>static/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 
 </project>

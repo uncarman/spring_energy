@@ -3,14 +3,29 @@
 前端项目: uiServer<br>
 后端项目：当前目录
 
+注: uiServer/static 等同于 src/main/resources/static目录
+前者可以单独部署, 后者可以整合到spring项目自启动
+
+当前打包已经排除了 recources/static目录, 配置再 pom.xml中
+....
+<build>
+    ...
+    <resources>
+        
+    </resources>
+    ...
+</build>
+....
+
+
 
 ##启动后端服务
 copy energy-1.0.jar 到当前目录<br>
 执行 ./start.sh
 
 ## 启动UI服务
-cd uiServer<br>
-npm run prod
+cd uiServer/src<br>
+node index.js
 
 ------------
 
@@ -39,6 +54,32 @@ TODO: 待后期修改成 从表费率计算的结果中获取  <br />
 ------------
 
 ## 阈值报警业务
+a_item_rule 对应设备配置, 一个设备一条记录, a_item_rule.rules 保存 [], 多个阈值规则
+```json
+rules: [
+    {
+        "description": "电压过高",
+        "key": "电压",
+        "val": "240",
+        "compare": ">=",
+        "warning_category" : "电过压",
+        "severity": "严重",
+        "err_msg": "电压过高, 请检查",
+        "solution_ref": "切断电路",
+    },
+    {
+        "description": "电流过大",
+        "key": "电流",
+        "val": "10",
+        "compare": ">=",
+        "warning_category" : "电负载超标",
+        "severity": "严重",
+        "err_msg": "电流过高",
+        "solution_ref": "检查是否漏电, 或开启大功率设备",
+    }
+]
+```
+a_item_warning 为报警信息
 
 ------------
 
@@ -74,4 +115,5 @@ REDIRECT_URI: http://open.snd02.com/demo.jsp（默认此地址，如果有其它
 
 #####硬件对接
 相关文档在 /曼顿资料/ <br />
+
 

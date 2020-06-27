@@ -212,4 +212,33 @@ public class ItemController {
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @RequestMapping("/getItemRuleByItemId")
+    @ResponseBody
+    public Object getItemRuleByItemId(@RequestParam("id") Integer id,
+                              HttpServletRequest request) {
+        Response res = new Response();
+        try {
+            Map rule = itemService.getItemRuleById(id);
+            res.makeSuccess(rule);
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @RequestMapping("/updateItemRule")
+    @ResponseBody
+    public Object updateItemRule(@RequestParam("itemId") Integer itemId,
+                                 HttpServletRequest request) {
+        Response res = new Response();
+        String rules = request.getParameter("rules");
+        try {
+            itemService.updateItemRule(itemId, rules);
+            res.makeSuccess("");
+        } catch (Exception ex) {
+            res.makeFailed(ex);
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }

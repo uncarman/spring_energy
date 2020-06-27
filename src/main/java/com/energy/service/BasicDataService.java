@@ -14,7 +14,7 @@ import java.util.Objects;
  * Created by Administrator on 2019/8/31.
  */
 
-@Service
+@Service("BasicDataService")
 public class BasicDataService {
 
     @Resource

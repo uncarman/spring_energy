@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件配置，namespace指向接口-->
+<mapper namespace="com.energy.mapper.ItemWarningMapper">
+
+    <select id="getWarningList" resultType="java.util.HashMap">
+        SELECT
+            w.id,
+            w.item_id as itemId,
+            w.warning_category as warningCategory,
+            w.severity,
+            w.compare,
+            w.err_msg as errMsg,
+            w.solution_ref as solutionRef,
+            w.has_fixed as hasFixed,
+            w.reported_at as reportedAt,
+            w.fixed_at as fixedAt,
+            w.created_at as createdAt,
+            w.updated_at as updatedAt,
+            w.operator,
+            w.flow_status as flowStatus,
+            w.note,
+            i.name as itemName,
+            i.item_type as itemType,
+            i.description as itemDescription
+        FROM a_item_warning w
+        left JOIN  a_item i on i.id = w.item_id
+        left JOIN a_collector c on c.id = i.collector_id
+        where c.building_id = #{buildingId}
+        <if test="itemType != null">
+            <![CDATA[
+            and i.item_type = #{itemType}
+            ]]>
+        </if>
+        <if test="hasFixed != null">
+            <![CDATA[
+            and w.has_fixed = #{hasFixed}
+            ]]>
+        </if>
+        <if test="flowStatus != null">
+            <![CDATA[
+            and w.flow_status = #{flowStatus}
+            ]]>
+        </if>
+        <if test="limit != null and test=offset != null ">
+            <![CDATA[
+            limit #{limit} offset #{offset}
+            ]]>
+        </if>
+    </select>
+
+    <select id="getWarningCount" resultType="int">
+        SELECT
+            count(w.id)
+        FROM a_item_warning w
+        left JOIN  a_item i on i.id = w.item_id
+        left JOIN a_collector c on c.id = i.collector_id
+        where c.building_id = #{buildingId}
+        <if test="itemType != null">
+            <![CDATA[
+            and i.item_type = #{itemType}
+            ]]>
+        </if>
+        <if test="hasFixed != null">
+            <![CDATA[
+            and w.has_fixed = #{hasFixed}
+            ]]>
+        </if>
+        <if test="flowStatus != null">
+            <![CDATA[
+            and w.flow_status = #{flowStatus}
+            ]]>
+        </if>
+        <if test="from != null">
+            <![CDATA[
+            and w.created_at >= #{from}
+            ]]>
+        </if>
+        <if test="to != null">
+            <![CDATA[
+            and w.created_at <= #{to}
+            ]]>
+        </if>
+    </select>
+
+    <update id="updateItemWarning">
+        UPDATE `a_item_warning` set `operator` = #{operator}, has_fixed = 1, `flow_status` = #{flowStatus},
+        `note`= #{note}, `updated_at`= NOW()
+        where id = ${id}
+    </update>
+
+    <delete id="deleteItemWarning" parameterType="Integer">
+        DELETE FROM a_item_warning WHERE id = #{id}
+    </delete>
+</mapper>

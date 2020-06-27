@@ -30,6 +30,8 @@ public interface ItemMapper {
     public Item getItemById(@Param("id")Integer id);
     public Map getItemCurrentData(@Param("id")Integer id);
 
+    public Map getItemRuleById(@Param("id")Integer id);
+    public void updateItemRule(@Param("itemId")Integer itemId, @Param("rules")String rules);
     //public List<Map> getItemTypeBaseInfo();
 
 }

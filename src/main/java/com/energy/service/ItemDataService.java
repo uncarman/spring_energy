@@ -17,7 +17,7 @@ import java.util.*;
  * Created by Administrator on 2019/8/31.
  */
 
-@Service
+@Service("ItemDataService")
 public class ItemDataService {
 
     @Resource

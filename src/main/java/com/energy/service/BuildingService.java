@@ -15,7 +15,7 @@ import java.util.*;
  * Created by Administrator on 2019/8/17.
  */
 
-@Service
+@Service("BuildingService")
 public class BuildingService {
 
     @Resource

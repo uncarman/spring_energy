@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Service
+@Service("ItemService")
 public class ItemService {
 
     @Resource
@@ -78,7 +78,7 @@ public class ItemService {
         list.removeIf(Objects::isNull);
         return list;
     }
-    
+
     @Transactional(rollbackFor = Exception.class)
     public Integer createItemGroup(ItemGroup itemGroup) {
         return itemMapper.createItemGroup(itemGroup);
@@ -93,7 +93,6 @@ public class ItemService {
     public void deleteItemGroup(Integer id) {
         itemMapper.deleteItemGroup(id);
     }
-
 
     public Item getItemById(Integer id) {
         return itemMapper.getItemById(id);
@@ -118,5 +117,12 @@ public class ItemService {
         itemMapper.deleteItem(id);
     }
 
+    public Map getItemRuleById(Integer id) {
+        return itemMapper.getItemRuleById(id);
+    }
+
+    public void updateItemRule(int itemId, String rules) {
+        itemMapper.updateItemRule(itemId, rules);
+    }
 
 }

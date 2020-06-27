@@ -51,6 +51,34 @@
         ]]>
     </select>
 
+    <!-- 分组下的所有设备 -->
+    <select id="getItemsByGroupIds" resultType="com.energy.entity.Item">
+        <![CDATA[
+        select
+            i.`id`,
+            i.collector_id as collectorId,
+            i.item_type as itemType,
+            i.`code`,
+            i.`name`,
+            i.`description`,
+            i.data_type as dataType,
+            i.data_unit as dataUnit,
+            i.coefficient,
+            i.max_value as `maxValue`,
+            i.`state`
+        from a_item_group g
+            LEFT JOIN a_item_group_mapper m on m.group_id = g.id
+            LEFT JOIN a_item i on i.id = m.item_id
+        where g.id in
+        ]]>
+        <foreach item="item" index="index" collection="groupIdList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <![CDATA[
+        order by i.item_type asc, i.collector_id asc, i.name asc
+        ]]>
+    </select>
+
     <!-- 设备分组  -->
     <select id="getItemGroups" resultType="java.util.LinkedHashMap">
         select
@@ -221,6 +249,41 @@
         <foreach collection="itemIds" item="item" index="index" separator=",">
             (#{item},#{groupId})
         </foreach>
+    </insert>
+
+    <!-- 设备报警阈值 -->
+    <select id="getItemRuleById" resultType="java.util.LinkedHashMap">
+        <![CDATA[
+        SELECT
+            i.`id` as itemId,
+            i.collector_id as collectorId,
+            i.item_type as itemType,
+            i.`code`,
+            i.`name`,
+            i.`description`,
+            i.data_type as dataType,
+            i.data_unit as dataUnit,
+            i.coefficient,
+            i.max_value as `maxValue`,
+            i.`state`,
+            r.id,
+            r.rules
+        FROM a_item i
+        left join a_item_rule r on r.item_id = i.id
+        where i.id = #{id}
+        ]]>
+    </select>
+    <insert id="updateItemRule" >
+        <selectKey keyProperty="count" resultType="int" order="BEFORE">
+            select count(*) from a_item_rule where item_id = #{itemId}
+        </selectKey>
+        <if test="count > 0">
+            UPDATE `a_item_rule` set `rules` = #{rules}, `updated_at` = NOW()
+            where item_id = ${itemId}
+        </if>
+        <if test="count==0">
+            insert into `a_item_rule` (item_id, rules) values (#{itemId}, #{rules})
+        </if>
     </insert>
 
 </mapper>

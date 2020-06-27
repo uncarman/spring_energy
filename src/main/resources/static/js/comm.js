@@ -62,7 +62,7 @@ var settings = {
 
     domain: "http://localhost:8095/",  // 接口地址
     cross_domain: false,
-    ajax_timeout: 30*1000, //ajax超时时间 (单位:毫秒)
+    ajax_timeout: 60*1000, //ajax超时时间 (单位:毫秒)
 
     ajax_func: {
         login: "login",
@@ -131,6 +131,10 @@ var settings = {
         "ajaxGetCashflow": "api/cashFlowList", // 充值记录
         "ajaxCreateCashflow": "api/cashFlowAdd", // 充值添加
 
+        "ajaxGetItemWarningSummary": "api/getBuildingItemWarningSummary", // 设备告警汇总
+        "ajaxGetItemWarningList": "api/getBuildingItemWarningList", // 设备告警
+        "ajaxUpdateItemWarning": "api/updateItemWarning", // 更新
+        //"ajaxRemoveItemWarning": "api/removeItemWarning",  // 删除
     },
 
     // 分页参数

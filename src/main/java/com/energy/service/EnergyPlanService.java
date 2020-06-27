@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Service("EnergyPlanService")
 public class EnergyPlanService {
 
     @Resource

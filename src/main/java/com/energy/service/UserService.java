@@ -11,7 +11,7 @@ import javax.annotation.Resource;
  * Created by Administrator on 2019/8/21.
  */
 
-@Service
+@Service("UserService")
 public class UserService {
 
     @Resource
