@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "bytenode": "^1.1.6",
+    "javascript-obfuscator": "^1.2.1",
     "mssql": "^6.0.1",
     "mysql": "^2.17.1",
     "oracledb": "^4.2.0",

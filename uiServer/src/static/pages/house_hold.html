@@ -1,0 +1,194 @@
+
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                商户管理
+            </h3>
+        </div>
+    </div>
+    <p class="clearfix"></p>
+
+    <section class="content">
+        <div class="x_content">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-success" ng-click="createItem();">
+                                <i class="fa fa-plus"></i>
+                                创建商户
+                            </button>
+                            <table class="table table-hover table-bordered" id="summaryTable">
+                                <thead>
+                                <tr>
+                                    <th ng-repeat="(k,n) in datas.tableData.title" ng-bind="n"></th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="v in datas.tableData.data | filter:nameFilt">
+                                    <td ng-repeat="(k,n) in datas.tableData.title">
+                                        <span ng-bind="v[k]" ng-if="k!='1' && k != '5'"></span>
+                                        <span class="btn btn-info btn-xs" ng-bind="v[k]" ng-if="k=='5'" ng-click="viewItemData(v);"></span>
+                                        <img ng-src="{{v[k]}}" ng-if="k=='1'" width="100">
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-info btn-xs" ng-click="viewItem(v);">
+                                            <i class="fa fa-folder"></i> 查看
+                                        </button>
+                                        <button class="btn btn-primary btn-xs" ng-click="editItem(v);">
+                                            <i class="fa fa-pencil"></i> 编辑
+                                        </button>
+                                        <button class="btn btn-danger btn-xs" ng-click="cashFlow(v, $index);">
+                                            <i class="fa fa-trash-o"></i> 充值记录
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+
+        <div class="modal fade itemEdit in">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" ng-show="datas.curMethod=='edit'" ng-bind="datas.curItemCache.name"></h4>
+                        <h4 class="modal-title" ng-show="datas.curMethod=='create'">创建商户</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="curItem" class="form-horizontal form-label-left">
+                            <div>
+                                <div class="item form-group" ng-show="datas.curMethod=='view' || datas.curMethod=='edit'">
+                                    <label class="control-label col-xs-4">ID:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="id" ng-model="datas.curItem.id" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">建筑ID:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="buildingId" ng-model="datas.curItem.buildingId" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">商户名称:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="name" ng-model="datas.curItem.name" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">商户别名:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="alias" ng-model="datas.curItem.alias" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">电表ID:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="itemIds" ng-model="datas.curItem.itemIds" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">照片地址:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="photo" ng-model="datas.curItem.photo" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">备注信息:</label>
+                                    <div class="col-xs-8">
+                                        <textarea class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                                  id="notes" ng-model="datas.curItem.notes" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button ng-show="datas.curMethod=='create'" type="button" class="btn btn-primary" ng-click="saveItem();">保存</button>
+                        <button ng-show="datas.curMethod=='edit'" type="button" class="btn btn-primary" ng-click="updateItem();">更新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade itemData in">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" ng-bind="'实时数据: '+datas.curItemData.name"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>总电量：</th>
+                                    <td ng-bind="datas.curItemData.otherData.pa"></td>
+                                </tr>
+                                <tr>
+                                    <th>电压：</th>
+                                    <td ng-bind="datas.curItemData.otherData.v"></td>
+                                </tr>
+                                <tr>
+                                    <th>电流：</th>
+                                    <td ng-bind="datas.curItemData.otherData.a"></td>
+                                </tr>
+                                <tr>
+                                    <th>尖电量：</th>
+                                    <td ng-bind="datas.curItemData.otherData.pj"></td>
+                                </tr>
+                                <tr>
+                                    <th>峰电量：</th>
+                                    <td ng-bind="datas.curItemData.otherData.pf"></td>
+                                </tr>
+                                <tr>
+                                    <th>平电量：</th>
+                                    <td ng-bind="datas.curItemData.otherData.pp"></td>
+                                </tr>
+                                <tr>
+                                    <th>谷电量：</th>
+                                    <td ng-bind="datas.curItemData.otherData.pg"></td>
+                                </tr>
+                                <tr>
+                                    <th>剩余费用</th>
+                                    <td ng-bind="datas.curItemData.otherData.rm"></td>
+                                </tr>
+                                <tr>
+                                    <th>最后更新时间：</th>
+                                    <td ng-bind="datas.curItemData.updateTime"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>

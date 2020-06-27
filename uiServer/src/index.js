@@ -9,9 +9,9 @@ var env = process.argv[2] === 'prod' ? 'prod' : 'test';
 
 var _path = process.cwd();
 console.log(_path);
-var conf = require(_path+'/conf/'+env+'.json');
-var mimeModel=require(_path+'/src/model/getmimefromfile.js');
-var app=require(_path+'/src/model/app.js');
+var conf = require(_path+'/conf/sysConfig').sysConfig();
+var mimeModel=require(_path+'/model/getmimefromfile');
+var app=require(_path+'/model/app');
 
 http.createServer(function(req,res){
 	var pathname=url.parse(req.url).pathname;

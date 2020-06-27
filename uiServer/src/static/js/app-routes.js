@@ -1,6 +1,7 @@
 define(function (require) {
     var app = require('./app');
-    var version = (settings && settings.is_debug) ? new Date().getMinutes() : new Date().getDate();
+    var settings = require('comm').settings;
+    var global = require('comm').global;
 
     app.run(['$state', '$stateParams', '$rootScope', function ($state, $stateParams, $rootScope) {
         $rootScope.$state = $state;
@@ -8,67 +9,680 @@ define(function (require) {
     }]);
 
     app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise('/index');
+        $urlRouterProvider.otherwise('/dashboard');
 
         $stateProvider
-            .state('login', {
-                url: '/login',
-                templateUrl: './modules/login/login.html?v='+version,
-                controllerUrl: './modules/login/loginCtrl',
-                controller: 'loginCtrl'
+            .state('building_list',{
+                url:'/building_list',
+                templateUrl:'pages/buildingList.html',
+                controller: 'buildingList',
             })
-            .state('index', {
-                url: '/index',
-                views: {
-                    // 无名 view
-                    '': {
-                        templateUrl: './pages/index/index.html?v='+version,
-                        controllerUrl: './pages/index/index',
-                        controller: 'indexCtrl',
-                    },
-                    'nav@index': {
-                        templateUrl: './pages/_components/nav/nav.html?v='+version,
-                        controllerUrl: './pages/_components/nav/nav',
-                        controller: 'navCtrl',
-                    },
+            .state('dashboard',{
+                url:'/dashboard',
+                templateUrl:'pages/dashboard.html?v=' + version,
+                controllerUrl: 'pages/dashboard',
+                controller: 'dashboard',
+            })
+            .state('monitor',{
+                url:'/monitor',
+                templateUrl:'pages/monitor.html',
+                controllerUrl: 'pages/monitor',
+                controller: 'monitor',
+            })
+
+            // 电能
+            .state('monitor_electricity',{
+                url:'/monitor_electricity',
+                templateUrl:'pages/monitor_energy.html',
+                controllerUrl: 'pages/monitor_energy',
+                controller: 'monitor_energy',
+                params: {
+                    type: "01"
                 }
             })
-            .state('monitor', {
-                url: '/monitor',
-                views: {
-                    // 无名 view
-                    '': {
-                        templateUrl: './pages/monitor/monitor.html?v='+version,
-                        controllerUrl: './pages/monitor/monitor',
-                        controller: 'monitorCtrl',
-                    },
-                    'nav@monitor': {
-                        templateUrl: './pages/_components/nav/nav.html?v='+version,
-                        controllerUrl: './pages/_components/nav/nav',
-                        controller: 'navCtrl',
-                    },
+            .state('monitor_electricity_by_subentry',{
+                url:'/monitor_electricity_by_subentry',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "能耗分项",
                 }
             })
-            .state('products', {
-                url: '/products',
-                templateUrl: './modules/products/products.html'+version,
-                controllerUrl: './modules/products/productsCtrl',
-                controller: 'productsCtrl',
-                // load more controllers, services, filters, ...
-                //dependencies: ['./services/usersService']
-            });
+            .state('monitor_electricity_by_subentry/:parent',{
+                url:'/monitor_electricity_by_subentry/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_electricity_by_area',{
+                url:'/monitor_electricity_by_area',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_electricity_by_area/:parent',{
+                url:'/monitor_electricity_by_area/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_electricity_by_org',{
+                url:'/monitor_electricity_by_org',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_electricity_by_org/:parent',{
+                url:'/monitor_electricity_by_org/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_electricity_by_custom',{
+                url:'/monitor_electricity_by_custom',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "自定义",
+                }
+            })
+            .state('monitor_electricity_by_custom/:parent',{
+                url:'/monitor_electricity_by_custom/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "01",
+                    subType: "自定义",
+                }
+            })
+
+
+            // 水能
+            .state('monitor_water',{
+                url:'/monitor_water',
+                templateUrl:'pages/monitor_energy.html',
+                controllerUrl: 'pages/monitor_energy',
+                controller: 'monitor_energy',
+                params: {
+                    type: "02"
+                }
+            })
+            .state('monitor_water_by_subentry',{
+                url:'/monitor_water_by_subentry',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_water_by_subentry/:parent',{
+                url:'/monitor_water_by_subentry/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_water_by_area',{
+                url:'/monitor_water_by_area',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_water_by_area/:parent',{
+                url:'/monitor_water_by_area/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_water_by_org',{
+                url:'/monitor_water_by_org',
+                templateUrl:'pages/monitor_water_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_water_by_org/:parent',{
+                url:'/monitor_water_by_org/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_water_by_custom',{
+                url:'/monitor_water_by_custom',
+                templateUrl:'pages/monitor_water_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "自定义",
+                }
+            })
+            .state('monitor_water_by_custom/:parent',{
+                url:'/monitor_water_by_custom/:parent',
+                templateUrl:'pages/monitor_water_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "02",
+                    subType: "自定义",
+                }
+            })
+
+            // 燃气能
+            .state('monitor_gas',{
+                url:'/monitor_gas',
+                templateUrl:'pages/monitor_energy.html',
+                controllerUrl: 'pages/monitor_energy',
+                controller: 'monitor_energy',
+                params: {
+                    type: "03"
+                }
+            })
+            .state('monitor_gas_by_subentry',{
+                url:'/monitor_gas_by_subentry',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_gas_by_subentry/:parent',{
+                url:'/monitor_gas_by_subentry/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_gas_by_area',{
+                url:'/monitor_gas_by_area',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_gas_by_area/:parent',{
+                url:'/monitor_gas_by_area/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_gas_by_org',{
+                url:'/monitor_gas_by_org',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_gas_by_org/:parent',{
+                url:'/monitor_gas_by_org/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_gas_by_custom',{
+                url:'/monitor_gas_by_custom',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "自定义",
+                }
+            })
+            .state('monitor_gas_by_custom/:parent',{
+                url:'/monitor_gas_by_custom/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "03",
+                    subType: "自定义",
+                }
+            })
+
+            // 冷热量
+            .state('monitor_cah',{
+                url:'/monitor_cah',
+                templateUrl:'pages/monitor_energy.html',
+                controllerUrl: 'pages/monitor_energy',
+                controller: 'monitor_energy',
+                params: {
+                    type: "04"
+                }
+            })
+            .state('monitor_cah_by_subentry',{
+                url:'/monitor_cah_by_subentry',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_cah_by_subentry/:parent',{
+                url:'/monitor_cah_by_subentry/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_cah_by_area',{
+                url:'/monitor_cah_by_area',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_cah_by_area/:parent',{
+                url:'/monitor_cah_by_area/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_cah_by_org',{
+                url:'/monitor_cah_by_org',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_cah_by_org/:parent',{
+                url:'/monitor_cah_by_org/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_cah_by_custom',{
+                url:'/monitor_cah_by_custom',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "自定义",
+                }
+            })
+            .state('monitor_cah_by_custom/:parent',{
+                url:'/monitor_cah_by_custom/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "04",
+                    subType: "自定义",
+                }
+            })
+
+            // 蒸汽
+            .state('monitor_steam',{
+                url:'/monitor_steam',
+                templateUrl:'pages/monitor_energy.html',
+                controllerUrl: 'pages/monitor_energy',
+                controller: 'monitor_energy',
+                params: {
+                    type: "05"
+                }
+            })
+            .state('monitor_steam_by_subentry',{
+                url:'/monitor_steam_by_subentry',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_steam_by_subentry/:parent',{
+                url:'/monitor_steam_by_subentry/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "能耗分项",
+                }
+            })
+            .state('monitor_steam_by_area',{
+                url:'/monitor_steam_by_area',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_steam_by_area/:parent',{
+                url:'/monitor_steam_by_area/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "建筑区域",
+                }
+            })
+            .state('monitor_steam_by_org',{
+                url:'/monitor_steam_by_org',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_steam_by_org/:parent',{
+                url:'/monitor_steam_by_org/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "组织机构",
+                }
+            })
+            .state('monitor_steam_by_custom',{
+                url:'/monitor_steam_by_custom',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "自定义",
+                }
+            })
+            .state('monitor_steam_by_custom/:parent',{
+                url:'/monitor_steam_by_custom/:parent',
+                templateUrl:'pages/monitor_energy_by_group.html',
+                controllerUrl: 'pages/monitor_energy_by_group',
+                controller: 'monitor_energy_by_group',
+                params: {
+                    type: "05",
+                    subType: "自定义",
+                }
+            })
+
+            // 数据分析
+            .state('statistics',{
+                url:'/statistics',
+                templateUrl:'pages/statistics.html',
+                controllerUrl: 'pages/statistics',
+                controller: 'statistics',
+            })
+            // 数据分析
+            .state('statistics_fee',{
+                url:'/statistics_fee',
+                templateUrl:'pages/statistics_fee.html',
+                controllerUrl: 'pages/statistics_fee',
+                controller: 'statistics_fee',
+            })
+            // 能耗分析
+            .state('statistics_analysis',{
+                url:'/statistics_analysis',
+                templateUrl:'pages/statistics_analysis.html',
+                controllerUrl: 'pages/statistics_analysis',
+                controller: 'statistics_analysis',
+            })
+
+
+            // 智能运维 - 物资
+            .state('maintenance_device',{
+                url:'/maintenance_device',
+                templateUrl:'pages/maintenance_device.html',
+                controllerUrl: 'pages/maintenance_device',
+                controller: 'maintenance_device',
+            })
+            // 智能运维 - 值班
+            .state('maintenance_duty',{
+                url:'/maintenance_duty',
+                templateUrl:'pages/maintenance_duty.html',
+                controllerUrl: 'pages/maintenance_duty',
+                controller: 'maintenance_duty',
+            })
+            // 智能运维 - 巡检
+            .state('maintenance_inspection',{
+                url:'/maintenance_inspection',
+                templateUrl:'pages/maintenance_inspection.html',
+                controllerUrl: 'pages/maintenance_inspection',
+                controller: 'maintenance_inspection',
+            })
+            // 智能运维 - 工单
+            .state('maintenance_order',{
+                url:'/maintenance_order',
+                templateUrl:'pages/maintenance_order.html',
+                controllerUrl: 'pages/maintenance_order',
+                controller: 'maintenance_order',
+            })
+
+
+            // 用能计划
+            .state('plan_electricity',{
+                url:'/plan_electricity',
+                templateUrl:'pages/plan_energy.html',
+                controllerUrl: 'pages/plan_energy',
+                controller: 'plan_energy',
+                params: {
+                    type: "01",
+                }
+            })
+            .state('plan_water',{
+                url:'/plan_water',
+                templateUrl:'pages/plan_energy.html',
+                controllerUrl: 'pages/plan_energy',
+                controller: 'plan_energy',
+                params: {
+                    type: "02",
+                }
+            })
+            .state('plan_gas',{
+                url:'/plan_gas',
+                templateUrl:'pages/plan_energy.html',
+                controllerUrl: 'pages/plan_energy',
+                controller: 'plan_energy',
+                params: {
+                    type: "03",
+                }
+            })
+            .state('plan_cah',{
+                url:'/plan_cah',
+                templateUrl:'pages/plan_energy.html',
+                controllerUrl: 'pages/plan_energy',
+                controller: 'plan_energy',
+                params: {
+                    type: "04",
+                }
+            })
+            .state('plan_steam',{
+                url:'/plan_steam',
+                templateUrl:'pages/plan_energy.html',
+                controllerUrl: 'pages/plan_energy',
+                controller: 'plan_energy',
+                params: {
+                    type: "05",
+                }
+            })
+
+            // 节能管理
+            .state('remould',{
+                url:'/remould',
+                templateUrl:'pages/remould.html',
+                controllerUrl: 'pages/remould',
+                controller: 'remould',
+            })
+
+            // 管网安全
+            .state('pipe_security',{
+                url:'/pipe_security',
+                templateUrl:'pages/pipe_security.html',
+                controllerUrl: 'pages/pipe_security',
+                controller: 'pipe_security',
+            })
+            // 管网安全配置, 链接为设置菜单子项
+            .state('settings_pipe_security',{
+                url:'/settings_pipe_security',
+                templateUrl:'pages/settings_pipe_security.html',
+                controllerUrl: 'pages/settings_pipe_security',
+                controller: 'settings_pipe_security',
+            })
+
+            // 报警管理
+            .state('warning',{
+                url:'/warning',
+                templateUrl:'pages/warning.html',
+                controllerUrl: 'pages/warning',
+                controller: 'warning',
+            })
+            .state('warning_settings',{
+                url:'/warning_settings',
+                templateUrl:'pages/warning_settings.html',
+                controllerUrl: 'pages/warning_settings',
+                controller: 'warning_settings',
+            })
+
+            // 分组编辑
+            .state('settings_group',{
+                url:'/settings_group',
+                templateUrl:'pages/settings_group.html',
+                controllerUrl: 'pages/settings_group',
+                controller: 'settings_group',
+            })
+            // 设备管理
+            .state('settings_item',{
+                url:'/settings_item',
+                templateUrl:'pages/settings_item.html',
+                controllerUrl: 'pages/settings_item',
+                controller: 'settings_item',
+            })
+            // 基本配置
+            .state('settings_base',{
+                url:'/settings_base',
+                templateUrl:'pages/settings_base.html',
+                controllerUrl: 'pages/settings_base',
+                controller: 'settings_base',
+            })
+
+            // 商户管理
+            .state('house_hold',{
+                url:'/house_hold',
+                templateUrl:'pages/house_hold.html',
+                controllerUrl: 'pages/house_hold',
+                controller: 'house_hold',
+            })
+            // 电表管理
+            .state('cash_flow',{
+                url:'/cash_flow',
+                templateUrl:'pages/cash_flow.html',
+                controllerUrl: 'pages/cash_flow',
+                controller: 'cash_flow',
+            })
+            // 电表充值流水
+            .state('cash_flow/:itemId',{
+                url:'/cash_flow/:itemId',
+                templateUrl:'pages/cash_flow.html',
+                controllerUrl: 'pages/cash_flow',
+                controller: 'cash_flow',
+            })
+
+            // 个人中心
+            .state('profile',{
+                url:'/profile',
+                templateUrl:'pages/profile.html',
+                controllerUrl: 'pages/profile',
+                controller: 'profile',
+            })
+            // 帮助中心
+            .state('help',{
+                url:'/help',
+                templateUrl:'pages/help.html',
+                controllerUrl: 'pages/help',
+                controller: 'help',
+            })
+        ;
+
     }]);
 
-    app.directive('onFinishRenderFilters', function ($timeout) {
-        return {
-            restrict: 'A',
-            link: function(scope, element, attr) {
-                if (scope.$last === true) {
-                    $timeout(function() {
-                        scope.$emit('ngRepeatFinished');
-                    });
-                }
-            }
-        };
-    });
 });

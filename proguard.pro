@@ -1,0 +1,16 @@
+-injars       target/energy.jar
+-outjars      target/energy_out.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/resources.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/rt.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/jsse.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/jce.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/charsets.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/ext/dnsns.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/ext/localedata.jar
+-libraryjars  C:/Program Files/Java/jdk1.6.0_35/jre/lib/ext/sunjce_provider.jar
+-libraryjars  lib/log4j-1.2.17.jar
+-printmapping proguard.map
+-overloadaggressively
+-repackageclasses ''
+-allowaccessmodification
+-keep class com.hiekn.wzh.ProGuardTest{*;}

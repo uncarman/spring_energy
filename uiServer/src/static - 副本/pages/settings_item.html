@@ -1,0 +1,165 @@
+
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                设备管理
+            </h3>
+        </div>
+        <div class="title_right">
+            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right text-right">
+                当前建筑名称
+                <i class="fa fa-chevron-down"></i>
+            </div>
+        </div>
+    </div>
+    <p class="clearfix"></p>
+
+    <section class="content">
+        <div class="x_content">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-success" ng-click="createItem();">
+                                <i class="fa fa-plus"></i>
+                                创建设备
+                            </button>
+                            <table class="table table-hover table-bordered" id="summaryTable">
+                                <thead>
+                                <tr>
+                                    <th ng-repeat="(k,n) in datas.tableData.title" ng-bind="n"></th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="v in datas.tableData.data">
+                                    <td ng-repeat="(k,n) in datas.tableData.title"
+                                        ng-bind="v[k]"></td>
+                                    <td>
+                                        <button class="btn btn-info btn-xs" ng-click="viewItem(v);">
+                                            <i class="fa fa-folder"></i> 查看
+                                        </button>
+                                        <button class="btn btn-primary btn-xs" ng-click="editItem(v);">
+                                            <i class="fa fa-pencil"></i> 编辑
+                                        </button>
+                                        <button class="btn btn-danger btn-xs" ng-click="removeItem(v, $index);">
+                                            <i class="fa fa-trash-o"></i> 删除
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+
+        <div class="modal fade itemEdit in">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" ng-show="datas.curMethod=='edit'" ng-bind="datas.curItemCache.name"></h4>
+                        <h4 class="modal-title" ng-show="datas.curMethod=='create'">创建分组</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="curItem" class="form-horizontal form-label-left">
+                            <div>
+                                <div class="item form-group" ng-show="datas.curMethod=='view' || datas.curMethod=='edit'">
+                                    <label class="control-label col-xs-4">ID:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="id" ng-model="datas.curItem.id" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">采集器ID:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="collector_id" ng-model="datas.curItem.collector_id" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">类型ID:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="item_type" ng-model="datas.curItem.item_type" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">编码:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="code" ng-model="datas.curItem.code" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">名称:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="name" ng-model="datas.curItem.name" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">数据类型:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="data_type" ng-model="datas.curItem.data_type" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">数据单位:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="data_unit" ng-model="datas.curItem.data_unit" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">变比系数:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="coefficient" ng-model="datas.curItem.coefficient" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">最大值:</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="max_value" ng-model="datas.curItem.max_value" />
+                                    </div>
+                                </div>
+                                <div class="item form-group">
+                                    <label class="control-label col-xs-4">描述:</label>
+                                    <div class="col-xs-8">
+                                        <textarea class="form-control col-xs-12"
+                                               ng-readonly="datas.curMethodReadOnly"
+                                               id="description" ng-model="datas.curItem.description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button ng-show="datas.curMethod=='create'" type="button" class="btn btn-primary" ng-click="saveItem();">保存</button>
+                        <button ng-show="datas.curMethod=='edit'" type="button" class="btn btn-primary" ng-click="updateItem();">更新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>

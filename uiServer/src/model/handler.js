@@ -1,9 +1,10 @@
 "use strict";
 
-const sql = require('./sql.js').sql;
-const db = require('./dbMysql.js');
-const moment = require("./moment-with-locales.min.js");
 var request = require('request');
+
+const sql = require('./sql').sql;
+const db = require('./dbMysql');
+const moment = require("./moment-with-locales.min");
 
 let _success = {
     code: 0,

@@ -1,0 +1,74 @@
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                所有报警 &nbsp;
+                <small ng-bind="datas.todayStr"></small>
+            </h3>
+        </div>
+    </div>
+    <p class="clearfix"></p>
+
+
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="name">名称</label>
+                            <input type="text" class="form-control" id="name" placeholder="管理员名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="sendTo">发送</label>
+                            <input type="text" class="form-control" id="sendTo" placeholder="联系方式: 电话或邮箱">
+                        </div>
+                        <p></p>
+                        <div class="form-group">
+                            <label for="from">最早</label>
+                            <input type="text" class="form-control" id="from" placeholder="最早时间">
+                        </div>
+                        <div class="form-group">
+                            <label for="to">最晚</label>
+                            <input type="text" class="form-control" id="to" placeholder="最晚时间">
+                        </div>
+                        <div class="form-group mr10">
+                            <label for="span">间隔</label>
+                            <input type="number" class="form-control" id="span" placeholder="时间间隔">
+                        </div>
+                        <button type="button" class="btn btn-primary">添加</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="x_panel">
+        <div class="x_content">
+            <h3>
+                <span class="glyphicon glyphicon-earphone"></span>
+                提醒人员
+            </h3>
+            <table class="table table-hover" id="summaryTable">
+                <thead>
+                <tr>
+                    <th ng-repeat="(k,n) in datas.result.tableData.title" ng-bind="n"></th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="v in datas.result.tableData.data">
+                    <td ng-repeat="(k,n) in datas.result.tableData.title"
+                        ng-bind="v[k]"></td>
+                    <td>
+                        <button class="btn btn-primary btn-xs" ng-click="editItem($index, v, 1);">编辑</button>
+                        <button class="btn btn-success btn-xs" ng-click="updateItem($index, v, 1);">停止</button>
+                        <button class="btn btn-default btn-xs" ng-click="updateItem($index, v, 2);">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

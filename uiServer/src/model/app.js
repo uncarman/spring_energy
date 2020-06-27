@@ -3,13 +3,13 @@
 var fs=require('fs');
 
 var _path = process.cwd();
-var mimeModel=require(_path+'/src/model/getmimefromfile.js');
-var handler = require(_path+'/src/model/handler.js');
+var mimeModel=require(_path+'/model/getmimefromfile');
+var handler = require(_path+'/model/handler');
 
 
 /*返回静态文件*/
 function dealWithStatics(conf, req, res, pathname, extname) {
-    fs.readFile(_path+'/src/static/'+pathname,function(err, data){
+    fs.readFile(_path+'/static/'+pathname,function(err, data){
 		if(err){
 			deal404(res);
 		}else{ /*返回这个文件*/
@@ -22,7 +22,7 @@ function dealWithStatics(conf, req, res, pathname, extname) {
 }
 
 function deal404(res) {
-	fs.readFile(_path+'/src/static/404.html',function(error,data404){
+	fs.readFile(_path+'/static/404.html',function(error,data404){
 		if(error){
 			console.log(error);
 		}
